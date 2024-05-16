@@ -1,0 +1,67 @@
+body{
+    background-color:blanchedalmond;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+#buttonDiv{
+    border-style:groove;
+    border-radius: 20px;
+    background-color: beige;
+    display: flex;
+    flex-direction: column;
+    justify-content:center;
+    align-items: center; /* Añade esta propiedad para centrar verticalmente */
+}
+
+.buttonFetch:hover{
+    background-color: rgba(137, 43, 226, 0.205);
+    color: #8a2be2;
+}
+
+.buttonFetch{
+    margin-top: 10px;
+    background-color: blueviolet;
+    color: #faebd7;
+    border-radius: 7px;    
+    text-transform: uppercase;
+    border: 1px solid blueviolet;
+}
+
+#divContainer{
+    margin: 10px;
+    padding: 5px;
+    background-color: blanchedalmond;
+    border-radius: 20px;    
+    border-style:groove;
+    text-align: center;
+}
+
+#dataContainer{
+    background-color: rgb(245, 245, 219);
+    border-radius: 20px;    
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th{
+    border-radius: 15px;
+    background-color: #f5f5dc;
+}
+
+th, td {
+    border: 0px solid #8a2be2;
+    padding: 15px;
+    text-align: left;
+}
+
+th {
+    background-color: #8a2be2;
+    color: #faebd7;
+}
+
+tr:nth-child(even) {
+    background-color: #f5f5dc;
+}
+
