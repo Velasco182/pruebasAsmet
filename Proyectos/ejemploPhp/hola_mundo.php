@@ -1,6 +1,6 @@
 <?php
     //VARIABLES
-
+    //++++echo PUEDE IMPRIMIR VARIOS RESULTADOS, print DEJA UNO SOLO++++
     //Declaración de una variable
     $inicio = "Hola";
     //Imprimir un texto y concatenación con .
