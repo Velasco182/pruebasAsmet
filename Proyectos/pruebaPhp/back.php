@@ -1,20 +1,22 @@
 <?php 
     // Configuración de la conexión a la base de datos 
     $host = 'localhost'; 
-    $username = 'tu_usuario'; 
-    $password = 'tu_contraseña'; 
-    $database = 'nombre_de_tu_base_de_datos'; 
+    $username = 'root'; 
+    $password = ''; 
+    $database = 'prueba'; 
     
     // Conexión a la base de datos 
-    $connection = new mysqli($host, $username, $password, $database); 
+    $connection = mysqli_connect($host, $username, $password, $database); 
     
     // Verificar la conexión 
     if ($connection->connect_error) { 
         die("Error de conexión: " . $connection->connect_error); 
-    } 
+    }
+    
+    //echo "Conectado a la base de datos";
     
     // Consulta para obtener datos (ejemplo) 
-    $sql = "SELECT * FROM tu_tabla"; 
+    $sql = "SELECT * FROM prueba.clientes"; 
     $result = $connection->query($sql); 
     
     // Array para almacenar los datos 

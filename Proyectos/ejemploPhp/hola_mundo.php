@@ -86,23 +86,26 @@
     $j = 0;
     do{
 
-        echo "Iteración Do While #".$i. "<br>";
+        echo "Iteración Do While #".$j. "<br>";
         $j++;
 
-    }while($i<5);
+    }while($j<5);
 
     #ARREGLOS
     $frutas = array("manzana", "pera", "naranja", "plátano");
 
     $otraForma = array(
-        'Nombre Fruta 1' => $frutas[0],
-        'Nombre Fruta 2' => $frutas[1],
-        'Nombre Fruta 3' => $frutas[2]
+        'fruta1' => $frutas[0],
+        'fruta2' => $frutas[1],
+        'fruta3' => $frutas[2]
     );
 
+    echo "Arreglo Frutas: ".$otraForma['fruta1']."<br>";
+
     #  count($x) Permite saber el numero exacto de elementos de un arreglo
-    for($i = 0; $i < count($otraForma); $i++){
-        echo "(For) La ".$i."° fruta es: ".$otraForma[$i]."<br>";
+    for($i = 1; $i < count($otraForma); $i++){
+        $fruta = "fruta$i";
+        echo "(For) La $i ° fruta es: ".$otraForma[$fruta]."<br>";
     }
 
     foreach($frutas as $value => $fruta){
@@ -151,7 +154,7 @@
     $auto1 = (object)["marca"=>"Toyota", "modelo"=>"Corolla"];
     $auto2 = (object)["marca"=>"Hyundai", "modelo"=>"Accent Vision"];
 
-    echo "<p>Hola soy un $auto1->$marca, modelo $auto1->$modelo </p><br>";
+    echo "<p>Hola soy un ".$auto1->marca.", modelo ".$auto1->modelo."</p><br>";
     function mostrar($auto){
 
         echo "<p>Hola soy un $auto->marca, modelo $auto->modelo </p><br>";

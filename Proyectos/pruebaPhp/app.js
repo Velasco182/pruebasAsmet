@@ -1,12 +1,12 @@
 const fetchData = () =>{
-    fetch('http://localhost:8080/back.php')
+    //Ruta para ejecución del Fetch en este caso el back.php
+    fetch('/sena/Proyectos/pruebaPhp/back.php')
     .then(response => response.json())
+    .catch(err => console.error('Error al obtener datos: ', err))
     .then( data => {
         renderTable(data);
         //document.getElementById('dataContainer').innerText = JSON.stringify(data);
-    })
-
-    .catch(err => console.error('Error al obtener datos: ', err));
+    });
 }
 
 document.getElementById('fetchData').addEventListener('click', fetchData)
