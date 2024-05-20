@@ -19,8 +19,8 @@
                 <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"
                     class="button">Crear</button>
                 <!--<button id="fetchMostrarDatos" class="button" type="submit">Obtener</button>-->
-                <button class="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Editar</button>
-                <button class="button">Eliminar</button>
+                <!--<button>Editar</button>-->
+                <!--<button class="button">Eliminar</button>-->
             </div>
 
             <div id="divContainer" class="col">
@@ -44,7 +44,7 @@
         </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal Crear Cliente-->
     <div class="modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -78,6 +78,48 @@
             </div>
         </div>
     </div>
+
+        <!-- Modal Editar Cliente-->
+    <div class="modal fade" id="actualizarModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="actualizarModalLabel">Editar cliente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="" id="actualizarFormulario" class="row g-3 was-validated" onclick="">
+                        <div class="mb-3 col-md-4">
+                            <label for="nombreACliente" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="nombreACliente" name="nombreACliente" required>
+                        </div>
+                        <div class="mb-3 col-md-4">
+                            <label for="apellidoACliente" class="form-label">Apellido</label>
+                            <input type="text" class="form-control was-validated" id="apellidoACliente" name="apellidoACliente"
+                                required>
+                        </div>
+                        <div class="mb-3 col-md-4">
+                            <label for="numeroACliente" class="form-label">Teléfono</label>
+                            <input type="number" class="form-control was-validated" id="numeroACliente" name="numeroACliente" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn-cerrar" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn" id="btn-actualizar" disabled>Actualizar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--<div class="alert alert-warning d-flex align-items-center" role="alert">
+        <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+        <div>
+          An example warning alert with an icon
+        </div>
+    </div>-->
 
     <script src="app.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
