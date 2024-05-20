@@ -1,4 +1,8 @@
 <?php 
+    //Permitir solicitudes desde cualquier origen
+    header('Access-Control-Allow-Origin: *');
+    //Establece la respuesta como de tipo JSON 
+    header('Content-Type: application/json');
     // Configuración de la conexión a la base de datos 
     $host = 'localhost'; 
     $username = 'root'; 
@@ -12,60 +16,91 @@
     if ($connection->connect_error) { 
         die("Error de conexión: " . $connection->connect_error); 
     }
-    
-    //echo "Conectado a la base de datos";
-    ###ABRO READ###
-    // Consulta para obtener datos (ejemplo) 
-    $sql = "SELECT * FROM prueba.clientes"; 
-    $result = $connection->query($sql); 
-    
-    // Array para almacenar los datos 
-    $data = array(); 
-    
-    // Recuperar y guardar los datos en el array 
-    if ($result->num_rows > 0) { 
 
-        while($row = $result->fetch_assoc()) { 
+    // Obtiene el método HTTP de la solicitud
+    $method = $_SERVER['REQUEST_METHOD'];
 
-            $data[] = $row; 
-
-        } 
-        
-    } else { 
-        echo "No se encontraron datos."; 
-    } 
-    
-    // Devolver los datos como JSON 
-    echo json_encode($data); 
-
-    ###CIERRO READ###
-    ###ABRO CREATE###
-    // Procesar la petición
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        // Obtener los datos enviados en el cuerpo de la petición
-        //$data = json_decode(file_get_contents('php://input'), true);
-        $dato = $_POST['formulario'];
-    /*$nombre = $_POST['nombreCliente'];
-    $apellido = $_POST['apellidoCliente'];
-    $telefono = $_POST['telefonoCliente'];*/
-        // Insertar los datos en la base de datos
-        $insertar = "INSERT INTO prueba.clientes (nombre, apellido, email) VALUES ($dato)";
-        /*$stmt = $connection->prepare($sql);
-        $stmt->bind_param("sss", $data['nombre'], $data['apellido'], $data['telefono']);
-        $stmt->execute();*/
-    //$result = $connection->query($insertar); 
-        // Devolver un mensaje de éxito
-        mysqli_query($con, $insertar);
-        
-        echo json_encode(array('message' => 'Registro creado exitosamente '.$dato));
-    } else {
-        // Devolver un mensaje de error si no se envió una petición POST
-        echo json_encode(array('error' => 'No se envió una petición POST'));
+    ############################ SWITCH PARA LOS METODOS HTTP #############################
+    switch ($method) {
+        ############################ ABRO READ #############################
+        case 'GET':
+            // Consulta SQL para obtener todos los datos de la tabla 'clientes' accion
+            $sql = "SELECT nombre, apellido, telefono FROM prueba.clientes";
+            // Ejecuta la consulta
+            $result = $connection->query($sql);
+            // Array para almacenar los datos
+            $data = array();
+            // Verifica si hay resultados y los agrega al array
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $data[] = $row;
+                }
+            }
+            // Devuelve los datos en formato JSON
+            echo json_encode($data);
+            break;
+        ############################ CIERRO READ #############################
+        ############################ ABRO CREAR #############################
+        case 'POST':
+            // Decodifica los datos JSON enviados en el cuerpo de la solicitud
+            $input = json_decode(file_get_contents('php://input'), true);
+            // Recupera los valores de 'nombre', 'apellido' y 'telefono'
+            $nombre = $input['nombre'];
+            $apellido = $input['apellido'];
+            $telefono = $input['telefono'];
+            //$accion = $cadena['accion'];
+            // Consulta SQL para insertar un nuevo registro en la tabla 'clientes' accion
+            $sql = "INSERT INTO clientes (nombre, apellido, telefono) VALUES ('$nombre', '$apellido', $telefono)";
+            // Verifica si la consulta se ejecuta correctamente
+            if ($connection->query($sql) === TRUE) {
+                echo json_encode(array("message" => "Registro creado con éxito"));
+            } else {
+                echo json_encode(array("message" => "Error al crear registro: " . $connection->error));
+            }
+            break;
+        ############################ CIERRO CREAR #############################
+        ############################ ABRO ACTUALIZAR #############################
+        case 'PUT':
+            // Decodifica los datos JSON enviados en el cuerpo de la solicitud
+            $input = json_decode(file_get_contents('php://input'), true);
+            // Recupera los valores de 'id', 'nombre', 'apellido' y 'telefono'
+            $id = $input['id'];
+            $nombre = $input['nombre'];
+            $apellido = $input['apellido'];
+            $telefono = $input['telefono'];
+            // Consulta SQL para actualizar un registro en la tabla 'clientes'
+            $sql = "UPDATE clientes SET nombre='$nombre', apellido='$apellido', telefono='$telefono' WHERE id=$id";
+            // Verifica si la consulta se ejecuta correctamente
+            if ($connection->query($sql) === TRUE) {
+                echo json_encode(array("message" => "Registro actualizado con éxito"));
+            } else {
+                echo json_encode(array("message" => "Error al actualizar registro: " . $connection->error));
+            }
+            break;
+        ############################ CIERRO ACTUALIZAR #############################
+        ############################ ABRO ELIMINAR #############################
+        case 'DELETE':
+            // Decodifica los datos JSON enviados en el cuerpo de la solicitud
+            $input = json_decode(file_get_contents('php://input'), true);
+            // Recupera el valor de 'id'
+            $id = $input['id'];
+            // Consulta SQL para eliminar un registro de la tabla 'clientes'
+            $sql = "DELETE FROM clientes WHERE id=$id";
+            // Verifica si la consulta se ejecuta correctamente
+            if ($connection->query($sql) === TRUE) {
+                echo json_encode(array("message" => "Registro eliminado con éxito"));
+            } else {
+                echo json_encode(array("message" => "Error al eliminar registro: " . $connection->error));
+            }
+            break;
+        ############################ CIERRO ELIMINAR #############################
+        ############################ CASO POR DEFECTO #############################
+        default:
+            // Maneja métodos HTTP no soportados
+            echo json_encode(array("message" => "Método no soportado"));
+            break;
     }
 
-    ###CIERRO CREATE###
-
-    
     // Cerrar la conexión 
     $connection->close(); 
 ?> 
