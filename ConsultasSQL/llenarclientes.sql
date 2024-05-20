@@ -1,0 +1,1 @@
+INSERT INTO prueba.clientes(nombre, apellido, telefono) VALUES ('Ana', 'García', 5551234), ('Carlos', 'Pérez', 5555678), ('Elena', 'Rodríguez', 5558765), ('Luis', 'Martínez', 5554321), ('María', 'López', 5556789);
