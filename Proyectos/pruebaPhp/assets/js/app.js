@@ -1,14 +1,21 @@
-//http://localhost/sena/Proyectos/pruebaPhp/
+//http://localhost/sena/Proyectos/pruebaPhp/index.html
 //Ruta para ejecución del Fetch en este caso el back.php
-let ruta = '/sena/Proyectos/pruebaPhp/back.php';
-console.log(ruta+'?id=${id}');
+let ruta = '/sena/Proyectos/pruebaPhp/assets/php/back.php';
+///console.log(ruta+'?id=${id}');
 let dataLoaded = false;
 // Instancia del formulario y boton de crear y actualizar Cliente
 let formularioCrear = document.getElementById('miFormulario');
 let btnEnviar = document.getElementById('btn-asmet');
+// Formulario actualizar
 let formularioActualizar = document.getElementById('actualizarFormulario');
 let btnActualizar = document.getElementById('btn-actualizar');
-let btnEliminar = document.getElementById('btn-eliminar');
+// Botón eliminar
+//let btnEliminar = document.getElementById('btn-eliminar');
+// Recupera los valores del formulario del modal
+let actualizarNombre = document.getElementById('nombreACliente');
+let actualizarApellido = document.getElementById('apellidoACliente');
+let actualizarTelefono = document.getElementById('numeroACliente');
+
 //Validar formularios
 let validarFormularios = (formulario) =>{
 
@@ -34,11 +41,10 @@ validarFormularios(formularioActualizar);
 document.addEventListener('DOMContentLoaded', (event) => {
   //#################CREAMOS UN EVENTO DE ESCUCHA EN EL BOTON DE OBTENER#####################
   mostrarDatos();
+  //renderTable();
   //##################CREAMOS UN EVENTO DE ESCUCHA EN EL BOTON DE CREAR######################
   btnEnviar.addEventListener('click', crearCliente);
-  //################CREAMOS UN EVENTO DE ESCUCHA EN EL BOTON DE ACTUALIZAR###################
   //btnActualizar.addEventListener('click', actualizarCliente);
-  //################CREAMOS UN EVENTO DE ESCUCHA EN EL BOTON DE ELIMINAR###################
   //btnEliminar.addEventListener('click', eliminarCliente);
 });
 ///################# FUNCIÓN FLECHA PARA HACER POST A LA DB #########################
@@ -53,6 +59,7 @@ let crearCliente = () => {
 
   // Instancia del formulario para poder cerrarlo después de crear un Cliente
   let modalInstance = bootstrap.Modal.getInstance(document.getElementById('exampleModal'));
+
   // Realiza una solicitud POST para crear un nuevo cliente
   fetch(ruta, {
 
@@ -63,11 +70,16 @@ let crearCliente = () => {
     body: JSON.stringify({ nombre, apellido, telefono })
 
   })
+  //Manejo de la respuesta
     .then(response => {
+      
       if (!response.ok) throw new Error('Error al crear cliente');
+      //Devuelve una promesa
       return response.json();
     })
+    //Manejo de datos recibidos
     .then(data => {
+      
       // Muestra un mensaje en la consola y refresca los datos en la tabla
       console.table(data);
       // Recargar la página actual con los datos actualizados
@@ -75,6 +87,7 @@ let crearCliente = () => {
       // Cierra el modal
       modalInstance.hide();
     })
+    //Manejo de errores
     .catch(error => console.error('Error:', error));
 }
 ///################################ CIERRO POST ##################################
@@ -84,14 +97,17 @@ let mostrarDatos = () => {
   if (!dataLoaded) {
 
     fetch(ruta)
+      //Manejo de la respuesta
       .then(response => {
 
         if (!response.ok) {
           throw new Error('Sin acceso a internet');
         }
+        //Devuelve una promesa
         return response.json();
 
       })
+      //Manejo de datos recibidos
       .then(data => {
 
         renderTable(data);
@@ -99,44 +115,113 @@ let mostrarDatos = () => {
         dataLoaded = true;
 
       })
+      //Manejo de errores
       .catch(err => console.error('Error al obtener datos: ', err));
   }
 }
 ///################################ CIERRO GET ##################################
-///#################### FUNCIÓN FLECHA PARA HACER PUT A LA DB ##########################
-let actualizarCliente = (id) => {
-  console.log('Editar cliente con ID:', id);
-//, nombre, apellido, telefono
-  // Recupera los valores del formulario del modal
-  let actualizarNombre = document.getElementById('nombreACliente').value;
-  let actualizarApellido = document.getElementById('apellidoACliente').value;
-  let actualizarTelefono = document.getElementById('numeroACliente').value;
-  // Instancia del formulario para poder cerrarlo después de crear un Cliente
-  let modalInstance = bootstrap.Modal.getInstance(document.getElementById('actualizarModal'));
-  
-  fetch(ruta, {
+///################# FUNCIÓN FLECHA PARA HACER GET POR ID A LA DB #########################
+let mostrarDatosID = (id) => {
 
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ id, actualizarNombre, actualizarApellido, actualizarTelefono })
+    fetch(`${ruta}?id=${id}`)
+      //Manejo de la respuesta
+      .then(response => {
 
-  })
-    .then(response => {
-      if (!response.ok) throw new Error('Error al actualizar cliente');
-      return response.json();
-    })
-    .then(data => {
-      // Muestra un mensaje en la consola y refresca los datos en la tabla
-      console.table(data);
-      // Recargar la página actual con los datos actualizados
-      //location.reload(true);
-      // Cierra el modal
-      modalInstance.hide();
-    })
-    .catch(error => console.error('Error:', error));
+        if (!response.ok) {
+          throw new Error('Sin acceso a internet');
+        }
+        //Devuelve una promesa
+        return response.json();
+
+      })
+      //Manejo de datos recibidos
+      .then(data => {
+
+        //renderTable(data);
+        console.table(data);
+
+        /*nombreA = data.nombre;
+        apellidoA = data.apellido;
+        telefonoA = data.telefono;*/
+
+        /*actualizarNombre.value = nombreA;
+        actualizarApellido.value = apellidoA;
+        actualizarTelefono.value = telefonoA;*/
+
+      })
+      //Manejo de errores
+      .catch(err => console.error('Error al obtener datos: ', err));
 }
+///################################ CIERRO GET POR ID ##################################
+///#################### FUNCIÓN FLECHA PARA HACER PUT A LA DB ##########################
+let actualizarCliente = (id, nombre, apellido, telefono) => {
+  //Mostrar los datos del cliente en el modal
+  mostrarDatosID(id);
+
+  // Recupera los valores del formulario del modal
+  actualizarNombre.value = nombre;
+  actualizarApellido.value = apellido;
+  actualizarTelefono.value = telefono;
+
+  let actualizarModal = document.querySelector("actualizarModal");
+
+  if(actualizarModal){
+
+        /*let nombre = event.target.getAttribute('nombreACliente');
+        let apellido = event.target.getAttribute('apellidoACliente');
+        let telefono = event.target.getAttribute('telefonoACliente');*/
+
+        //console.log('Editar cliente con ID:', id);
+        //, nombre, apellido, telefono
+        // Instancia del formulario para poder cerrarlo después de crear un Cliente
+      let modalInstance = bootstrap.Modal.getInstance(document.getElementById('actualizarModal'));
+
+    actualizarModal.addEventListener("click", function(event){
+
+      if(event.target.id == 'btn-actualizar'){
+
+        btnActualizar.addEventListener('click', () =>{
+
+          fetch(`${ruta}?id=${id}`, {
+
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({id, nombre, apellido, telefono})
+        
+          })
+            //Manejo de la respuesta
+            .then(async response => {
+              if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text);
+              }
+              return response.json();
+            })
+            //Manejo de los datos recibidos
+            .then(data => {
+              // Muestra un mensaje en la consola y refresca los datos en la tabla
+              console.table(data);
+              // Recargar la página actual con los datos actualizados
+              location.reload(true);
+              // Cierra el modal
+              modalInstance.hide();
+            })
+            //Manejo de errores
+            .catch(error => console.error('Error:', error));
+
+        })
+      }
+
+    })
+  }
+}//?id=${id}
+  //console.log(""+id, nombre, apellido, telefono);
+  /*btnActualizar.addEventListener('click', () => {
+
+    
+  })*/
 ///################################ CIERRO PUT ##################################
 ///#################### FUNCIÓN FLECHA PARA HACER DELETE A LA DB ##########################
 let eliminarCliente = (id) => {
@@ -144,22 +229,24 @@ let eliminarCliente = (id) => {
 
   if (confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
 
-    fetch(`/sena/Proyectos/pruebaPhp/back.php?id=${id}`, 
+    fetch(`${ruta}?id=${id}`, 
     {
-      method: 'DELETE'
-      ,
+      method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ id })
 
     })
+    //Manejo de la respuesta
     .then(response => {
 
       if (!response.ok) throw new Error('Error al eliminar cliente');
+      //Devuelve una promesa
       return response.json();
 
     })
+    //Manejo de los datos recibidos
     .then(data => {
       if(data.success){
 
@@ -173,17 +260,9 @@ let eliminarCliente = (id) => {
           console.error('No se puede eliminar el cliente', data.message);
 
         }
-      // Muestra un mensaje en la consola y refresca los datos en la tabla
-      
-      //mostrarDatos();
-      // Recargar la página actual con los datos actualizados
-      //location.reload(true);
-      // Cierra el modal
-      //modalInstance.hide();
     })
+    //Manejo de errores
     .catch(error => console.error('Error:', error));
-
-    //console.log()
   }
 }
 ///################################ CIERRO DELETE ##################################
@@ -210,7 +289,11 @@ function renderTable(data) {
 
     });
 
+    // ID del cliente según la fila seleccionada
     let id = item.id;
+    let nombreA = item.nombre;
+    let apellidoA = item.apellido;
+    let telefonoA = item.telefono;
 
     // Crear la celda para los botones de acción
     let actionCell = document.createElement('td');
@@ -218,22 +301,25 @@ function renderTable(data) {
     // Botón Editar
     let editButton = document.createElement('button');
     editButton.textContent = '✍️';
-    editButton.classList.add('btn', 'btn-primary');
+    editButton.classList.add('btn');
+    //editButton.setAttribute('style', 'background-color: #2e9c9d; color: white; hover: { background-color: #cdeeee; color: black; }')
+    editButton.style.cssText = 'background-color: #2e9c9d; color: white; hover: { background-color: #cdeeee; color: black; }';
     editButton.setAttribute('type', 'button'); 
     editButton.setAttribute('data-bs-toggle', 'modal');
     editButton.setAttribute('data-bs-target', '#actualizarModal');
     editButton.setAttribute('data-id', id);
-    editButton.addEventListener('click', () => actualizarCliente(item.id));
+    //editButton.setAttribute('id', 'btn-editar');
+    //################CREAMOS UN EVENTO DE ESCUCHA EN EL BOTON DE ACTUALIZAR###################
+    editButton.addEventListener('click', () => actualizarCliente(id, nombreA, apellidoA, telefonoA));
     actionCell.appendChild(editButton);
-
-    //console.log(id);
 
     // Botón Eliminar
     let deleteButton = document.createElement('button');
     deleteButton.textContent = '✘';
     deleteButton.classList.add('btn', 'btn-danger');
     deleteButton.setAttribute('data-id', id);
-    deleteButton.addEventListener('click', () => eliminarCliente(item.id));
+    //################CREAMOS UN EVENTO DE ESCUCHA EN EL BOTON DE ELIMINAR###################
+    deleteButton.addEventListener('click', () => eliminarCliente(id));
     actionCell.appendChild(deleteButton);
 
     row.appendChild(actionCell);
@@ -241,5 +327,4 @@ function renderTable(data) {
   
   });
 }
-
 ///########################### CIERRO RENDERIZACIÓN DE LA TABLA ############################

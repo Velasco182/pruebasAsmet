@@ -27,20 +27,38 @@
     switch ($method) {
         ############################ ABRO READ #############################
         case 'GET':
-            // Consulta SQL para obtener todos los datos de la tabla 'clientes' accion nombre, apellido, telefono
-            $sql = "SELECT * FROM prueba.clientes";
-            // Ejecuta la consulta
-            $result = $connection->query($sql);
-            // Array para almacenar los datos
-            $data = array();
-            // Verifica si hay resultados y los agrega al array
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    $data[] = $row;
+            if (isset($_GET['id'])) {
+                // Obtener un solo cliente por ID
+                $id = $_GET['id'];
+                $stmt = $connection->prepare("SELECT id, nombre, apellido, telefono FROM clientes WHERE id = ?");
+                $stmt->bind_param("i", $id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+    
+                $data = array();
+                if ($result->num_rows > 0) {
+                    $data = $result->fetch_assoc();
                 }
+                header('Content-Type: application/json');
+                echo json_encode($data);
+    
+                $stmt->close();
+            } else {
+                // Consulta SQL para obtener todos los datos de la tabla 'clientes' accion nombre, apellido, telefono
+                $sql = "SELECT * FROM prueba.clientes";
+                // Ejecuta la consulta
+                $result = $connection->query($sql);
+                // Array para almacenar los datos
+                $data = array();
+                // Verifica si hay resultados y los agrega al array
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $data[] = $row;
+                    }
+                }
+                // Devuelve los datos en formato JSON
+                echo json_encode($data);
             }
-            // Devuelve los datos en formato JSON
-            echo json_encode($data);
         break;
         ############################ CIERRO READ #############################
         ############################ ABRO CREAR #############################
@@ -64,7 +82,7 @@
         ############################ CIERRO CREAR #############################
         ############################ ABRO ACTUALIZAR #############################
         case 'PUT':
-            // Decodifica los datos JSON enviados en el cuerpo de la solicitud
+            /*// Decodifica los datos JSON enviados en el cuerpo de la solicitud
             $input = json_decode(file_get_contents('php://input'), true);
             // Recupera los valores de 'id', 'nombre', 'apellido' y 'telefono'
             $id = $_GET['id'];
@@ -78,25 +96,37 @@
                 echo json_encode(array("message" => "Registro actualizado con éxito"));
             } else {
                 echo json_encode(array("message" => "Error al actualizar registro: " . $connection->error));
-            }
-            /*parse_str(file_get_contents("php://input"), $_PUT); // Convierte el cuerpo de la solicitud PUT en un array asociativo
-            $id = $_PUT['id']; // Asigna el valor del parámetro 'id' al variable $id
-            $nombre = $_PUT['nombre']; // Asigna el valor del parámetro 'nombre' al variable $nombre
-            $apellido = $_PUT['apellido']; // Asigna el valor del parámetro 'apellido' al variable $apellido
-            $telefono = $_PUT['telefono']; // Asigna el valor del parámetro 'telefono' al variable $telefono
+            }*/
 
-            $stmt = $connection->prepare("UPDATE clientes SET nombre = ?, apellido = ?, telefono = ? WHERE id = ?"); // Prepara la declaración SQL para actualizar un registro por ID
-            $stmt->bind_param("sssi", $nombre, $apellido, $telefono, $id); // Vincula los parámetros $nombre, $apellido, $telefono y $id a los marcadores de posición en la declaración SQL
+            // Convierte el cuerpo de la solicitud PUT en un array asociativo
+            parse_str(file_get_contents("php://input"), $_PUT); 
+            // Asigna el valor del parámetro 'id' al variable $id
+            $id = $_PUT['id'];
+            // Asigna el valor del parámetro 'nombre' al variable $nombre
+            $nombre = $_PUT['nombre']; 
+            // Asigna el valor del parámetro 'apellido' al variable $apellido
+            $apellido = $_PUT['apellido']; 
+            // Asigna el valor del parámetro 'telefono' al variable $telefono
+            $telefono = $_PUT['telefono']; 
+            // Prepara la declaración SQL para actualizar un registro por ID
+            $stmt = $connection->prepare("UPDATE clientes SET nombre = ?, apellido = ?, telefono = ? WHERE id = ?"); 
+            // Vincula los parámetros $nombre, $apellido, $telefono y $id a los marcadores de posición en la declaración SQL
+            $stmt->bind_param("sssi", $nombre, $apellido, $telefono, $id); 
+            // Ejecuta la declaración SQL
+            if ($stmt->execute()) { 
 
-            if ($stmt->execute()) { // Ejecuta la declaración SQL
-                $response = array('success' => true); // Crea una respuesta de éxito
+                $response = array('success' => true); 
+
             } else {
-                $response = array('success' => false, 'message' => 'Error al actualizar cliente: ' . $stmt->error); // Crea una respuesta de error si la ejecución falla
-            }
-            header('Content-Type: application/json'); // Establece el tipo de contenido de la respuesta a JSON
-            echo json_encode($response); // Devuelve la respuesta en formato JSON
 
-            $stmt->close(); // Cierra la declaración preparada*/
+                http_response_code(500);
+                $response = array('success' => false, 'message' => 'Error al actualizar cliente: ' . $stmt->error);
+
+            }
+            // Devuelve la respuesta en formato JSON
+            echo json_encode($response); 
+
+            $stmt->close(); // Cierra la declaración preparada
         break;
         ############################ CIERRO ACTUALIZAR #############################
         ############################ ABRO ELIMINAR #############################
@@ -140,7 +170,10 @@
         ############################ CASO POR DEFECTO #############################
         default:
             // Maneja métodos HTTP no soportados
-            echo json_encode(array("message" => "Método no soportado"));
+            header('HTTP/1.1 405 Method Not Allowed');
+            header('Allow: GET, POST, PUT, DELETE');
+            $response = array('success' => false, 'message' => 'Método no permitido');
+            echo json_encode($response);
         break;
     }
 
