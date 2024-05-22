@@ -288,6 +288,7 @@ let eliminarCliente = (id) => {
 ///################################ CIERRO DELETE ##################################
 //################## Muestra el modal cuando se actualiza el registro ######################
 let validacion = (modalInstance) => {
+  let timer = 3000;
   //let validacionModalInstance = bootstrap.Modal.getInstance(verificacionModal);
   // Muestra el modal
   verificacionModal.classList.add('show'); 
@@ -295,12 +296,36 @@ let validacion = (modalInstance) => {
   setTimeout(function () {
     // Oculta el modal
     //validacionModalInstance.hide();
-    verificacionModal.classList.remove('show'); 
-    //Recargar página
-    location.reload(true);
-    //Ocualtar modal
-    modalInstance.hide();
-  }, 1000);
+    verificacionModal.classList.remove('show');
+    
+    //timer = 3000;
+    
+    if((timer-2300)){
+
+      
+      //Instancia de Titulo del modal
+      const modalTitle = document.querySelector('#verificacionModal .modal-title');
+      console.log(modalTitle.textContent); 
+      
+      // Asignación del nuevo título
+      modalTitle.textContent = '      OK!';  
+
+      //timer = 3000;
+
+      if((timer-700)){
+
+        //Recargar página
+        location.reload(true);
+        //Ocualtar modal
+        modalInstance.hide();
+
+        //timer = 3000;
+
+      }
+
+    }
+
+  }, timer);
 
 }
 //#################### RENDERIZAMOS LOS DATOS OBTENIDOS EN UNA TABLA ######################
