@@ -14,7 +14,7 @@ let btnActualizar = document.getElementById('btn-actualizar');
 // Recupera los valores del formulario del modal
 let actualizarNombre = document.getElementById('nombreACliente');
 let actualizarApellido = document.getElementById('apellidoACliente');
-let actualizarTelefono = document.getElementById('numeroACliente');
+let actualizarTelefono = document.getElementById('telefonoACliente');
 
 //Validar formularios
 let validarFormularios = (formulario) =>{
@@ -53,7 +53,7 @@ let crearCliente = () => {
   // Recupera los valores del formulario del modal
   let nombre = document.getElementById('nombreCliente').value;
   let apellido = document.getElementById('apellidoCliente').value;
-  let telefono = document.getElementById('numeroCliente').value;
+  let telefono = document.getElementById('telefonoCliente').value;
   
   dataLoaded = false;
 
@@ -140,11 +140,11 @@ let mostrarDatosID = (id) => {
         //renderTable(data);
         console.table(data);
 
-        /*nombreA = data.nombre;
-        apellidoA = data.apellido;
-        telefonoA = data.telefono;*/
+        /*let nombreA = data.nombre;
+        let apellidoA = data.apellido;
+        let telefonoA = data.telefono;
 
-        /*actualizarNombre.value = nombreA;
+        actualizarNombre.value = nombreA;
         actualizarApellido.value = apellidoA;
         actualizarTelefono.value = telefonoA;*/
 
@@ -154,18 +154,23 @@ let mostrarDatosID = (id) => {
 }
 ///################################ CIERRO GET POR ID ##################################
 ///#################### FUNCIÓN FLECHA PARA HACER PUT A LA DB ##########################
-let actualizarCliente = (id, nombre, apellido, telefono) => {
+let actualizarCliente = (idA, nombreA, apellidoA, telefonoA) => {
   //Mostrar los datos del cliente en el modal
-  mostrarDatosID(id);
+  mostrarDatosID(idA);
+  console.log(idA, nombreA, apellidoA, telefonoA);
+
+  /*let nombreA = actualizarNombre.value;
+  let apellidoA = actualizarApellido.value;
+  let telefonoA = actualizarTelefono.value;*/
 
   // Recupera los valores del formulario del modal
-  actualizarNombre.value = nombre;
-  actualizarApellido.value = apellido;
-  actualizarTelefono.value = telefono;
+  actualizarNombre.value = nombreA;
+  actualizarApellido.value = apellidoA;
+  actualizarTelefono.value = telefonoA;
 
-  let actualizarModal = document.querySelector("actualizarModal");
+  //let actualizarModal = document.querySelector("actualizarModal");
 
-  if(actualizarModal){
+  //if(actualizarModal){
 
         /*let nombre = event.target.getAttribute('nombreACliente');
         let apellido = event.target.getAttribute('apellidoACliente');
@@ -176,19 +181,21 @@ let actualizarCliente = (id, nombre, apellido, telefono) => {
         // Instancia del formulario para poder cerrarlo después de crear un Cliente
       let modalInstance = bootstrap.Modal.getInstance(document.getElementById('actualizarModal'));
 
-    actualizarModal.addEventListener("click", function(event){
+    //actualizarModal.addEventListener("click", function(event){
 
-      if(event.target.id == 'btn-actualizar'){
+      //if(event.target.id == 'btn-actualizar'){
 
         btnActualizar.addEventListener('click', () =>{
-
-          fetch(`${ruta}?id=${id}`, {
+          console.log(idA, nombreA, apellidoA, telefonoA);
+          //?id=${id}
+          fetch(`${ruta}?id=${idA}`, 
+          {
 
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({id, nombre, apellido, telefono})
+            body: JSON.stringify({idA, nombreA, apellidoA, telefonoA})
         
           })
             //Manejo de la respuesta
@@ -204,9 +211,9 @@ let actualizarCliente = (id, nombre, apellido, telefono) => {
               // Muestra un mensaje en la consola y refresca los datos en la tabla
               console.table(data);
               // Recargar la página actual con los datos actualizados
-              location.reload(true);
+              //location.reload(true);
               // Cierra el modal
-              modalInstance.hide();
+              //modalInstance.hide();
             })
             //Manejo de errores
             .catch(error => console.error('Error:', error));
@@ -214,9 +221,9 @@ let actualizarCliente = (id, nombre, apellido, telefono) => {
         })
       }
 
-    })
-  }
-}//?id=${id}
+    //})
+  //}
+//}//?id=${id}
   //console.log(""+id, nombre, apellido, telefono);
   /*btnActualizar.addEventListener('click', () => {
 
@@ -291,17 +298,18 @@ function renderTable(data) {
 
     // ID del cliente según la fila seleccionada
     let id = item.id;
-    let nombreA = item.nombre;
-    let apellidoA = item.apellido;
-    let telefonoA = item.telefono;
+    let nombre = item.nombre;
+    let apellido = item.apellido;
+    let telefono = item.telefono;
+    //console.log(id, nombre, apellido, telefono);
 
     // Crear la celda para los botones de acción
     let actionCell = document.createElement('td');
 
     // Botón Editar
-    let editButton = document.createElement('button');
-    editButton.textContent = '✍️';
-    editButton.classList.add('btn');
+    let editButton = document.createElement('i');
+    //editButton.textContent = '✍️';
+    editButton.classList.add('btn', 'fa-solid', 'fa-pen');
     //editButton.setAttribute('style', 'background-color: #2e9c9d; color: white; hover: { background-color: #cdeeee; color: black; }')
     editButton.style.cssText = 'background-color: #2e9c9d; color: white; hover: { background-color: #cdeeee; color: black; }';
     editButton.setAttribute('type', 'button'); 
@@ -310,13 +318,13 @@ function renderTable(data) {
     editButton.setAttribute('data-id', id);
     //editButton.setAttribute('id', 'btn-editar');
     //################CREAMOS UN EVENTO DE ESCUCHA EN EL BOTON DE ACTUALIZAR###################
-    editButton.addEventListener('click', () => actualizarCliente(id, nombreA, apellidoA, telefonoA));
+    editButton.addEventListener('click', () => actualizarCliente(id, nombre, apellido, telefono));
     actionCell.appendChild(editButton);
 
     // Botón Eliminar
-    let deleteButton = document.createElement('button');
-    deleteButton.textContent = '✘';
-    deleteButton.classList.add('btn', 'btn-danger');
+    let deleteButton = document.createElement('i');
+    //deleteButton.textContent = '✘';
+    deleteButton.classList.add('btn', 'btn-danger', 'fa-solid', 'fa-user-xmark');
     deleteButton.setAttribute('data-id', id);
     //################CREAMOS UN EVENTO DE ESCUCHA EN EL BOTON DE ELIMINAR###################
     deleteButton.addEventListener('click', () => eliminarCliente(id));
