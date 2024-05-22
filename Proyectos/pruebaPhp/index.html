@@ -46,8 +46,8 @@
     <div id="buttonDiv" class="container card shadow p-3 mb-5 bg-body">
         <div class="row align-items-center">
 
-            <div class="col btn-group">
-                <!--<button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"
+            <!--<div class="col btn-group">
+                <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"
                     class="button btn-lg">Crear</button>
                 <button id="fetchMostrarDatos" class="button" type="submit">Obtener</button>-->
                 <!--<button>Editar</button>-->
@@ -106,7 +106,7 @@
                 <div class="modal-footer">
                     <button type="button" id="btn-cerrar" class="btn btn-secondary"
                         data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn" id="btn-asmet" disabled>Guardar</button>
+                    <button type="submit" class="btn" id="btn-asmet" data-bs-toggle="modal" data-bs-target="#verificacionModal" onclick="validacion(new bootstrap.Modal(document.getElementById('verificacionModal')))"  disabled>Guardar</button>
                 </div>
             </div>
         </div>
@@ -141,11 +141,38 @@
                 <div class="modal-footer">
                     <button type="button" id="btn-cerrar" class="btn btn-secondary"
                         data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn" id="btn-actualizar" onclick="" disabled>Actualizar</button>
+                    <button type="submit" class="btn" id="btn-actualizar" data-bs-toggle="modal" data-bs-target="#verificacionModal" onclick="validacion(new bootstrap.Modal(document.getElementById('verificacionModal')))" disabled>Actualizar</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Button trigger modal
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#verificacionModal">
+    Launch static backdrop modal
+    </button>-->
+
+    <!-- Modal Verificación-->
+    <div class="modal fade modal-sm" id="verificacionModal" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="verificacionModalLabel" aria-hidden="true">
+        <div class="modal-dialog ">
+        <div class="modal-content" style="background-color: #D1E7DD;" >
+            <div class="modal-header">
+            <h1 class="modal-title fs-8 fw-bold p-3 text-uppercase" id="verificacionModalLabel">Verificando</h1>
+            <!--<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+            </div>
+            <div class="modal-body text-center">
+                <div class="spinner-border" style="color: #2e9c9d; width: 5rem; height: 5rem;" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+            </div>
+            <!--<div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Understood</button>
+            </div>-->
+        </div>
+        </div>
+    </div>
+      
 
     <!--<div class="alert alert-warning d-flex align-items-center" role="alert">
         <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
