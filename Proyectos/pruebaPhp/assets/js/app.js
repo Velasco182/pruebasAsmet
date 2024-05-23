@@ -18,7 +18,6 @@ let actualizarTelefono = document.getElementById('telefonoACliente');
 //Instancia de modal verificación
 let verificacionModal = document.getElementById('verificacionModal');
 
-
 //Validar formularios
 
 let validarFormularios = (formulario) => {
