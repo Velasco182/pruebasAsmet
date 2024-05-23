@@ -13,14 +13,14 @@
 
 <body>
 
-    <nav id="nav" class="navbar navbar-expand-lg bg-body-tertiary card shadow p-3">
+    <nav id="nav" class="fixed-top navbar navbar-expand-lg bg-body-tertiary card shadow p-3">
         <div class="container-fluid">
           <a class="navbar-brand" href="#" style="color: white;">
                 <img src="./assets/img/logo2.png" alt="Logo" width="100" height="50" class="d-inline-block align-text-top">
                 <h3>Listado de Clientes</h3>
             </a>
-          <button style="background-color:#D1E7DD" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-            <span style="shape-outside: black;" class="navbar-toggler-icon"></span>
+          <button style="color: #2e9c9d; background-color:#D1E7DD" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="navbar-toggler-icon fa-solid fa-bars mt-2"></i>
           </button>
           <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -42,8 +42,20 @@
           </div>
         </div>
     </nav>
-    <br>
-    <div id="buttonDiv" class="container card shadow p-3 mb-5 bg-body">
+
+        <!-- Hero Section -->
+    <section id="hero" style="background-color: #D1E7DD;" class="hero text-white text-center py-5">
+        <div class="container">
+            <h1 style="color: black;" class="display-4 text-uppercase fw-bolder">Bienvenido a mi CRUD</h1>
+            <p style="color: black;" class="lead" id="short-text">XAMPP fue usado para levantar los servicios web (Apache) y de bases de datos relacionales (MySQL).</p>
+            <div class="collapse" id="more-text">
+                <p class="lead" style="color: black;">Usé herramientas como css y Bootstrap para diseñar algo más amigable e intuitivo (FrontEnd). También se implementaron: Php como BackEnd y JavaScript como herramienta para capturar datos. <br>Ésta prueba está plateada en el patrón de diseño modelo vista controlador (MVC).</p>
+            </div>
+            <button data-bs-toggle="collapse" href="#more-text" role="button" aria-expanded="false" aria-controls="more-text" style="background-color:#2e9c9d; color: white;" href="#" class="btn btn-lg btn-light btn-sm">Ver más</button>
+        </div>
+    </section>
+
+    <div id="buttonDiv" class="container card shadow p-3 mb-5 bg-body contenido">
         <div class="row align-items-center">
 
             <!--<div class="col btn-group">
@@ -51,8 +63,8 @@
                     class="button btn-lg">Crear</button>
                 <button id="fetchMostrarDatos" class="button" type="submit">Obtener</button>-->
                 <!--<button>Editar</button>-->
-                <!--<button class="button">Eliminar</button>-->
-            </div>
+                <!--<button class="button">Eliminar</button>
+            </div>-->
 
             <div id="divContainer" class="col">
                 <h3 style="color: white;">INFORME</h3>
@@ -88,18 +100,18 @@
                 </div>
                 <div class="modal-body">
                     <form method="" id="miFormulario" class="row g-3 was-validated" onclick="">
-                        <div class="mb-3 col-md-4">
+                        <div class="form-floating mb-3 col-md-4">
+                            <input type="text" class="form-control" id="nombreCliente" name="nombreCliente" placeholder="Nombre" required>
                             <label for="nombreCliente" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="nombreCliente" name="nombreCliente" required>
                         </div>
-                        <div class="mb-3 col-md-4">
-                            <label for="apellidoCliente" class="form-label">Apellido</label>
-                            <input type="text" class="form-control was-validated" id="apellidoCliente" name="apellidoCliente"
+                        <div class="form-floating mb-3 col-md-4">
+                            <input type="text" class="form-control was-validated" id="apellidoCliente" name="apellidoCliente" placeholder="Apellido"
                                 required>
+                            <label for="apellidoCliente" class="form-label">Apellido</label>                        
                         </div>
-                        <div class="mb-3 col-md-4">
+                        <div class="form-floating mb-3 col-md-4">
+                            <input type="number" class="form-control was-validated" id="telefonoCliente" name="telefonoCliente" placeholder="Teléfono" required>
                             <label for="telefonoCliente" class="form-label">Teléfono</label>
-                            <input type="number" class="form-control was-validated" id="telefonoCliente" name="telefonoCliente" required>
                         </div>
                     </form>
                 </div>
@@ -123,18 +135,18 @@
                 </div>
                 <div class="modal-body">
                     <form method="" id="actualizarFormulario" class="row g-3 was-validated" onclick="">
-                        <div class="mb-3 col-md-4">
-                            <label for="nombreACliente" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="nombreACliente" name="nombreACliente" required>
+                        <div class="form-floating mb-3 col-md-4">
+                            <input type="text" class="form-control" id="nombreACliente" name="nombreACliente"  placeholder="Nombre" required>
+                            <label for="nombreACliente" class=""> Nombre</label>
                         </div>
-                        <div class="mb-3 col-md-4">
-                            <label for="apellidoACliente" class="form-label">Apellido</label>
-                            <input type="text" class="form-control was-validated" id="apellidoACliente" name="apellidoACliente"
+                        <div class="form-floating mb-3 col-md-4">
+                            <input type="text" class="form-control was-validated" id="apellidoACliente" name="apellidoACliente" placeholder="Apellido"
                                 required>
+                            <label for="apellidoACliente" class="">Apellido</label>
                         </div>
-                        <div class="mb-3 col-md-4">
-                            <label for="telefonoACliente" class="form-label">Teléfono</label>
-                            <input type="number" class="form-control was-validated" id="telefonoACliente" name="telefonoACliente" required>
+                        <div class="form-floating mb-3 col-md-4">                            
+                            <input type="number" class="form-control was-validated" id="telefonoACliente" name="telefonoACliente" placeholder="Teléfono" required>
+                            <label for="telefonoACliente" class="">Teléfono</label>
                         </div>
                     </form>
                 </div>
@@ -180,6 +192,17 @@
           An example warning alert with an icon
         </div>
     </div>-->
+
+        <!-- Footer -->
+    <footer style="background-color:#2e9c9d" class="footer text-white py-4">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 Sitio web desarrollado en Html, JavaScript y Php como una Prueba de conexión a bases de datos Relacionales y de forma local. Todos los derechos reservados.</p>
+            <ul class="list-inline mt-3">
+                <li class="list-inline-item"><a href="#" class="text-white">Política de Privacidad</a></li>
+                <li class="list-inline-item"><a href="#" class="text-white">Términos de Uso</a></li>
+            </ul>
+        </div>
+    </footer>
 
     <script src="./assets/js/app.js"></script>
     <!--ICONOS-->

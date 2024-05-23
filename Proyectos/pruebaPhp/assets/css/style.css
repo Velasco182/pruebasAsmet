@@ -1,5 +1,5 @@
 body{
-    padding: 20px;
+    
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     background-color: #cdeeee;
 }
@@ -13,6 +13,37 @@ body{
     align-items: center; /* Añade esta propiedad para centrar verticalmente */
 }
 
+#hero{
+    margin-top: 150px;
+    margin-bottom: 20px;
+}
+
+#hero {
+    position: relative;
+    background-image: url('./assets/img/unsplash.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    text-align: center;
+    padding: 5rem 0;
+}
+
+#hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.191); /* Semi-transparente negro */
+    z-index: 1;
+}
+
+#hero .container {
+    position: relative;
+    z-index: 2;
+}
+
 .button:hover{
     background-color: #ed8380;
     color: #faebd7;
@@ -23,7 +54,6 @@ body{
     background-color: #d92127;
     color: #faebd7;
     border-radius: 7px;    
-    text-transform: uppercase;
     border: 0px solid #d92127;
 }
 
@@ -32,7 +62,6 @@ body{
     padding: 10px;
     background-color: #2e9c9d;
     border-radius: 20px;    
-    border-style:groove;
     text-align: center;
 }
 
