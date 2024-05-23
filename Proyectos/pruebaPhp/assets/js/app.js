@@ -300,19 +300,19 @@ let validacion = (modalInstance) => {
     
     //timer = 3000;
     
-    if((timer-2300)){
+    if((timer-2000)){
 
       
       //Instancia de Titulo del modal
       const modalTitle = document.querySelector('#verificacionModal .modal-title');
-      console.log(modalTitle.textContent); 
+      //console.log(modalTitle.textContent); 
       
       // Asignación del nuevo título
       modalTitle.textContent = '      OK!';  
 
       //timer = 3000;
 
-      if((timer-700)){
+      if((timer-500)){
 
         //Recargar página
         location.reload(true);
