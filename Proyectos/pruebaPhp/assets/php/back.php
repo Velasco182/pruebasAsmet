@@ -1,4 +1,5 @@
 <?php
+//Información adicional: https://www.aprenderaprogramar.com/index.php?option=com_content&view=article&id=612:php-consultas-mysql-mysqliconnect-selectdb-query-fetcharray-freeresult-close-ejemplos-cu00841b&catid=70&Itemid=193
 //Habilitar la visualización de errores
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -22,7 +23,8 @@ if ($connection->connect_error) {
 
 // Obtiene el método HTTP de la solicitud
 $method = $_SERVER['REQUEST_METHOD'];
-
+//Para que se muestren las tildesx
+//$tildes = $connection->query("SET NAMES 'utf8'"); 
 ############################ SWITCH PARA LOS METODOS HTTP #############################
 switch ($method) {
     ############################ ABRO READ #############################
