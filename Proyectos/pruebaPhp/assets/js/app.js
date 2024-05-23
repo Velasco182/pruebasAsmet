@@ -19,6 +19,7 @@ let actualizarTelefono = document.getElementById('telefonoACliente');
 let verificacionModal = document.getElementById('verificacionModal');
 
 //Validar formularios
+
 let validarFormularios = (formulario) => {
 
   formulario.addEventListener('input', () => {
