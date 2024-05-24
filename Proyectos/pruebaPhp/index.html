@@ -24,7 +24,7 @@
                 <img src="./assets/img/logo2.png" alt="Logo" width="100" height="50" class="d-inline-block align-text-top">
                 <!--<h3>Listado de Clientes</h3>-->
             </a>
-            <h1 style="color: white;" class="fw-bold text-uppercase">Clientes Activos</h1>
+            <h1 style="color: white;" class="fw-bold text-uppercase no-select">Clientes Activos</h1>
           <button style="color: #2e9c9d; background-color:#D1E7DD" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
             <i class="navbar-toggler-icon fa-solid fa-bars mt-2"></i>
           </button>
@@ -56,10 +56,10 @@
               <div class="carousel-item active">
                 <div class="container">
                     <br>
-                    <h1 style="color: black;" class="display-4 text-uppercase fw-bolder">Bienvenido a mi CRUD</h1>
-                    <p style="color: black;" class="lead" id="short-text">XAMPP fue usado para levantar los servicios web (Apache) y de bases de datos relacionales (MySQL).</p>
+                    <h1 style="color: black;" class="display-4 text-uppercase fw-bolder no-select">Bienvenido a mi CRUD</h1>
+                    <p style="color: black;" class="lead no-select" id="short-text">XAMPP fue usado para levantar los servicios web (Apache) y de bases de datos relacionales (MySQL).</p>
                     <div class="collapse" id="more-text">
-                        <p class="lead" style="color: black;">Usé herramientas como css y Bootstrap para diseñar algo más amigable e intuitivo (FrontEnd). <br>También se implementaron: Php como BackEnd y JavaScript como herramienta para capturar datos. <br>Ésta prueba está plateada en el patrón de diseño modelo vista controlador (MVC).</p>
+                        <p class="lead no-select" style="color: black;">Usé herramientas como css y Bootstrap para diseñar algo más amigable e intuitivo (FrontEnd). <br>También se implementaron: Php como BackEnd y JavaScript como herramienta para capturar datos. <br>Ésta prueba está plateada en el patrón de diseño modelo vista controlador (MVC).</p>
                     </div>
                     <button data-bs-toggle="collapse" href="#more-text" role="button" aria-expanded="false" aria-controls="more-text" style="background-color:#2e9c9d; color: white;" href="#" class="btn btn-lg btn-light btn-sm">Ver más</button>
                     <br><br>
@@ -87,7 +87,7 @@
     <div id="buttonDiv" class="container card shadow p-3 mb-5 bg-body contenido">
         <div class="row align-items-center">
 
-            <h1 class="text-center">Tabla de Clientes</h1>
+            <h1 class="text-center no-select">Tabla de Clientes</h1>
 
             <!--<div class="col btn-group">
                 <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"
@@ -97,7 +97,7 @@
                 <!--<button class="button">Eliminar</button>
             </div>-->
 
-            <div id="divContainer" class="col">
+            <div id="divContainer" class="col no-select">
                 <h3 style="color: white;">INFORME</h3>
                 <div id="dataContainer" class="table-responsive shadow-sm bg-body">
 
@@ -121,7 +121,7 @@
     </div>
 
     <!-- Modal Crear Cliente-->
-    <div class="modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div class="no-select modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -156,7 +156,7 @@
     </div>
 
     <!-- Modal Editar Cliente-->
-    <div class="modal fade" id="actualizarModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div class="no-select modal fade" id="actualizarModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -196,7 +196,7 @@
     </button>-->
 
     <!-- Modal Verificación-->
-    <div style="background-color:#0000009a" class="modal fade" id="verificacionModal" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="verificacionModalLabel" aria-hidden="true">
+    <div style="background-color:#0000009a" class="modal fade no-select" id="verificacionModal" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="verificacionModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content" style="background-color: #D1E7DD;" >
             <div class="modal-header">
@@ -224,7 +224,7 @@
     </div>-->
 
     <!-- Footer -->
-    <footer style="background-color:#2e9c9d" class="footer text-white py-4">
+    <footer style="background-color:#2e9c9d" class="footer text-white py-4 no-select">
         <div class="container text-center">
             <p class="mb-0">&copy; 2024 Sitio web desarrollado en Html, JavaScript y Php como una Prueba de conexión a bases de datos Relacionales y de forma local. Todos los derechos reservados.</p>
             <ul class="list-inline mt-3">
