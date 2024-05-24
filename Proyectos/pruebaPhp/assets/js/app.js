@@ -337,6 +337,7 @@ function renderTable(data) {
     // Botón Eliminar
     let deleteButton = document.createElement("i");
     //deleteButton.textContent = '✘';
+    
     deleteButton.classList.add(
       "btn",
       "btn-danger",

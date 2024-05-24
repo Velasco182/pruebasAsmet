@@ -24,23 +24,29 @@
                 <img src="./assets/img/logo2.png" alt="Logo" width="100" height="50" class="d-inline-block align-text-top">
                 <!--<h3>Listado de Clientes</h3>-->
             </a>
+
             <h1 style="color: white;" class="fw-bold text-uppercase no-select">Clientes Activos</h1>
-          <button style="color: #2e9c9d; background-color:#D1E7DD" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-            <i class="navbar-toggler-icon fa-solid fa-bars mt-2"></i>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link active" style="color: black;" aria-current="page" href="#"><button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                    class="button btn-lg">Crear</button></a>
-              </li>
-              <!--<li class="nav-item">
-                <a class="nav-link" style="color: black;" href="#">Link</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-              </li>-->
-            </ul>
+            
+            <button style="color: #2e9c9d; background-color:#D1E7DD" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="navbar-toggler-icon fa-solid fa-bars mt-2"></i>
+            </button>
+            <div class="color collapse navbar-collapse" id="navbarTogglerDemo02">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                      <a class="nav-link active" style="color: black;" aria-current="page" href="#verMas"><button type="button"
+                          class="button btn-lg">Ver Clientes</button></a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link active" style="color: black;" aria-current="page" href="#btn-crear"><button type="button"
+                          class="button btn-lg">Crear Cliente</button></a>
+                    </li>
+                    <!--<li class="nav-item">
+                      <a class="nav-link" style="color: black;" href="#">Link</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+                    </li>-->
+                  </ul>
             <!--<form class="d-flex" role="search">
               <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
               <button class="btn btn-outline-success" type="submit">Search</button>
@@ -50,27 +56,31 @@
     </nav>
 
     <!-- Hero Section -->
-    <section id="hero" style="background-color: #D1E7DD;" class="object-fit-cover hero text-white text-center py-5  object-fit-fill">    
-        <div id="carouselExample" class="carousel carousel-dark slide">
-            <div class="carousel-inner img-container">
+    <section id="hero" class=" shadow object-fit-cover hero text-white text-center py-5  object-fit-fill">    
+        <div id="carouselExample" class="carousel slide carousel-dark">
+            <!--<div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            </div>-->
+            <div class="carousel-inner">
               <div class="carousel-item active">
-                <div class="container">
+                <div class="container ">
                     <br>
-                    <h1 style="color: black;" class="display-4 text-uppercase fw-bolder no-select">Bienvenido a mi CRUD</h1>
-                    <p style="color: black;" class="lead no-select" id="short-text">XAMPP fue usado para levantar los servicios web (Apache) y de bases de datos relacionales (MySQL).</p>
+                    <h1 style="color: rgb(0, 0, 0);" class="display-4 text-uppercase fw-bolder no-select">Bienvenido a mi CRUD</h1>
+                    <p style="color: rgb(0, 0, 0);" class="lead no-select" id="short-text">XAMPP fue usado para levantar los servicios web (Apache) y de bases de datos relacionales (MySQL).</p>
                     <div class="collapse" id="more-text">
-                        <p class="lead no-select" style="color: black;">Usé herramientas como css y Bootstrap para diseñar algo más amigable e intuitivo (FrontEnd). <br>También se implementaron: Php como BackEnd y JavaScript como herramienta para capturar datos. <br>Ésta prueba está plateada en el patrón de diseño modelo vista controlador (MVC).</p>
+                        <p class="lead no-select" style="color: rgb(0, 0, 0);">Usé herramientas como css y Bootstrap para diseñar algo más amigable e intuitivo (FrontEnd). <br>También se implementaron: Php como BackEnd y JavaScript como herramienta para capturar datos. <br>Ésta prueba está plateada en el patrón de diseño modelo vista controlador (MVC).</p>
                     </div>
-                    <button data-bs-toggle="collapse" href="#more-text" role="button" aria-expanded="false" aria-controls="more-text" style="background-color:#2e9c9d; color: white;" href="#" class="btn btn-lg btn-light btn-sm">Ver más</button>
+                    <button id="verMas" data-bs-toggle="collapse" href="#more-text" role="button" aria-expanded="false" aria-controls="more-text" style="background-color:#2e9c9d; color: white;" href="#" class="btn btn-lg btn-light btn-sm">Ver más</button>
                     <br><br>
                 </div>
               </div>
               <div class="carousel-item">
                 <img src="./assets/img/logo.png" class="img-fluid w-50" alt="logo asmet">
               </div>
-              <div class="carousel-item">
+              <!--<div class="carousel-item">
                 <img src="./assets/img/unsplash.jpg" class="img-fluid w-50" alt="code image">
-              </div>
+              </div>-->
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
               <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -85,10 +95,11 @@
 
     <!-- Contenido -->
     <div id="buttonDiv" class="container card shadow p-3 mb-5 bg-body contenido">
-        <div class="row align-items-center">
-
-            <h1 class="text-center no-select">Tabla de Clientes</h1>
-
+        <br>
+        <div class="align-items-center">
+            <div class="row align-items-center"> 
+                <h1 class="text-center no-select">Listado de Clientes</h1>
+            </div>
             <!--<div class="col btn-group">
                 <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"
                     class="button btn-lg">Crear</button>
@@ -97,7 +108,7 @@
                 <!--<button class="button">Eliminar</button>
             </div>-->
 
-            <div id="divContainer" class="col no-select">
+            <div id="divContainer" class="no-select border border-secondary-subtle">
                 <h3 style="color: white;">INFORME</h3>
                 <div id="dataContainer" class="table-responsive shadow-sm bg-body">
 
@@ -115,6 +126,16 @@
                         </tbody>
                     </table>
 
+                </div>
+            </div>
+
+            <div class="row text-center">
+                <br>
+                <h5 class="col-md-8">Para crear un cliente presiona: </h5>
+                <br>
+                <div class="col-md-2">
+                    <button id="btn-crear" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" 
+                class="btn">Crear</button>
                 </div>
             </div>
         </div>
@@ -224,9 +245,9 @@
     </div>-->
 
     <!-- Footer -->
-    <footer style="background-color:#2e9c9d" class="footer text-white py-4 no-select">
+    <footer id="footer" class="footer text-white py-4 no-select">
         <div class="container text-center">
-            <p class="mb-0">&copy; 2024 Sitio web desarrollado en Html, JavaScript y Php como una Prueba de conexión a bases de datos Relacionales y de forma local. Todos los derechos reservados.</p>
+            <p class="mb-0">&copy; 2024 Sitio web desarrollado en HTML, JavaScript y PHP como una Prueba de conexión a bases de datos Relacionales y de forma local. Todos los derechos reservados.</p>
             <ul class="list-inline mt-3">
                 <li class="list-inline-item"><a href="#" class="text-white">Política de Privacidad</a></li>
                 <li class="list-inline-item"><a href="#" class="text-white">Términos de Uso</a></li>
