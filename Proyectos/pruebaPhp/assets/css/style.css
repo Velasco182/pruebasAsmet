@@ -13,35 +13,22 @@ body{
     align-items: center; /* Añade esta propiedad para centrar verticalmente */
 }
 
-#hero{
-    margin-top: 150px;
-    margin-bottom: 20px;
+.img-container{
+    width: 100%; /* Ancho del contenedor */
+    /*height: 200px;   Alto del contenedor */
+    position: relative; /* Necesario para posicionamiento */
+    overflow: hidden; /* Oculta el desbordamiento */
+}
+
+.img-container img {
+    width: 100%; /* Asegura que la imagen cubra el ancho */
+    height: 100%; /* Asegura que la imagen cubra el alto */
+    object-fit: cover;  /* Cubre completamente el contenedor */
 }
 
 #hero {
-    position: relative;
-    background-image: url('./assets/img/unsplash.jpg');
-    background-size: cover;
-    background-position: center;
-    color: white;
-    text-align: center;
-    padding: 5rem 0;
-}
-
-#hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 0.191); /* Semi-transparente negro */
-    z-index: 1;
-}
-
-#hero .container {
-    position: relative;
-    z-index: 2;
+    margin-top: 120px;
+    margin-bottom: 20px;
 }
 
 .button:hover{

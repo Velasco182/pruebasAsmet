@@ -12,12 +12,12 @@
 </head>
 
 <body>
-
+    <!--Navigation Bar-->
     <nav id="nav" class="fixed-top navbar navbar-expand-lg bg-body-tertiary card shadow p-3">
         <div class="container-fluid">
-          <a class="navbar-brand" href="#" style="color: white;">
+          <a class="navbar-brand" href="././index.html" style="color: white;">
                 <img src="./assets/img/logo2.png" alt="Logo" width="100" height="50" class="d-inline-block align-text-top">
-                <h3>Listado de Clientes</h3>
+                <!--<h3>Listado de Clientes</h3>-->
             </a>
           <button style="color: #2e9c9d; background-color:#D1E7DD" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
             <i class="navbar-toggler-icon fa-solid fa-bars mt-2"></i>
@@ -43,20 +43,42 @@
         </div>
     </nav>
 
-        <!-- Hero Section -->
-    <section id="hero" style="background-color: #D1E7DD;" class="hero text-white text-center py-5">
-        <div class="container">
-            <h1 style="color: black;" class="display-4 text-uppercase fw-bolder">Bienvenido a mi CRUD</h1>
-            <p style="color: black;" class="lead" id="short-text">XAMPP fue usado para levantar los servicios web (Apache) y de bases de datos relacionales (MySQL).</p>
-            <div class="collapse" id="more-text">
-                <p class="lead" style="color: black;">Usé herramientas como css y Bootstrap para diseñar algo más amigable e intuitivo (FrontEnd). También se implementaron: Php como BackEnd y JavaScript como herramienta para capturar datos. <br>Ésta prueba está plateada en el patrón de diseño modelo vista controlador (MVC).</p>
+    <!-- Hero Section -->
+    <section id="hero" style="background-color: #D1E7DD;" class="hero text-white text-center py-5">    
+        <div id="carouselExample" class="carousel carousel-dark slide">
+            <div class="carousel-inner img-container">
+              <div class="carousel-item active">
+                <div class="container">
+                    <h1 style="color: black;" class="display-4 text-uppercase fw-bolder">Bienvenido a mi CRUD</h1>
+                    <p style="color: black;" class="lead" id="short-text">XAMPP fue usado para levantar los servicios web (Apache) y de bases de datos relacionales (MySQL).</p>
+                    <div class="collapse" id="more-text">
+                        <p class="lead" style="color: black;">Usé herramientas como css y Bootstrap para diseñar algo más amigable e intuitivo (FrontEnd). <br>También se implementaron: Php como BackEnd y JavaScript como herramienta para capturar datos. <br>Ésta prueba está plateada en el patrón de diseño modelo vista controlador (MVC).</p>
+                    </div>
+                    <button data-bs-toggle="collapse" href="#more-text" role="button" aria-expanded="false" aria-controls="more-text" style="background-color:#2e9c9d; color: white;" href="#" class="btn btn-lg btn-light btn-sm">Ver más</button>
+                </div>
+              </div>
+              <div class="carousel-item">
+                <img src="./assets/img/logo.png" class="img-fluid w-50" alt="logo asmet">
+              </div>
+              <div class="carousel-item">
+                <img src="./assets/img/unsplash.jpg" class="img-fluid w-50" alt="code image">
+              </div>
             </div>
-            <button data-bs-toggle="collapse" href="#more-text" role="button" aria-expanded="false" aria-controls="more-text" style="background-color:#2e9c9d; color: white;" href="#" class="btn btn-lg btn-light btn-sm">Ver más</button>
-        </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>    
     </section>
 
     <div id="buttonDiv" class="container card shadow p-3 mb-5 bg-body contenido">
         <div class="row align-items-center">
+
+            <h1 class="text-center">Contenido de Clientes</h1>
 
             <!--<div class="col btn-group">
                 <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"
