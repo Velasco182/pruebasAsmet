@@ -255,40 +255,36 @@ let eliminarCliente = (id) => {
 ///################################ CIERRO DELETE ##################################
 //################## Muestra el modal cuando se actualiza el registro ######################
 let validacion = (modalInstance) => {
-  let timer = 5000;
-  //let validacionModalInstance = bootstrap.Modal.getInstance(verificacionModal);
   // Muestra el modal
   verificacionModal.classList.add("show");
   // Cierra el modal después de 2 segundos
   setTimeout(function () {
     // Oculta el modal
-    //validacionModalInstance.hide();
     verificacionModal.classList.remove("show");
+  }, 4000);
 
-    //timer = 3000;
+  setTimeout(function () {
+    //Instancia de Titulo del modal
+    const modalTitle = document.querySelector(
+      "#verificacionModal .modal-title"
+    );
+    // Asignación del nuevo título
+    modalTitle.textContent = "Verificación exitosa!";
+    //Instancia del icono del modal
+    const verificarUsuarioIcon = document.querySelector(".modal-body #verificarUsuarioIcon");
+    // Asignación del nuevo icono
+    verificarUsuarioIcon.classList.replace("fa-spinner", "fa-person-circle-check");
+    verificarUsuarioIcon.classList.replace("fa-spin-pulse", "fa-bounce");
+    //verificarUsuarioIcon.classList.replace("fa-spinner", "");
+  }, 2500);
 
-    if (timer - 3000) {
-      //Instancia de Titulo del modal
-      const modalTitle = document.querySelector(
-        "#verificacionModal .modal-title"
-      );
-      //console.log(modalTitle.textContent);
+  setTimeout(function () {
+    //Recargar página
+    location.reload(true);
+    //Ocualtar modal
+    modalInstance.hide();
+  }, 4500);
 
-      // Asignación del nuevo título
-      modalTitle.textContent = "      OK!";
-
-      //timer = 3000;
-
-      if (timer - 100) {
-        //Recargar página
-        location.reload(true);
-        //Ocualtar modal
-        modalInstance.hide();
-
-        //timer = 3000;
-      }
-    }
-  }, timer);
 };
 //#################### RENDERIZAMOS LOS DATOS OBTENIDOS EN UNA TABLA ######################
 function renderTable(data) {

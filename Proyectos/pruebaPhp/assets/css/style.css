@@ -16,7 +16,7 @@ body{
 .img-container{
     width: 100%; /* Ancho del contenedor */
     /*height: 200px;   Alto del contenedor */
-    position: relative; /* Necesario para posicionamiento */
+    /*position: relative;  Necesario para posicionamiento */
     overflow: hidden; /* Oculta el desbordamiento */
 }
 
