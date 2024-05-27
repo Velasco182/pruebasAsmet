@@ -43,6 +43,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
   btnEnviar.addEventListener("click", crearCliente);
   //btnActualizar.addEventListener('click', actualizarCliente);
   //btnEliminar.addEventListener('click', eliminarCliente);
+  //new DataTable('#myTable');
 });
 ///################# FUNCIÓN FLECHA PARA HACER POST A LA DB #########################
 let crearCliente = () => {
@@ -352,5 +353,39 @@ function renderTable(data) {
     row.appendChild(actionCell);
     tbody.appendChild(row);
   });
+
+  // Inicializar DataTables después de renderizar la tabla
+  new DataTable('#myTable',{
+    //Agregar lenguaje español, en un inicio sólo estaba Ingles
+    language:{
+      url: 'https://cdn.datatables.net/plug-ins/1.13.5/i18n/es-MX.json'
+    },
+    //Orden alfabético de acuerdo a la primera columna
+    order: [[0, 'asc']],
+    //Centrar elementos en cada celda definiendo las columnas que se quieren afectar
+    columnDefs:[{
+      targets: [0, 1, 2, 3],
+      className: "text-center"
+    }
+    /*Se cambian los colores de las columnas de acuerdo al if con ayuda de una función
+    ,{
+      target: 4,
+      render: function(data, type, userRow){
+        let classColor = 'text-succes';
+        if(data == 3){
+          classColor = 'text-warning'
+        }
+        return `<span class="${classColor}">${data}</span>`
+      }
+    }*/
+    ],
+    lengthMenu:[5,10,15,20],
+    
+  });
+
+  //$('#myTable').DataTable();
 }
 ///########################### CIERRO RENDERIZACIÓN DE LA TABLA ############################
+/*$(document).ready(function() {
+  $('#myTable').DataTable();
+});*/

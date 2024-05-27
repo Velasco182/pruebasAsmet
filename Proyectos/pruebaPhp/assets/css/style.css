@@ -10,7 +10,8 @@ body{
     display: flex;
     flex-direction: column;
     justify-content:center;
-    align-items: center; /* Añade esta propiedad para centrar verticalmente */
+    /* Añade esta propiedad para centrar verticalmente */
+    align-items: center; 
 }
 
 .no-select {
@@ -131,6 +132,21 @@ th, td {
     background-color: #2e9c9d;
     border-end-end-radius: 15px;
     border-bottom-left-radius: 15px;
+}
+
+/*Estilos DataTable*/
+
+.pagination{
+}
+
+#dt-search-0{
+    width: 150px;
+    margin: 10px;
+}
+
+#dt-length-0{
+    width: 70px;
+    margin: 10px;
 }
 
 /*.btn-ul{
