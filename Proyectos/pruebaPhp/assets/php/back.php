@@ -42,9 +42,45 @@ try {
     switch ($method) {
         ############################ ABRO READ #############################
         case 'GET':
-            if (isset($_GET['id'])) {
+            
+            $draw = isset($_GET['draw']) ? intval($_GET['draw']) : 0;
+            $start = isset($_GET['start']) ? intval($_GET['start']) : 0;
+            $length = isset($_GET['length']) ? intval($_GET['length']) : 10;
+
+            $search = isset($_GET['search']['value']) ? $_GET['search']['value'] : '';
+
+            // Consulta para obtener el total de registros sin filtrar
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM clientes");
+            $stmt->execute();
+            $recordsTotal = $stmt->fetchColumn();
+
+            if (!empty($search)) {
+                $stmt = $pdo->prepare("SELECT COUNT(*) FROM clientes WHERE nombre LIKE :search OR apellido LIKE :search OR telefono LIKE :search");
+                $stmt->bindValue(':search', '%' . $search . '%');
+                $stmt->execute();
+                $recordsFiltered = $stmt->fetchColumn();
+
+                $stmt = $pdo->prepare("SELECT * FROM clientes WHERE nombre LIKE :search OR apellido LIKE :search OR telefono LIKE :search LIMIT :start, :length");
+                $stmt->bindValue(':search', '%' . $search . '%');
+            } else {
+                $recordsFiltered = $recordsTotal;
+                $stmt = $pdo->prepare("SELECT * FROM clientes LIMIT :start, :length");
+            }
+
+            $stmt->bindValue(':start', $start, PDO::PARAM_INT);
+            $stmt->bindValue(':length', $length, PDO::PARAM_INT);
+            $stmt->execute();
+            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            echo json_encode(array(
+                'draw' => $draw,
+                'recordsTotal' => $recordsTotal,
+                'recordsFiltered' => $recordsFiltered,
+                'data' => $data
+            ));
+            //if (isset($_GET['id'])) {
                 // Obtener un solo cliente por ID
-                $id = $_GET['id'];
+                /*$id = $_GET['id'];
                 $stmt = $pdo->prepare("SELECT id, nombre, apellido, telefono FROM clientes WHERE id = :id");
                 //$stmt->bind_param("i", $id);
                 $stmt->execute([':id'=>$id]);
@@ -64,8 +100,10 @@ try {
                 header('Content-Type: application/json');
                 echo json_encode($data);
 
-                $stmt->close();*/
+                //$stmt->close();
             } else {
+                // Obtiene la solicitud de DataTables
+                $request = $_REQUEST;
                 // Consulta SQL para obtener todos los datos de la tabla 'clientes' accion nombre, apellido, telefono
                 $sql = "SELECT * FROM prueba.clientes";
                 // Ejecuta la consulta
@@ -78,10 +116,20 @@ try {
                     while ($row = $result->fetch_assoc()) {
                         $data[] = $row;
                     }
-                }*/
+                //}
                 // Devuelve los datos en formato JSON
-                echo json_encode($data);
-            }
+                //echo json_encode($data);
+                // Crea un array para devolver los datos
+                $response = array(
+                    'draw' => $request['draw'],
+                    'recordsTotal' => $stmt->rowCount(),
+                    'recordsFiltered' => $stmt->rowCount(),
+                    'data' => $data
+                );
+                
+                // Devuelve los datos en formato JSON
+                echo json_encode($response);
+            }*/
             break;
         ############################ CIERRO READ #############################
         ############################ ABRO CREAR #############################

@@ -37,8 +37,8 @@ validarFormularios(formularioActualizar);
 
 document.addEventListener("DOMContentLoaded", (event) => {
   //#################CREAMOS UN EVENTO DE ESCUCHA EN EL BOTON DE OBTENER#####################
-  mostrarDatos();
-  //renderTable();
+  //mostrarDatos();
+  renderTable();
   //##################CREAMOS UN EVENTO DE ESCUCHA EN EL BOTON DE CREAR######################
   btnEnviar.addEventListener("click", crearCliente);
   //btnActualizar.addEventListener('click', actualizarCliente);
@@ -289,9 +289,76 @@ let validacion = (modalInstance) => {
 };
 //#################### RENDERIZAMOS LOS DATOS OBTENIDOS EN UNA TABLA ######################
 function renderTable(data) {
+
+  let d = data;
+
+  $(document).ready(function() {
+
+    new DataTable('#myTable', {
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/1.13.5/i18n/es-MX.json'
+        },
+        order: [[0, 'asc']], // Orden por la columna 'Nombre'
+        columnDefs: [
+            {
+                targets: [0, 1, 2], // Centrar las columnas de datos
+                className: "text-center"
+            },
+            {
+                targets: 3, // Columna de acciones
+                className: "text-center",
+                render: function(data, type, row) {
+                  // ID del cliente según la fila seleccionada
+                    let id = row.id;
+                    let nombre = row.nombre;
+                    let apellido = row.apellido;
+                    let telefono = row.telefono;
+                    console.log(id, nombre, apellido, telefono);
+                    console.log(row);
+                    // Aquí puedes personalizar los botones de acciones (editar, eliminar, etc.)
+                    return `
+                        <i class="btn fa-solid fa-pen" style="background-color: #2e9c9d; color: white;" type="button" data-bs-toggle="modal" data-bs-target="#actualizarModal" data-id="${row.id}" onclick="actualizarCliente('${row.id}', '${row.nombre}', '${row.apellido}', '${row.telefono}')"></i>
+                        <i class="btn btn-danger fa-solid fa-user-xmark" data-id="${row.id}" onclick="eliminarCliente('${row.id}')"></i>
+                    `;
+                }
+            }
+        ],
+        lengthMenu: [5, 10, 15, 20],
+        ajax: {
+            url: `${ruta}`, // URL de tu API o archivo JSON
+            type: 'GET',
+            //dataSrc: '' // Si tu API devuelve un array de objetos, usa una cadena vacía
+        },
+        columns: [
+            { data: 'nombre' },
+            { data: 'apellido' },
+            { data: 'telefono' },                 
+            { data: null } // Columna para las acciones
+        ]
+    });
+});
+
+  /*$(document).ready(function() {
+    $('#myTable').DataTable({
+      "processing": true,
+      "serverSide": true,
+      "ajax": {
+        "url": `${ruta}`,
+        "type": "GET",
+        dataSrc: '' // Si tu API devuelve un array de objetos, usa una cadena vacía
+      },
+      "columns": [
+        { "data": "id" },
+        { "data": "nombre" },
+        { "data": "apellido" },
+        { "data": "telefono" }
+      ]
+    });
+  });*/
+
   //validacion();
 
-  let tbody = document.querySelector("#myTable tbody");
+  /*let tbody = document.querySelector("#myTable tbody");
   // Limpiar la tabla antes de renderizar
   tbody.innerHTML = "";
   // Renderizar los datos
@@ -352,10 +419,10 @@ function renderTable(data) {
 
     row.appendChild(actionCell);
     tbody.appendChild(row);
-  });
+  });*/
 
   // Inicializar DataTables después de renderizar la tabla
-  new DataTable('#myTable',{
+  /*new DataTable('#myTable',{
     //Agregar lenguaje español, en un inicio sólo estaba Ingles
     language:{
       url: 'https://cdn.datatables.net/plug-ins/1.13.5/i18n/es-MX.json'
@@ -377,11 +444,11 @@ function renderTable(data) {
         }
         return `<span class="${classColor}">${data}</span>`
       }
-    }*/
+    }
     ],
     lengthMenu:[5,10,15,20],
     
-  });
+  });*/
 
   //$('#myTable').DataTable();
 }
