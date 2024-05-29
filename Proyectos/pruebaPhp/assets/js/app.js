@@ -17,9 +17,10 @@ let actualizarApellido = document.getElementById("apellidoACliente");
 let actualizarTelefono = document.getElementById("telefonoACliente");
 //Instancia de modal verificación
 let verificacionModal = document.getElementById("verificacionModal");
+//Creación de variable para asignar el dataTable
+let table;
 
 //Validar formularios
-
 let validarFormularios = (formulario) => {
   formulario.addEventListener("input", () => {
     if (formulario.checkValidity()) {
@@ -37,6 +38,8 @@ validarFormularios(formularioActualizar);
 
 document.addEventListener("DOMContentLoaded", (event) => {
   //#################CREAMOS UN EVENTO DE ESCUCHA EN EL BOTON DE OBTENER#####################
+  formularioCrear.reset();
+  formularioActualizar.reset();
   //mostrarDatos();
   renderTable();
   //##################CREAMOS UN EVENTO DE ESCUCHA EN EL BOTON DE CREAR######################
@@ -44,6 +47,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
   //btnActualizar.addEventListener('click', actualizarCliente);
   //btnEliminar.addEventListener('click', eliminarCliente);
   //new DataTable('#myTable');
+  //Modal Actualizar
+  let actualizarModal = bootstrap.Modal.getInstance(document.getElementById("actualizarModal"));
+// Instancia del formulario para poder cerrarlo después de crear un Cliente
+  let crearModal = bootstrap.Modal.getInstance(document.getElementById("exampleModal"));
 });
 ///################# FUNCIÓN FLECHA PARA HACER POST A LA DB #########################
 let crearCliente = () => {
@@ -54,10 +61,7 @@ let crearCliente = () => {
 
   dataLoaded = false;
 
-  // Instancia del formulario para poder cerrarlo después de crear un Cliente
-  let modalInstance = bootstrap.Modal.getInstance(
-    document.getElementById("exampleModal")
-  );
+
 
   // Realiza una solicitud POST para crear un nuevo cliente
   fetch(ruta, {
@@ -79,9 +83,10 @@ let crearCliente = () => {
       console.table(data);
       // Recargar la página actual con los datos actualizados
       //location.reload(true)
-      validacion(modalInstance);
-      // Cierra el modal
-      //modalInstance.hide();
+      validacion();
+      //Cierra el modal
+      //crearModal.hide();
+      $('#exampleModal').modal('hide');
     })
     //Manejo de errores
     .catch((error) => console.error("Error:", error));
@@ -168,9 +173,6 @@ let actualizarCliente = (id, nombre, apellido, telefono) => {
   //console.log('Editar cliente con ID:', id);
   //, nombre, apellido, telefono
   // Instancia del formulario para poder cerrarlo después de crear un Cliente
-  let modalInstance = bootstrap.Modal.getInstance(
-    document.getElementById("actualizarModal")
-  );
 
   //actualizarModal.addEventListener("click", function(event){
 
@@ -209,8 +211,8 @@ let actualizarCliente = (id, nombre, apellido, telefono) => {
           //location.reload(true);
           // Cierra el modal
           //modalInstance.hide();
-
-          validacion(modalInstance);
+          $('#actualizarModal').modal('hide');
+          validacion();
         }
         //validacion();
       })
@@ -243,7 +245,9 @@ let eliminarCliente = (id) => {
         if (data.success) {
           console.table(data);
           // Recargar la página actual con los datos actualizados
-          location.reload(true);
+          //location.reload(true);
+          // El segundo parámetro evita el reinicio de la paginación
+          table.ajax.reload(null, false);
         } else {
           alert("No se puede eliminar el cliente");
           console.error("No se puede eliminar el cliente", data.message);
@@ -255,12 +259,14 @@ let eliminarCliente = (id) => {
 };
 ///################################ CIERRO DELETE ##################################
 //################## Muestra el modal cuando se actualiza el registro ######################
-let validacion = (modalInstance) => {
+//modalInstance
+let validacion = () => {
   // Muestra el modal
   verificacionModal.classList.add("show");
   // Cierra el modal después de 2 segundos
   setTimeout(function () {
     // Oculta el modal
+    $('#verificacionModal').modal('hide');
     verificacionModal.classList.remove("show");
   }, 4000);
 
@@ -281,9 +287,14 @@ let validacion = (modalInstance) => {
 
   setTimeout(function () {
     //Recargar página
-    location.reload(true);
+    //location.reload(true);
+    table.ajax.reload(null, false);
     //Ocualtar modal
-    modalInstance.hide();
+    //$('#exampleModal').modal('hide');
+    //$('#actualizarModal').modal('hide');
+    //Clarear Modal
+    formularioCrear.reset();
+    formularioActualizar.reset();
   }, 4500);
 
 };
@@ -294,7 +305,7 @@ function renderTable(data) {
 
   $(document).ready(function() {
 
-    new DataTable('#myTable', {
+    table = new DataTable('#myTable', {
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.13.5/i18n/es-MX.json'
         },

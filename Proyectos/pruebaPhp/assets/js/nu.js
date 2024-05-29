@@ -91,20 +91,32 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
 /*
-Compensatorios
-formulario para registro de horas
-inicio :: input html5 -> bootdate fecha -> boost fecha y hora 
-final
-funcionario lista con un buscador (select2) jquery
-inicio sea menor que el final back
-en espera
-edito lo aprueba
-descripcion: porque del compensatorio.
-denegado
-columna: diferencia horas
+            -- Compensatorios --
 
-lista diferencas de horas  
+- Formulario para registro de horas
+- Hora de inicio :: input html5 -> bootdate fecha -> boost fecha y hora 
+- Hora de final
+- Lista de funcionarios con un buscador (select2) jquery
+- Validar que inicio sea menor que el final en el back (Php)
 
++ si el mismo usuario lo hace queda en espera de la validación
++ si un admin lo edita si lo puede aprobar
+
+- descripcion: porque del compensatorio.
+- aceptado o denegado
+
+----Resultado para el admin----
+columnas: 
++ Funcionario
++ fecha y hora de inicio
++ fecha y hora de final
++ descripción
++ diferencia horas (Horas compensatorias)(NO en DB)
++ Validación (Aceptado o Denegado)
+
+- lista horas compensatorias hecha desde el backend, no en la db.
+
+¿El resultado se debe reflejar en una tabla a la cual sólo tiene acceso el admin?, lo que llamo Resultado!
 
 */
 
