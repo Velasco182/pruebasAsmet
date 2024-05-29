@@ -27,9 +27,24 @@ validarFormulario(formularioCompensatorios);
 // El segundo parámetro evita el reinicio de la paginación
 // tableCompensatorios.ajax.reload(null, false);
 
+//https://www.codexworld.com/bootstrap-datetimepicker-add-date-time-picker-input-field/
+
 document.addEventListener('DOMContentLoaded', function(){
 
+    //Para la hora precisa, pero no existe la funcion datetimepicker
+
+    var today = new Date();
+    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    var time = today.getHours() + ":" + today.getMinutes();
+    var dateTime = date+' '+time;
+
+    console.log(dateTime);
+
     $('#formularioCompensatorios .input-append.date').datepicker({
+        format: 'yyyy-mm-dd',
+        autoclose: true,
+        todayBtn: true,
+        //startDate: dateTime
     });
 
     tableCompensatorios = $('#tableCompensatorios').dataTable({
