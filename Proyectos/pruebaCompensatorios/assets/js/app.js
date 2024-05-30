@@ -40,12 +40,21 @@ document.addEventListener('DOMContentLoaded', function(){
 
     console.log(dateTime);
 
-    $('#formularioCompensatorios .input-append.date').datepicker({
+    /**/$('#formularioCompensatorios .input-append.date').datepicker({
         format: 'yyyy-mm-dd',
         autoclose: true,
         todayBtn: true,
         //startDate: dateTime
     });
+
+    /*$('#datetimepicker').datetimepicker()
+
+    $(function () {
+        $('#datetimepicker').datetimepicker({
+          format: 'L'
+        });
+    });*/
+
 
     tableCompensatorios = $('#tableCompensatorios').dataTable({
 
