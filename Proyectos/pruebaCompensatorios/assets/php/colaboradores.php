@@ -43,13 +43,13 @@ if (isset($_GET['id'])) {
     // Devuelve los datos en formato JSON
     //echo json_encode($data);
     // Crea un array para devolver los datos
-    $response = array(
+    /*$response = array(
         'draw' => $request['draw'],
         'recordsTotal' => $stmt->rowCount(),
         'recordsFiltered' => $stmt->rowCount(),
         'data' => $data
-    );
+    );*/
     
     // Devuelve los datos en formato JSON
-    echo json_encode($response);
+    echo json_encode($data);
 }

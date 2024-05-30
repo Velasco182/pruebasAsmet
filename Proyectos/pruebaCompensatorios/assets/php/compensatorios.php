@@ -1,4 +1,4 @@
-<?
+<?php
 //Requerir lineas de código de otro archivo
 require 'conexiondb.php';
 // Obtiene el método HTTP de la solicitud
@@ -10,7 +10,7 @@ switch($method){
         if (isset($_GET['id'])) {
             // Obtener un solo cliente por ID
             $id = $_GET['id'];
-            $stmt = $pdo->prepare("SELECT * FROM compensatorios WHERE id = :id");
+            $stmt = $pdo->prepare("SELECT * FROM prueba.compensatorios WHERE id = :id");
             //$stmt->bind_param("i", $id);
             $stmt->execute([':id'=>$id]);
             //$result = $stmt->get_result();
@@ -49,19 +49,38 @@ switch($method){
             // Devuelve los datos en formato JSON
             //echo json_encode($data);
             // Crea un array para devolver los datos
-            $response = array(
+            /*$response = array(
                 'draw' => $request['draw'],
                 'recordsTotal' => $stmt->rowCount(),
                 'recordsFiltered' => $stmt->rowCount(),
                 'data' => $data
-            );
+            );*/
             
             // Devuelve los datos en formato JSON
-            echo json_encode($response);
+            echo json_encode($data);
         }
         break;
     case 'POST':
         // Procesar solicitud POST
+        // Decodifica los datos JSON enviados en el cuerpo de la solicitud
+        $input = json_decode(file_get_contents('php://input'), true);
+        // Recupera los valores de 'nombre', 'apellido' y 'telefono'
+        $identificacion = $input['identificacion'];
+        $nombre = $input['nombre'];
+        $descripcion = $input['descripcion'];
+        $inicio = $input['inicio'];
+        $final = $input['final'];
+        $validacion = $input['validacion'];
+        //$accion = $cadena['accion'];
+        // Consulta SQL para insertar un nuevo registro en la tabla 'clientes' accion
+        $sql = "INSERT INTO prueba.compensatorios (identificacion, nombre, descripcion, inicio, final, validacion) VALUES (:identificacion, :nombre, :descripcion, :inicio, :final, :validacion)";
+        $stmt = $pdo->prepare($sql);
+        // Verifica si la consulta se ejecuta correctamente
+        if ($stmt->execute(['identificacion' => $identificacion,':nombre' => $nombre, ':descripcion' => $descripcion, ':inicio' => $inicio, ':final' => $final, ':validacion' => $validacion]) === TRUE) {
+            echo json_encode(array("message" => "Registro creado con éxito"));
+        } else {
+            echo json_encode(array("message" => "Error al crear registro: " . $e->getMessage()));
+        }
         break;
     case 'PUT':
         // Procesar solicitud PUT
