@@ -1,6 +1,6 @@
-//import { tempusDominus, Namespace } from '@eonasdan/tempus-dominus';
-
 let tableCompensatorios;
+
+//Rutas para hacer las peticiones del backend a la db
 let rutaColaboradores =
   "/sena/Proyectos/pruebaCompensatorios/assets/php/colaboradores.php";
 let rutaCompensatorios =
@@ -10,41 +10,12 @@ let rutaCompensatorios =
 let formularioCompensatorios = document.getElementById(
   "formularioCompensatorios"
 );
-let btnEnviar = document.getElementById("btn-accept");
+let btnEnviarCompensatorio = document.getElementById("btn-accept");
 
 //Instancia de los campos de fecha y hora
 let inicioPicker = document.getElementById("inicioDateTimePicker");
 let finalPicker = document.getElementById("finalDateTimePicker");
 
-//Instancia de los campos del formulario
-let colaboradores = document.querySelector("#colaboradores").value;
-let descripcion = document.querySelector("#descripcion").value;
-let inicio = document.querySelector("#inicio").value;
-let final = document.querySelector("#final").value;
-let valid = document.querySelector("#validacion");
-
-//Validar formularios
-console.log(valid.checked);
-
-let validarFormulario = (formulario) => {
-  //colaboradores.value != '' || descripcion.value != '' || inicio.value != '' || final.value
-  formulario.addEventListener("input", () => {
-    if (formulario.checkValidity()) {
-      btnEnviar.disabled = false;
-      console.log(valid.checked);
-    } else {
-      btnEnviar.disabled = true;
-    }
-  });
-
-  /*valid.addEventListener('click', ()=>{
-        if(valid.checked){
-            btnEnviar.disabled = false;
-        }else{
-            btnEnviar.disabled = true;
-        }
-    });*/
-};
 
 // El segundo parámetro evita el reinicio de la paginación
 // tableCompensatorios.ajax.reload(null, false);
@@ -52,41 +23,47 @@ let validarFormulario = (formulario) => {
 //https://www.codexworld.com/bootstrap-datetimepicker-add-date-time-picker-input-field/
 
 document.addEventListener("DOMContentLoaded", function () {
+  //Reinicamos el formulario
   formularioCompensatorios.reset();
-  inicioFinComparison(inicioPicker, finalPicker);
-
-  dateTimePicker(inicioPicker);
-  dateTimePicker(finalPicker);
-
-  validarFormulario(formularioCompensatorios);
-
+  //Cargamos los colaboradores dentro del select
   renderizarColaboradores();
+  //Cargamos los compensatorios en la tabla
   renderizarCompensatorios();
+  //Configuración del DateTimePicker
+  dateTimePicker(inicioPicker, finalPicker);
+  //Evento de escucha para el boton de guardar compensatorio
+  btnEnviarCompensatorio.addEventListener("click", crearCompensatorio);
 
-  btnEnviar.addEventListener(
-    "click",
-    crearCompensatorio(colaboradores, descripcion, inicio, final, valid)
-  );
-  //Para la hora precisa, pero no existe la funcion datetimepicker
-
-  /*var today = new Date();
-  var date =
-    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
-  var time = today.getHours() + ":" + today.getMinutes();
-  var dateTime = date + " " + time;
-
-  console.log(dateTime);*/
 });
 
-let crearCompensatorio = (colaborador, descripcion, inicio, final, valid) => {
-  ///Separar los valores de nombre y cédula del colaborador para crear el compensatorio
-  let match = colaborador.match(/^(.+?) \((\d+)\)$/);
 
-  if (match) {
+let crearCompensatorio = () => {
+
+  //formularioCompensatorios.addEventListener('submit',  function (e){
+    //e.preventDefault();
+
+    //Instancia de los campos del formulario
+    let colaboradores = document.querySelector("#colaboradores").value;
+    let descripcion = document.querySelector("#descripcion").value;
+    let inicio = document.querySelector("#inicio").value;
+    let final = document.querySelector("#final").value;
+
+    ///Separar los valores de nombre y cédula del colaborador para crear el compensatorio
+    let match = colaboradores.match(/^(.+?) \((\d+)\)$/);
+
     let nombre = match[1];
     let identificacion = match[2];
 
-    let validacion = valid.checked;
+    let validacion = 0;
+
+    if(identificacion == '' || nombre == '' || descripcion == '' || inicio == '' || final == ''){
+      Swal.fire({
+        title: "Atención",
+        text: "Todos los campos son obligatorios.",
+        icon: "error"
+      });
+      return false;
+    }
 
     fetch(rutaCompensatorios, {
       method: "POST",
@@ -99,24 +76,46 @@ let crearCompensatorio = (colaborador, descripcion, inicio, final, valid) => {
         descripcion,
         inicio,
         final,
-        validacion,
+        validacion
       }),
     })
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        $("#exampleModal").modal("hide");
-        table.ajax.reload();
+        //Modales personalizados de SweetAlert2
+        Swal.fire({
+          title: "¿Deseas guardar el Compensatorio?",
+          showDenyButton: true,
+          showCancelButton: true,
+          confirmButtonText: "Guardar",
+          denyButtonText: `Descartar`
+        }).then((result) => {
+          /* Read more about isConfirmed, isDenied below */
+          if (result.isConfirmed) {
+            Swal.fire("Guardado con éxito", "", "success");
+            //Si es confirmada el modal, cerramos el modal del registro del compensatorio
+            $("#exampleModal").modal("hide");
+            //y recargamos la tabla para obtener todos los compensatorios actualizados
+            tableCompensatorios.ajax.reload();
+            //Borrar campos del formulario
+            formularioCompensatorios.reset();
+          
+          } else if (result.isDenied) {
+            Swal.fire("Se descartó el compensatorio", "", "info");
+          }
+        });
       })
       .catch((error) => console.error("Error al crear Compensatorio:", error));
-  }
+
+  //});
+  
 };
 
 let renderizarCompensatorios = () => {
 
 $(document).ready(function() {   
 
-    table = new DataTable('#tableCompensatorios',{
+    tableCompensatorios = new DataTable('#tableCompensatorios',{
 
         responsive: "true",
         order: [[1, "asc"]],
@@ -126,31 +125,39 @@ $(document).ready(function() {
             orderable: false,
             className: "text-center"
         },
-            {
+        //Para agregar botones de acción a la tabla de forma "dinámica"
+            { // Columna de acciones
+                targets: 6, 
+                className: "text-center",
                 render: function (row) {
                     let id = row.id;
-                    let nombre = row.identificacion;
-                    let apellido = row.nombre;
+                    let identificacion = row.identificacion;
+                    let nombre = row.nombre;
                     let descripcion = row.descripcion;
                     let inicio = row.inicio;
                     let final = row.final;
                     let validacion = row.validacion;
                     let colaborador = {
                         id,
+                        identificacion,
                         nombre,
-                        apellido,
                         descripcion,
                         inicio,
                         final,
                         validacion,
-                    };
-                    console.table(colaborador);
+                    }
+                    //console.table(colaborador);
+                    // Aquí puedes personalizar los botones de acciones (editar, eliminar, etc.)
+                    return `
+                        <i class="btn fa-solid fa-pen" style="background-color: #2e9c9d; color: white;" type="button" data-bs-toggle="modal" data-bs-target="#actualizarModal" data-id="${row.id}" onclick="actualizarCliente('${row.id}', '${row.nombre}', '${row.apellido}', '${row.telefono}')"></i>
+                    `;
                 },
             },
         ],
         ajax: {
             url: `${rutaCompensatorios}`,
             type: "GET",
+            dataSrc: ''
             },
         columns: [
             { data: "identificacion" },
@@ -158,6 +165,7 @@ $(document).ready(function() {
             { data: "descripcion" },
             { data: "inicio" },
             { data: "final" },
+            { data: null },
             { data: "validacion" },
         ]
     });
@@ -184,12 +192,68 @@ let renderizarColaboradores = () => {
     .catch((err) => console.error("Error al obtener colaboradores: ", err));
 };
 
-let inicioFinComparison = (inicio, final) => {
-  let inicioP = new tempusDominus.TempusDominus(inicio);
+/*let inicioFinComparison = (inicio, final) => {
 
-  let finalP = new tempusDominus.TempusDominus(final, {
+};*/
+
+//inicioFinComparison(inicioPicker, finalPicker);
+
+let dateTimePicker = (inicio, final) => {
+
+  //new tempusDominus.TempusDominus(inicio);
+  //new tempusDominus.TempusDominus(final);
+  let configuracionPicker = {
+    localization: {
+      format: "dd/MM/yyyy h:mm T",
+    },
+    display: {
+      icons: {
+        type: "icons",
+        time: "fa-regular fa-clock fa-lg",
+        date: "fa-solid fa-calendar-plus",
+        up: "fa-solid fa-caret-up",
+        down: "fa-solid fa-caret-down",
+        previous: "fa-solid fa-angles-left",
+        next: "fa-solid fa-angles-right",
+        today: "fa-solid fa-calendar-check",
+        clear: "fa-solid fa-trash",
+        close: "fa-solid fa-xmark",
+      },
+      sideBySide: false,
+      calendarWeeks: false,
+      viewMode: "calendar",
+      toolbarPlacement: "bottom",
+      keepOpen: false,
+      buttons: {
+        today: false,
+        clear: false,
+        close: false,
+      },
+      components: {
+        calendar: true,
+        date: true,
+        month: true,
+        year: true,
+        decades: true,
+        clock: true,
+        hours: true,
+        minutes: true,
+        seconds: false,
+        //deprecated use localization.hourCycle = 'h24' instead
+        useTwentyfourHour: undefined,
+      },
+      inline: false,
+      theme: "auto",
+    }
+  }
+
+  let inicioP = new tempusDominus.TempusDominus(inicio, configuracionPicker);
+
+  let finalP = new tempusDominus.TempusDominus(final, configuracionPicker /*{
+   
     useCurrent: false,
-  });
+    
+  }*/);
 
   //using event listeners
   inicio.addEventListener(tempusDominus.Namespace.events.change, (e) => {
@@ -211,57 +275,5 @@ let inicioFinComparison = (inicio, final) => {
       });
     }
   );
-};
-
-//inicioFinComparison(inicioPicker, finalPicker);
-
-let dateTimePicker = (idCampo) => {
-  new tempusDominus.TempusDominus(
-    idCampo,
-
-    {
-      localization: {
-        format: "dd/MM/yyyy h:mm T",
-      },
-      display: {
-        icons: {
-          type: "icons",
-          time: "fa-regular fa-clock fa-lg",
-          date: "fa-solid fa-calendar-plus",
-          up: "fa-solid fa-caret-up",
-          down: "fa-solid fa-caret-down",
-          previous: "fa-solid fa-angles-left",
-          next: "fa-solid fa-angles-right",
-          today: "fa-solid fa-calendar-check",
-          clear: "fa-solid fa-trash",
-          close: "fa-solid fa-xmark",
-        },
-        sideBySide: false,
-        calendarWeeks: false,
-        viewMode: "calendar",
-        toolbarPlacement: "bottom",
-        keepOpen: false,
-        buttons: {
-          today: false,
-          clear: false,
-          close: false,
-        },
-        components: {
-          calendar: true,
-          date: true,
-          month: true,
-          year: true,
-          decades: true,
-          clock: true,
-          hours: true,
-          minutes: true,
-          seconds: false,
-          //deprecated use localization.hourCycle = 'h24' instead
-          useTwentyfourHour: undefined,
-        },
-        inline: false,
-        theme: "auto",
-      },
-    }
-  );
-};
+  
+}

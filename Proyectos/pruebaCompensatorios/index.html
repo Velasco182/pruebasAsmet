@@ -105,7 +105,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="" id="formularioCompensatorios" class="row g-3  was-validated  " onclick="">
+                    <form method="submit" id="formularioCompensatorios" class="row g-3  was-validated  " onclick="">
                         <div class="form-floating">
                             <input class="form-control" list="collaborators" id="colaboradores"
                                 placeholder="Ingresa tu número de Identificación" required>
@@ -161,8 +161,7 @@
                             </div>
                         </div>
 
-
-                        <div class="form-check form-switch form-check-reverse">
+                        <div id="validacionContainer" class="form-check form-switch form-check-reverse" hidden>
                             <input class="form-check-input me-2" type="checkbox" role="switch" id="validacion" required>
                             <label class="form-check-label me-2" for="validacion">Validar Compensatorio</label>
                         </div>
@@ -171,8 +170,7 @@
                 <div style="background-color: #cdeeee;" class="modal-footer">
                     <button type="button" id="btn-cerrar" class="btn btn-secondary"
                         data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn" id="btn-accept" data-bs-toggle="modal"
-                        data-bs-target="#verificacionModal" onclick="">Guardar</button>
+                    <button type="submit" class="btn" id="btn-accept">Guardar</button>
                 </div>
             </div>
         </div>
@@ -203,7 +201,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha256-BRqBN7dYgABqtY9Hd4ynE+1slnEw+roEPFzQ7TRRfcg=" crossorigin="anonymous"></script>
     <!-- Tempus Dominus JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/@eonasdan/tempus-dominus@6.9.4/dist/js/tempus-dominus.min.js" crossorigin="anonymous"></script>
-
+    <!--SweetAlert2-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
 </body>
 

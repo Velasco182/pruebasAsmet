@@ -44,8 +44,8 @@ switch($method){
             /*if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
                     $data[] = $row;
-                }*/
-            //}
+                }
+            }*/
             // Devuelve los datos en formato JSON
             //echo json_encode($data);
             // Crea un array para devolver los datos
