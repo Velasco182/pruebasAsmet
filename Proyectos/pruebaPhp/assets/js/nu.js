@@ -93,31 +93,39 @@ document.addEventListener('DOMContentLoaded', function(){
 /*
             -- Compensatorios --
 
-- Formulario para registro de horas
-- Hora de inicio :: input html5 -> bootdate fecha -> boost fecha y hora 
-- Hora de final
-- Lista de funcionarios con un buscador (select2) jquery
-- Validar que inicio sea menor que el final en el back (Php)
+- Formulario para registro de horas *
+- Hora de inicio :: input html5 -> bootdate fecha -> boost fecha y hora |* 
+- Hora de final *
+- Lista de funcionarios con un buscador (select2) jquery |(pero Sin select2)|*
+- Validar que inicio sea menor que el final en el back (Php) |FALTA|
 
-+ si el mismo usuario lo hace queda en espera de la validación
-+ si un admin lo edita si lo puede aprobar
++ si el mismo usuario lo hace queda en espera de la validación |+/-|*
++ si un admin lo edita si lo puede aprobar |+/-|*
 
-- descripcion: porque del compensatorio.
-- aceptado o denegado
+- descripcion: porque del compensatorio. |*
+- aceptado o denegado |FALTA| (Validar estados)
 
 ----Resultado para el admin----
 columnas: 
-+ Funcionario
-+ fecha y hora de inicio
-+ fecha y hora de final
-+ descripción
-+ diferencia horas (Horas compensatorias)(NO en DB)
-+ Validación (Aceptado o Denegado)
++ Funcionario (1.Identificación - 2.Nombre)
++ 3.descripción
++ 4.fecha y hora de inicio
++ 5.fecha y hora de final
++ 6.diferencia horas (Horas compensatorias)(NO en DB)
++ 7.Validación (Aceptado o Denegado)
 
 - lista horas compensatorias hecha desde el backend, no en la db.
 
 ¿El resultado se debe reflejar en una tabla a la cual sólo tiene acceso el admin?, lo que llamo Resultado!
 
+Hacer un join con la tabla de colaboradores para no tener datos duplicados
+Mejorar la nomenclatura de las columnas de las dos tablas, para identificar mejor |YA|
+Hacer envío de datos después de aceptar, no antes, no solo mostrar la alerta y ya |YA|
+hacer un select para comparar los campos de fecha y hora
+cambiar el tipo de dato a datetime |YA|
+(pediente rechazado y aceptado) estados para la validación del compensatorio -No chekbox- Select
+Cuando cierre el modal clarear el formulario |YA|
+Ordenamiento por la columna fecha dato numérico -no cadena- |+/-|
 */
 
 

@@ -57,3 +57,13 @@ body{
     background-color: #cdeeee;
     color: black;
 }
+
+#btn-validar{
+    background-color:#2e9c9d; 
+    color: white;
+}
+
+#btn-validar:hover{
+    background-color: #cdeeee;
+    color: black;
+}

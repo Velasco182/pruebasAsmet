@@ -1,12 +1,12 @@
 <?php
 require 'conexiondb.php';
 // Procesar solicitud GET
-if (isset($_GET['id'])) {
+if (isset($_GET['id_colab'])) {
     // Obtener un solo cliente por ID
-    $id = $_GET['id'];
-    $stmt = $pdo->prepare("SELECT * FROM prueba.colaboradores WHERE id = :id");
+    $id_colab = $_GET['id_colab'];
+    $stmt = $pdo->prepare("SELECT * FROM prueba.colaboradores WHERE id_colab = :id_colab");
     //$stmt->bind_param("i", $id);
-    $stmt->execute([':id'=>$id]);
+    $stmt->execute([':id_colab'=>$id_colab]);
     //$result = $stmt->get_result();
     $data = $stmt->fetch();
 
