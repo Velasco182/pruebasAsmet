@@ -38,15 +38,10 @@ document.addEventListener("DOMContentLoaded", function () {
   btnEnviarCompensatorio.addEventListener("click", crearCompensatorio);
   //Evento de escucha para el boton de validar compensatorios
   //btnValidarCompensatorio.addEventListener("click", crearCompensatorio);
-  //Evento al cerrar o cancelar modal
-  btnCerrar.addEventListener("click", clarearFormulario);
-  btnClose.addEventListener("click", clarearFormulario);
+  //Evento al cerrar o cancelar modal//Borrar campos del formulario
+  btnCerrar.addEventListener("click", formularioCompensatorios.reset());
+  btnClose.addEventListener("click", formularioCompensatorios.reset());
 });
-
-let clarearFormulario = () =>{
-  //Borrar campos del formulario
-  formularioCompensatorios.reset();
-}
 
 
 let crearCompensatorio = () => {
@@ -57,8 +52,11 @@ let crearCompensatorio = () => {
     //Instancia de los campos del formulario
     let colaboradores = document.querySelector("#colaboradores").value;
     let descripcion_compe = document.querySelector("#descripcion").value;
-    let inicio_compe = document.querySelector("#inicio").value;
-    let final_compe = document.querySelector("#final").value;
+    let inicio = document.querySelector("#inicio").value;
+    let final = document.querySelector("#final").value;
+
+    let inicio_compe = parsearFecha(inicio);
+    let final_compe = parsearFecha(final);
 
     ///Separar los valores de nombre y cédula del colaborador para crear el compensatorio
     let match = colaboradores.match(/^(.+?) \((\d+)\)$/);
@@ -68,14 +66,14 @@ let crearCompensatorio = () => {
 
     let validacion_compe = 0;
 
-    if(identificacion_compe == '' || nombre_compe == '' || descripcion_compe == '' || inicio_compe == '' || final_compe == ''){
+    /*if(identificacion_compe == '' || nombre_compe == '' || descripcion_compe == '' || inicio_compe == '' || final_compe == ''){
       Swal.fire({
         title: "Atención",
         text: "Todos los campos son obligatorios.",
         icon: "error"
       });
       return false;
-    }
+    }*/
 
     //Modales personalizados de SweetAlert2
     Swal.fire({
@@ -123,6 +121,46 @@ let crearCompensatorio = () => {
   //});
   
 };
+
+let parsearFecha = (fechas) =>{
+
+  /*let fechaParts = fechas.split(" ");
+  let fechaDia = fechaParts[0].split("/");
+  let hora = fechaParts[1].replace("A. M.", "").trim();
+
+  let fecha = moment.tz(`${fechaDia[2]}-${fechaDia[1]}-${fechaDia[0]} ${hora}`, "YYYY-MM-DD HH:mm", "America/Bogota");
+
+  let fechaFormateada = fecha.format("YYYY-MM-DD HH:mm:ss");
+
+  console.log(fechaFormateada); // Output: "2024-11-06 10:00:00"
+
+  return fechaFormateada;*/
+
+  let fechaParts = fechas.split(" ");
+  let fechaDia = fechaParts[0].split("/");
+  let hora = fechaParts[1].replace("A. M.", "").trim();
+
+  let fecha = new Date(fechaDia[2], fechaDia[1] - 1, fechaDia[0], hora.split(":")[0], hora.split(":")[1]);
+  //fecha.setTimezone("America/Bogota"); // Agregamos la zona horaria de Colombia
+  //Funcionó +/-
+  let fechaFormateada = fecha.toISOString().slice(0, 19).replace("T", " ");
+  //let opciones = { timeZone: "America/Bogota", timeZoneName: "short" };
+  //let fechaFormateada = fecha.toLocaleString("es-CO", opciones);
+
+  console.log(fechaFormateada); // Output: "2024-06-04 04:00:00"
+
+  return fechaFormateada;
+  ////////
+  /*let partes = fechas.split(" ");
+  let fecha = partes[0];
+  let horaAMorPM = partes[1];
+
+  let horaNum = horaAMorPM.includes("P.M.") ? Number(horaAMorPM.replace("P.M.", "").trim()) + 12 : Number(horaAMorPM.replace("A.M.", "").trim());
+  let horaFormateada = `${fecha} ${horaNum.toString().padStart(2, "0")}:00:00`;
+
+  return horaFormateada;*/
+  
+}
 
 let renderizarCompensatorios = () => {
 
@@ -247,7 +285,7 @@ let dateTimePicker = (inicio, final) => {
   //new tempusDominus.TempusDominus(inicio);
   //new tempusDominus.TempusDominus(final);
   let configuracionPicker = {
-    localization: {
+    localization: { //T
       format: "dd/MM/yyyy h:mm T",
     },
     display: {

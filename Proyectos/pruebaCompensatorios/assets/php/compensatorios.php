@@ -1,4 +1,6 @@
 <?php
+// Establecer la zona horaria por defecto
+date_default_timezone_set('America/Bogota');
 //Requerir lineas de código de otro archivo
 require 'conexiondb.php';
 // Obtiene el método HTTP de la solicitud
@@ -72,11 +74,24 @@ switch($method){
         $final_compe = $input['final_compe'];
         $validacion_compe = $input['validacion_compe'];
         //$accion = $cadena['accion'];
+        //Convertir a DateTime
+        //Funcionó +/-
+        $fechaInicio = date("Y-m-d H:i:s", strtotime($inicio_compe));
+        $fechaFinal = date("Y-m-d H:i:s", strtotime($final_compe));
+
+        //$fechaInicio = date_create_from_format('Y-m-d H:i:s',  strtotime($inicio_compe));
+        //$fechaFinal = date_create_from_format('Y-m-d H:i:s', strtotime($final_compe));
+
+        //$fechaInicio = DateTime::createFromFormat('Y-m-d H:i:s', $inicio_compe);
+        //$fechaFinal = DateTime::createFromFormat('Y-m-d H:i:s', $final_compe);
+        
+        //echo "Fecha inicio $fechaInicio";
+        //echo "Fecha final $fechaFinal";
         // Consulta SQL para insertar un nuevo registro en la tabla 'clientes' accion
         $sql = "INSERT INTO prueba.compensatorios (identificacion_compe, nombre_compe, descripcion_compe, inicio_compe, final_compe, validacion_compe) VALUES (:identificacion_compe, :nombre_compe, :descripcion_compe, :inicio_compe, :final_compe, :validacion_compe)";
         $stmt = $pdo->prepare($sql);
         // Verifica si la consulta se ejecuta correctamente
-        if ($stmt->execute(['identificacion_compe' => $identificacion_compe,':nombre_compe' => $nombre_compe, ':descripcion_compe' => $descripcion_compe, ':inicio_compe' => $inicio_compe, ':final_compe' => $final_compe, ':validacion_compe' => $validacion_compe]) === TRUE) {
+        if ($stmt->execute(['identificacion_compe' => $identificacion_compe,':nombre_compe' => $nombre_compe, ':descripcion_compe' => $descripcion_compe, ':inicio_compe' => $fechaInicio, ':final_compe' => $fechaFinal, ':validacion_compe' => $validacion_compe]) === TRUE) {
             echo json_encode(array("message" => "Registro creado con éxito"));
         } else {
             echo json_encode(array("message" => "Error al crear registro: " . $e->getMessage()));

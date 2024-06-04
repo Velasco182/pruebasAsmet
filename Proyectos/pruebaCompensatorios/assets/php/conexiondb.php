@@ -1,5 +1,7 @@
 <?php
 //Información adicional: https://www.aprenderaprogramar.com/index.php?option=com_content&view=article&id=612:php-consultas-mysql-mysqliconnect-selectdb-query-fetcharray-freeresult-close-ejemplos-cu00841b&catid=70&Itemid=193
+// Establecer la zona horaria por defecto
+date_default_timezone_set('America/Bogota');
 //Habilitar la visualización de errores
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -30,3 +32,6 @@ try {
     // Manejar errores de conexión
     die("Error de conexión: " . $e->getMessage());
 }
+
+//echo 'Zona horaria por defecto: ' . date_default_timezone_get();
+

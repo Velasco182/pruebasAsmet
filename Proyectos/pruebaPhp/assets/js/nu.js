@@ -91,6 +91,30 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
 /*
+//Eliminar espacios adicionales en 'A. M.' o 'P. M.'
+        $fecha_inicio = preg_replace('/\s+([AP]\.M\.)$/', '$1', $fecha_inicio);
+        $fecha_final = preg_replace('/\s+([AP]\. M\.)$/', '$1', $fecha_final);
+        // Eliminar cualquier carácter adicional de espacios al final de la cadena
+        //$fecha_inicio = trim($fecha_inicio);
+        //$fecha_final = trim($fecha_final);
+        // Crear un objeto DateTime
+        $fecha_inicio = new DateTime($fecha_inicio);
+        $fecha_final = new DateTime($fecha_final);
+        // Crear un objeto DateTime desde el formato especificado
+        $inicio_compe = date_format($fecha_inicio, 'd/m/Y g:i A');
+        $final_compe = date_format($fecha_final, 'd/m/Y g:i A');
+
+        //$fechaInicio = date("Y-m-d H:i:s", strtotime($inicio_compe));
+        //$fechaFinal = date("Y-m-d H:i:s", strtotime($final_compe));
+
+        Hacer validación en back (php), no en js, en js toma la hora del computador
+
+        06/11/2024 10:00 P. M.
+        06/11/2024 11:00 P. M.
+                                        5 horas de diferencia ??
+        2024-11-06 15:00:00
+        2024-11-06 16:00:00
+
             -- Compensatorios --
 
 - Formulario para registro de horas *
@@ -121,13 +145,12 @@ columnas:
 Hacer un join con la tabla de colaboradores para no tener datos duplicados
 Mejorar la nomenclatura de las columnas de las dos tablas, para identificar mejor |YA|
 Hacer envío de datos después de aceptar, no antes, no solo mostrar la alerta y ya |YA|
-hacer un select para comparar los campos de fecha y hora
+hacer un select en la base de datos para comparar los campos de fecha y hora
 cambiar el tipo de dato a datetime |YA|
 (pediente rechazado y aceptado) estados para la validación del compensatorio -No chekbox- Select
 Cuando cierre el modal clarear el formulario |YA|
 Ordenamiento por la columna fecha dato numérico -no cadena- |+/-|
 */
-
 
 
 $('#tableMenus').DataTable();

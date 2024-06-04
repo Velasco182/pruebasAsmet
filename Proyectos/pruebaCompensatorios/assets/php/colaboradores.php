@@ -1,5 +1,7 @@
 <?php
 require 'conexiondb.php';
+// Establecer la zona horaria por defecto
+date_default_timezone_set('America/Bogota');
 // Procesar solicitud GET
 if (isset($_GET['id_colab'])) {
     // Obtener un solo cliente por ID
