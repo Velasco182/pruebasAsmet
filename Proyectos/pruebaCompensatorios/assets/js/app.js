@@ -6,7 +6,7 @@ let rutaColaboradores =
 let rutaCompensatorios =
   "/sena/Proyectos/pruebaCompensatorios/assets/php/compensatorios.php";
 
-//Instancia del formulario y boton de crear y actualizar Cliente
+/////#################### INSTANCIA DE FORMULARIO Y BOTONES DEL FRONT-END ##########################
 let formularioCompensatorios = document.getElementById(
   "formularioCompensatorios"
 );
@@ -15,16 +15,13 @@ let btnValidarCompensatorio = document.getElementById("btn-validar");
 let btnCerrar = document.getElementById("btn-cerrar");
 let btnClose = document.getElementById("btn-close");
 
-//Instancia de los campos de fecha y hora
+///#################### Instancia de los campos de fecha y hora ##########################
 let inicioPicker = document.getElementById("inicioDateTimePicker");
 let finalPicker = document.getElementById("finalDateTimePicker");
 
-
-// El segundo parámetro evita el reinicio de la paginación
-// tableCompensatorios.ajax.reload(null, false);
-
 //https://www.codexworld.com/bootstrap-datetimepicker-add-date-time-picker-input-field/
 
+///#################### CARGA DE ELEMENTOS CON EL DOM ##########################
 document.addEventListener("DOMContentLoaded", function () {
   //Reinicamos el formulario
   formularioCompensatorios.reset();
@@ -42,8 +39,8 @@ document.addEventListener("DOMContentLoaded", function () {
   btnCerrar.addEventListener("click", formularioCompensatorios.reset());
   btnClose.addEventListener("click", formularioCompensatorios.reset());
 });
-
-
+///#################### CIERRO DOM ##########################
+///#################### FUNCIÓN FLECHA PARA MÉTODO CREATE ##########################
 let crearCompensatorio = () => {
 
   //formularioCompensatorios.addEventListener('submit',  function (e){
@@ -52,19 +49,24 @@ let crearCompensatorio = () => {
     //Instancia de los campos del formulario
     let colaboradores = document.querySelector("#colaboradores").value;
     let descripcion_compe = document.querySelector("#descripcion").value;
-    let inicio = document.querySelector("#inicio").value;
-    let final = document.querySelector("#final").value;
+    let inicio_compe = document.querySelector("#inicio").value;
+    let final_compe = document.querySelector("#final").value;
+    let validacion_compe = document.querySelector("#validacion").value;
+
+    /*console.info("INI: "+inicio);
+    console.info("INI: "+final);
 
     let inicio_compe = parsearFecha(inicio);
     let final_compe = parsearFecha(final);
+
+    console.info("INI2: "+inicio_compe);
+    console.info("INI2: "+final_compe);*/
 
     ///Separar los valores de nombre y cédula del colaborador para crear el compensatorio
     let match = colaboradores.match(/^(.+?) \((\d+)\)$/);
 
     let nombre_compe = match[1];
     let identificacion_compe = match[2];
-
-    let validacion_compe = 0;
 
     /*if(identificacion_compe == '' || nombre_compe == '' || descripcion_compe == '' || inicio_compe == '' || final_compe == ''){
       Swal.fire({
@@ -120,8 +122,155 @@ let crearCompensatorio = () => {
 
   //});
   
-};
+}
+///#################### CIERRO CREATE ##########################
+///#################### FUNCIÓN FLECHA PARA MÉTODO READ (COMPENSATORIOS) ##########################
+let renderizarCompensatorios = () => {
 
+$(document).ready(function() {   
+
+    tableCompensatorios = new DataTable('#tableCompensatorios',{
+
+        responsive: "true",
+        language: {
+          url: '././assets/js/spanish.json'
+        },
+        order: [[3, "desc"]],
+        columnDefs: [
+        {
+            targets: [0, 1, 2, 3, 4, 5, 6, 7],
+            orderable: false,
+            className: "text-center"
+        },
+          //Para agregar botones de acción a la tabla de forma "dinámica"
+          { // Columna de acciones
+            targets: 5, 
+            className: "text-center",
+            render: function (row) {
+                let id = row.id_compe;
+                let identificacion = row.identificacion_compe;
+                let nombre = row.nombre_compe;
+                let descripcion = row.descripcion_compe;
+                let inicio = row.inicio_compe;
+                let final = row.final_compe;
+                let validacion = row.validacion_compe;
+                //console.table(colaborador);
+                // Aquí puedes personalizar los botones de acciones (editar, eliminar, etc.)
+                return `${inicio + final}`;
+            },
+            
+        },
+        //Para agregar botones de acción a la tabla de forma "dinámica"
+            { // Columna de acciones
+                targets: 7, 
+                className: "text-center",
+                render: function (row) {
+                    let id = row.id_compe;
+                    let identificacion = row.identificacion_compe;
+                    let nombre = row.nombre_compe;
+                    let descripcion = row.descripcion_compe;
+                    let inicio = row.inicio_compe;
+                    let final = row.final_compe;
+                    let validacion = row.validacion_compe;
+                    let colaborador = {
+                        id,
+                        identificacion,
+                        nombre,
+                        descripcion,
+                        inicio,
+                        final,
+                        validacion,
+                    }
+                    //console.table(colaborador);
+                    // Aquí puedes personalizar los botones de acciones (editar, eliminar, etc.)
+                    return `
+                        <i id="btn-validar" class="btn fa-solid fa-pen" style="background-color: #2e9c9d; color: white; :hover { background-color: #cdeeee; color: black; }" 
+                        type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="${row.id_compe}" 
+                        onclick="actualizarCompensatorio('${row.id_compe}', '${row.nombre_compe}', 
+                        '${row.apellido_compe}', '${row.telefono_compe}')"></i>
+                        <i class="btn btn-danger fa-solid fa-trash" data-id="${id}" onclick="eliminarCompensatorio('${id}')"></i>
+                        `;
+              },
+                
+            },
+
+        ],
+        ajax: {
+            url: `${rutaCompensatorios}`,
+            type: "GET",
+            dataSrc: ''
+            },
+        columns: [
+            { data: "identificacion_compe" },
+            { data: "nombre_compe" },
+            { data: "descripcion_compe" },
+            { data: "inicio_compe" },
+            { data: "final_compe" },
+            { data: null },
+            { data: "validacion_compe" },
+            { data: null },
+        ]
+    });
+});
+}
+///#################### CIERRO READ COMPENSATORIOS ##########################
+///#################### FUNCIÓN FLECHA PARA MÉTODO READ (COLABORADORES) ##########################
+let renderizarColaboradores = () => {
+  fetch(rutaColaboradores)
+    .then((response) => response.json())
+    .then((data) => {
+      console.table(data);
+
+      let datalist = $("#collaborators");
+
+      data.forEach(function (colaborador) {
+        let option = $("<option></option>").attr(
+          "value",
+          colaborador.nombre_colab + " (" + colaborador.identificacion_colab + ")"
+        );
+
+        datalist.append(option);
+      });
+    })
+    .catch((err) => console.error("Error al obtener colaboradores: ", err));
+}
+///#################### CIERRO READ COLABORADORES ##########################
+///#################### FUNCIÓN FLECHA PARA MÉTODO DELETE ##########################
+let eliminarCompensatorio = (id_compe) => {
+  console.log("Editar cliente con ID:", id_compe);
+
+  if (confirm("¿Estás seguro de que deseas eliminar este compensatorio?")) {
+    fetch(`${rutaCompensatorios}?id_compe=${id_compe}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id_compe }),
+    })
+      //Manejo de la respuesta
+      .then((response) => {
+        if (!response.ok) throw new Error("Error al eliminar compensatorio");
+        //Devuelve una promesa
+        return response.json();
+      })
+      //Manejo de los datos recibidos
+      .then((data) => {
+        if (data.success) {
+          console.table(data);
+          //y recargamos la tabla para obtener todos los compensatorios actualizados
+          tableCompensatorios.ajax.reload();
+        } else {
+          alert("No se puede eliminar el compensatorio");
+          console.error("No se puede eliminar el compensatorio", data.message);
+        }
+      })
+      //Manejo de errores
+      .catch((error) => console.error("Error:", error));
+  }
+}
+///################################ CIERRO DELETE ##################################
+
+///#################### FUNCIÓN FLECHA PARA PARSEAR FECHA (SIN USO) ##########################
 let parsearFecha = (fechas) =>{
 
   /*let fechaParts = fechas.split(" ");
@@ -161,125 +310,8 @@ let parsearFecha = (fechas) =>{
   return horaFormateada;*/
   
 }
-
-let renderizarCompensatorios = () => {
-
-$(document).ready(function() {   
-
-    tableCompensatorios = new DataTable('#tableCompensatorios',{
-
-        responsive: "true",
-        language: {
-          url: '././assets/js/spanish.json'
-        },
-        order: [[3, "desc"]],
-        columnDefs: [
-        {
-            targets: [0, 1, 2, 3, 4, 5, 6, 7],
-            orderable: false,
-            className: "text-center"
-        },
-          //Para agregar botones de acción a la tabla de forma "dinámica"
-          { // Columna de acciones
-            targets: 6, 
-            className: "text-center",
-            render: function (row) {
-                let id = row.id_compe;
-                let identificacion = row.identificacion_compe;
-                let nombre = row.nombre_compe;
-                let descripcion = row.descripcion_compe;
-                let inicio = row.inicio_compe;
-                let final = row.final_compe;
-                let validacion = row.validacion_compe;
-                let colaborador = {
-                    id,
-                    identificacion,
-                    nombre,
-                    descripcion,
-                    inicio,
-                    final,
-                    validacion,
-                }
-                //console.table(colaborador);
-                // Aquí puedes personalizar los botones de acciones (editar, eliminar, etc.)
-                return `Pendiente`;
-            },
-            
-        },
-        //Para agregar botones de acción a la tabla de forma "dinámica"
-            { // Columna de acciones
-                targets: 7, 
-                className: "text-center",
-                render: function (row) {
-                    let id = row.id_compe;
-                    let identificacion = row.identificacion_compe;
-                    let nombre = row.nombre_compe;
-                    let descripcion = row.descripcion_compe;
-                    let inicio = row.inicio_compe;
-                    let final = row.final_compe;
-                    let validacion = row.validacion_compe;
-                    let colaborador = {
-                        id,
-                        identificacion,
-                        nombre,
-                        descripcion,
-                        inicio,
-                        final,
-                        validacion,
-                    }
-                    //console.table(colaborador);
-                    // Aquí puedes personalizar los botones de acciones (editar, eliminar, etc.)
-                    return `
-                        <i id="btn-validar" class="btn fa-solid fa-pen" style="background-color: #2e9c9d; color: white; :hover { background-color: #cdeeee; color: black; }" 
-                        type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="${row.id_compe}" 
-                        onclick="actualizarCliente('${row.id_compe}', '${row.nombre_compe}', 
-                        '${row.apellido_compe}', '${row.telefono_compe}')"></i>
-                        <i class="btn btn-danger fa-solid fa-trash" data-id="${row.id}" onclick="eliminarCliente('${row.id}')"></i>
-                        `;
-                },
-                
-            },
-
-        ],
-        ajax: {
-            url: `${rutaCompensatorios}`,
-            type: "GET",
-            dataSrc: ''
-            },
-        columns: [
-            { data: "identificacion_compe" },
-            { data: "nombre_compe" },
-            { data: "descripcion_compe" },
-            { data: "inicio_compe" },
-            { data: "final_compe" },
-            { data: null },
-            { data: "validacion_compe" },
-            { data: null },
-        ]
-    });
-});
-}
-
-let renderizarColaboradores = () => {
-  fetch(rutaColaboradores)
-    .then((response) => response.json())
-    .then((data) => {
-      console.table(data);
-
-      let datalist = $("#collaborators");
-
-      data.forEach(function (colaborador) {
-        let option = $("<option></option>").attr(
-          "value",
-          colaborador.nombre_colab + " (" + colaborador.identificacion_colab + ")"
-        );
-
-        datalist.append(option);
-      });
-    })
-    .catch((err) => console.error("Error al obtener colaboradores: ", err));
-};
-
+///#################### CIERRO PARSEAR FECHA ##########################
+///#################### CONFIGURACIÓN DEL TIMEPICKER ##########################
 let dateTimePicker = (inicio, final) => {
 
   //new tempusDominus.TempusDominus(inicio);
@@ -359,3 +391,4 @@ let dateTimePicker = (inicio, final) => {
   );
   
 }
+///#################### CIERRO TIMEPICKER ##########################

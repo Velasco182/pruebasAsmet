@@ -74,19 +74,11 @@ switch($method){
         $final_compe = $input['final_compe'];
         $validacion_compe = $input['validacion_compe'];
         //$accion = $cadena['accion'];
+
         //Convertir a DateTime
-        //Funcionó +/-
-        $fechaInicio = date("Y-m-d H:i:s", strtotime($inicio_compe));
-        $fechaFinal = date("Y-m-d H:i:s", strtotime($final_compe));
+        $fechaInicio = parsearFecha($inicio_compe);
+        $fechaFinal = parsearFecha($final_compe);
 
-        //$fechaInicio = date_create_from_format('Y-m-d H:i:s',  strtotime($inicio_compe));
-        //$fechaFinal = date_create_from_format('Y-m-d H:i:s', strtotime($final_compe));
-
-        //$fechaInicio = DateTime::createFromFormat('Y-m-d H:i:s', $inicio_compe);
-        //$fechaFinal = DateTime::createFromFormat('Y-m-d H:i:s', $final_compe);
-        
-        //echo "Fecha inicio $fechaInicio";
-        //echo "Fecha final $fechaFinal";
         // Consulta SQL para insertar un nuevo registro en la tabla 'clientes' accion
         $sql = "INSERT INTO prueba.compensatorios (identificacion_compe, nombre_compe, descripcion_compe, inicio_compe, final_compe, validacion_compe) VALUES (:identificacion_compe, :nombre_compe, :descripcion_compe, :inicio_compe, :final_compe, :validacion_compe)";
         $stmt = $pdo->prepare($sql);
@@ -104,6 +96,40 @@ switch($method){
     case 'DELETE':
         // Procesar solicitud DELETE
 
+        // Convierte el cuerpo de la solicitud DELETE en un array asociativo
+        parse_str(file_get_contents("php://input"), $_DELETE);
+        // Verifica si el parámetro 'id' está presente en la URL
+        if (isset($_GET['id_compe'])) {
+            // Asigna el valor del parámetro 'id' a la variable $id
+            $id_compe = $_GET['id_compe'];
+            // Prepara la declaración SQL para eliminar un registro por ID
+            $stmt = $pdo->prepare("DELETE FROM prueba.compensatorios WHERE id_compe = :id_compe");
+            // Verifica si la preparación de la declaración falló
+            if (!$stmt) {
+                $response = array('success' => false, 'message' => 'Error en la preparación de la declaración.');
+                echo json_encode($response);
+                exit();
+            }
+            // Vincula el parámetro $id al marcador de posición en la declaración SQL
+            //$stmt->bind_param("i", $id);
+            // Ejecuta la declaración SQL
+            if ($stmt->execute([':id_compe' => $id_compe])) {
+                $response = array('success' => true);
+            } else {
+                $response = array('success' => false, 'message' => 'Error al ejecutar la declaración.');
+            }
+
+            // Cierra la declaración preparada
+            //$stmt->close();
+
+        } else {
+
+            $response = array('success' => false, 'message' => 'ID no especificado.');
+
+        }
+        //header('Content-Type: application/json');
+        echo json_encode($response);
+
         break;
     default:
         // Maneja métodos HTTP no soportados
@@ -112,6 +138,69 @@ switch($method){
         $response = array('message' => 'Método no permitido');
         echo json_encode($response);
         break;
+}
+
+//Función para convertir fecha de texto al formato que acepta la DB
+function parsearFecha($fecha){
+    //$fecha = "06/06/2024 9:00 A. M.";
+    //Separo la cadena que llega por espacios
+    $date_parts = preg_split('/\s+/u', $fecha);
+    //Defino el primer tercio como fecha
+    $date_day = $date_parts[0];
+    //Defino el segundo tercio como hora
+    $date_time = $date_parts[1];
+    //Defino la tercera posición del arreglo como AM o PM
+    $ampm = $date_parts[2];
+    //Separo la fecha por slash "/"
+    $date_day_parts = explode("/", $date_day);
+    //La primera parte es el día
+    $day = $date_day_parts[0];
+    //La segunda parte es el mes
+    $month = $date_day_parts[1];
+    //La última parte es el año
+    $year = $date_day_parts[2];
+
+    //Verifico si es una fecha valida con Checkdate
+    if (!checkdate($month, $day, $year)) {
+        echo "Error: la fecha no es válida";
+        exit;
+    }
+
+    //Divido el campo de hora por dos puntos ":"
+    $time_parts = explode(":", $date_time);
+    //La primera parte es la hora
+    $hour = $time_parts[0];
+    //La segunda parte son los minútos
+    $minute = $time_parts[1];
+
+    //Evalúo si la tercera parte del arreglo principal que llega del front
+    //incluye A. de AM
+    //con el fin de convertir la hora a formato militar, que es el que reconoce
+    //La DB
+    if ($ampm == "A.") {
+        //Si es así, y la hora es igual a 12
+        if ($hour == "12") {
+            //, es asingada como 00
+            $hour = "00";
+        }
+        //Sino y si la hora que llega incluye P. de PM
+    } elseif ($ampm == "P.") {
+        //Y si la hora es diferente de 12
+        if ($hour != "12") {
+            //Se le suman 12, para que nos dé el formato de hora militar
+            $hour = $hour + 12;
+        }
+    } else {
+        echo "Error: el formato de hora no es válido";
+        exit;
+    }
+
+    //Guardo en una cadena la fecha formateada para que la DB la reconozca
+    //Concatenando elemento por elemento 
+    $fecha_formateada = $year."-". $month. "-" . $day . " " . str_pad($hour, 2, "0", STR_PAD_LEFT) . ":" . str_pad($minute, 2, "0", STR_PAD_LEFT) . ":00";
+    //echo $fecha_formateada;
+    //Retornamos la cadena que va a ser guardada en una variable, donde se llame a la función
+    return $fecha_formateada;
 }
 
 ?>

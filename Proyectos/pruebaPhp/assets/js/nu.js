@@ -115,19 +115,33 @@ document.addEventListener('DOMContentLoaded', function(){
         2024-11-06 15:00:00
         2024-11-06 16:00:00
 
+        //Pruebas para parsear la fecha y hora
+
+                //$fechaInicio = date_create_from_format('Y-m-d H:i:s',  strtotime($inicio_compe));
+        //$fechaFinal = date_create_from_format('Y-m-d H:i:s', strtotime($final_compe));
+
+        //$fechaInicio = DateTime::createFromFormat('Y-m-d H:i:s', $inicio_compe);
+        //$fechaFinal = DateTime::createFromFormat('Y-m-d H:i:s', $final_compe);
+        
+        //echo "Fecha inicio $fechaInicio";
+        //echo "Fecha final $fechaFinal";
+
+        //Funcionó ok!
+        Función checkdate
+
             -- Compensatorios --
 
-- Formulario para registro de horas *
-- Hora de inicio :: input html5 -> bootdate fecha -> boost fecha y hora |* 
-- Hora de final *
-- Lista de funcionarios con un buscador (select2) jquery |(pero Sin select2)|*
+- Formulario para registro de horas |YA|
+- Hora de inicio :: input html5 -> bootdate fecha -> boost fecha y hora |YA| 
+- Hora de final |YA|
+- Lista de funcionarios con un buscador (select2) jquery |(pero Sin select2)|YA|
 - Validar que inicio sea menor que el final en el back (Php) |FALTA|
 
 + si el mismo usuario lo hace queda en espera de la validación |+/-|*
 + si un admin lo edita si lo puede aprobar |+/-|*
 
-- descripcion: porque del compensatorio. |*
-- aceptado o denegado |FALTA| (Validar estados)
+- descripcion: porque del compensatorio. |YA|
+- aceptado o denegado |FALTA| (Validar estados) |AVANZADO|
 
 ----Resultado para el admin----
 columnas: 
@@ -138,18 +152,18 @@ columnas:
 + 6.diferencia horas (Horas compensatorias)(NO en DB)
 + 7.Validación (Aceptado o Denegado)
 
-- lista horas compensatorias hecha desde el backend, no en la db.
+- lista horas compensatorias hecha desde el backend, no en la db. |FALTA|
 
 ¿El resultado se debe reflejar en una tabla a la cual sólo tiene acceso el admin?, lo que llamo Resultado!
 
-Hacer un join con la tabla de colaboradores para no tener datos duplicados
+Hacer un join con la tabla de colaboradores para no tener datos duplicados |FALTA|
 Mejorar la nomenclatura de las columnas de las dos tablas, para identificar mejor |YA|
 Hacer envío de datos después de aceptar, no antes, no solo mostrar la alerta y ya |YA|
-hacer un select en la base de datos para comparar los campos de fecha y hora
+hacer un select en la base de datos para comparar los campos de fecha y hora |FALTA|
 cambiar el tipo de dato a datetime |YA|
-(pediente rechazado y aceptado) estados para la validación del compensatorio -No chekbox- Select
+(pediente rechazado y aceptado) estados para la validación del compensatorio -No chekbox- Select |YA|
 Cuando cierre el modal clarear el formulario |YA|
-Ordenamiento por la columna fecha dato numérico -no cadena- |+/-|
+Ordenamiento por la columna fecha dato numérico -no cadena- |YA|
 */
 
 

@@ -220,6 +220,50 @@
         return fechaMySQL;
       }
 
+      function parseDateTime(dateTimeStr) {
+      // Eliminar espacios adicionales en 'A. M.' o 'P. M.'
+      dateTimeStr = dateTimeStr.replace(/\s+([AP]\.\sM\.)$/, '$1');
+
+      // Separar la parte de la fecha y la hora
+      let [datePart, timePart, meridian] = dateTimeStr.split(/[\s]+/);
+      let [day, month, year] = datePart.split('/').map(num => parseInt(num));
+      let [hour, minute] = timePart.split(':').map(num => parseInt(num));
+
+      // Convertir a formato de 24 horas
+      if (meridian === 'P. M.' && hour !== 12) {
+          hour += 12;
+      } else if (meridian === 'A. M.' && hour === 12) {
+          hour = 0;
+      }
+
+      // Crear el objeto Date
+      return new Date(year, month - 1, day, hour, minute);
+    }
+
+  function getDifferenceInTime(date1, date2) {
+      // Diferencia en milisegundos
+      let diffMs = date2 - date1;
+
+      // Convertir a días, horas y minutos
+      let diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      let diffHrs = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      let diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+      return { days: diffDays, hours: diffHrs, minutes: diffMins };
+  }
+
+  // Ejemplo de uso
+  let dateTimeStr1 = '06/06/2024 2:52 P. M.';
+  let dateTimeStr2 = '07/06/2024 3:45 A. M.';
+
+  let date1 = parseDateTime(dateTimeStr1);
+  let date2 = parseDateTime(dateTimeStr2);
+
+  let difference = getDifferenceInTime(date1, date2);
+  console.log(`Diferencia: ${difference.days} días, ${difference.hours} horas, ${difference.minutes} minutos`);
+
+
+
       const fechaTexto = "04/06/2024 8:00 A. M.";
       const fechaMySQL = parseFecha(fechaTexto);
       console.log(fechaMySQL); // Salida: 2024-06-04 08:00:00
