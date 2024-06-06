@@ -1,9 +1,9 @@
 let tableCompensatorios;
 
 //Rutas para hacer las peticiones del backend a la db
-let rutaColaboradores =
+const rutaColaboradores =
   "/sena/Proyectos/pruebaCompensatorios/assets/php/colaboradores.php";
-let rutaCompensatorios =
+const rutaCompensatorios =
   "/sena/Proyectos/pruebaCompensatorios/assets/php/compensatorios.php";
 
 /////#################### INSTANCIA DE FORMULARIO Y BOTONES DEL FRONT-END ##########################
@@ -147,16 +147,12 @@ $(document).ready(function() {
             targets: 5, 
             className: "text-center",
             render: function (row) {
-                let id = row.id_compe;
-                let identificacion = row.identificacion_compe;
-                let nombre = row.nombre_compe;
-                let descripcion = row.descripcion_compe;
-                let inicio = row.inicio_compe;
-                let final = row.final_compe;
-                let validacion = row.validacion_compe;
-                //console.table(colaborador);
-                // Aquí puedes personalizar los botones de acciones (editar, eliminar, etc.)
-                return `${inicio + final}`;
+
+                let diferencia = row.diferencia;
+              
+                //Mostramos en la columna 6 la columna de diferencia creada desde el backend
+                //
+                return `${diferencia}`;
             },
             
         },
@@ -237,7 +233,7 @@ let renderizarColaboradores = () => {
 ///#################### CIERRO READ COLABORADORES ##########################
 ///#################### FUNCIÓN FLECHA PARA MÉTODO DELETE ##########################
 let eliminarCompensatorio = (id_compe) => {
-  console.log("Editar cliente con ID:", id_compe);
+  console.log("Eliminar cliente con ID:", id_compe);
 
   if (confirm("¿Estás seguro de que deseas eliminar este compensatorio?")) {
     fetch(`${rutaCompensatorios}?id_compe=${id_compe}`, {

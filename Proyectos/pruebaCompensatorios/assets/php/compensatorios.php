@@ -40,24 +40,29 @@ switch($method){
             // Ejecuta la consulta
             $stmt = $pdo->query($sql);
             // Array para almacenar los datos
+            //$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $data = $stmt->fetchAll();
-            //$data = array();
-            // Verifica si hay resultados y los agrega al array
-            /*if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    $data[] = $row;
+
+            // Iterar sobre cada fila para calcular la diferencia de fecha y hora
+            foreach ($data as &$row) {
+                //columnas de la base de datos
+                $startTime = $row['inicio_compe'];
+                $endTime = $row['final_compe'];
+
+                // Convertir las cadenas de fecha y hora en objetos DateTime con el formato adecuado
+                $startDateTime = DateTime::createFromFormat('Y-m-d H:i:s', $startTime);
+                $endDateTime = DateTime::createFromFormat('Y-m-d H:i:s', $endTime);
+
+                if ($startDateTime && $endDateTime) {
+                    // Calcular la diferencia entre las dos fechas
+                    $interval = $startDateTime->diff($endDateTime);
+                    // Añadir la diferencia al array de resultados
+                    $row['diferencia'] = $interval->format('%d días, %h horas, %i minutos');
+                } else {
+                    $row['diferencia'] = 'Formato de fecha y hora no válido';
                 }
-            }*/
-            // Devuelve los datos en formato JSON
-            //echo json_encode($data);
-            // Crea un array para devolver los datos
-            /*$response = array(
-                'draw' => $request['draw'],
-                'recordsTotal' => $stmt->rowCount(),
-                'recordsFiltered' => $stmt->rowCount(),
-                'data' => $data
-            );*/
-            
+        
+            }
             // Devuelve los datos en formato JSON
             echo json_encode($data);
         }
