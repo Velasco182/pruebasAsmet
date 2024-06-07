@@ -115,6 +115,24 @@
       </div>
     </div>
 
+    <?php
+    // Fecha y hora en formato 'Y-m-d H:i:s'
+    $datetimeString = '2024-06-08 09:00:00';
+
+    // Crear un objeto DateTime a partir de la cadena de fecha y hora
+    $datetime = new DateTime($datetimeString);
+
+    // Formatear la fecha y hora en el nuevo formato
+    $formattedDate = $datetime->format('d/m/Y g:i A');
+
+    // Reemplazar el espacio entre A. M./P. M. con un espacio especial
+    $formattedDate = str_replace('AM', 'A. M.', $formattedDate);
+    $formattedDate = str_replace('PM', 'P. M.', $formattedDate);
+
+    echo $formattedDate; // Imprime: 06/08/2024 9:00 A. M.
+    ?>
+
+
     <script>
       //import {computePosition} from 'https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.5/+esm';
       /*$(document).ready(function() {

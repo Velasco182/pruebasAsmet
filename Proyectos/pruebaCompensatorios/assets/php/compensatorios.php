@@ -17,11 +17,15 @@ switch($method){
             $stmt->execute([':id_compe'=>$id_compe]);
             //$result = $stmt->get_result();
             $data = $stmt->fetch();
-
+            //Si no hay datos, se crear un arreglo vacío
             if(!$data){
                 $data = [];
-            }
-
+            } /*else {
+                // sino se Parsean las fechas antes de enviarse al front-end
+                $data['inicio_compe'] = parsearFechaJS($data['inicio_compe']);
+                $data['final_compe'] = parsearFechaJS($data['final_compe']);
+            }*/
+            //Se encía un objeto json con los datos
             echo json_encode($data);
 
             /*$data = array();
@@ -35,8 +39,25 @@ switch($method){
         } else {
             // Obtiene la solicitud de DataTables
             $request = $_REQUEST;
-            // Consulta SQL para obtener todos los datos de la tabla 'clientes' accion nombre, apellido, telefono
-            $sql = "SELECT * FROM prueba.compensatorios";
+            // Consulta SQL para obtener todos los datos de la tabla 
+            $sql = "SELECT 
+                    id_compe,
+                    identificacion_colab,
+                    nombre_colab,
+                    descripcion_compe,
+                    DATE_FORMAT(inicio_compe, '%d/%m/%Y %l:%i %p') AS inicio_compe,
+                    DATE_FORMAT(final_compe, '%d/%m/%Y %l:%i %p') AS final_compe,
+                    EXTRACT(HOUR FROM (final_compe - inicio_compe)) + 
+                    (EXTRACT(DAY FROM (final_compe - inicio_compe)) * 24) +
+                    (EXTRACT(MINUTE FROM (final_compe - inicio_compe)) / 60) AS diferencia,
+                    validacion_compe
+                FROM 
+                    prueba.compensatorios
+                JOIN 
+                    prueba.colaboradores ON colaborador_id_compe = id_colab";
+            /*$sql = "SELECT id_compe, identificacion_colab, nombre_colab, descripcion_compe, inicio_compe, final_compe, validacion_compe 
+            FROM prueba.compensatorios
+            JOIN prueba.colaboradores ON colaborador_id_compe = id_colab";*/
             // Ejecuta la consulta
             $stmt = $pdo->query($sql);
             // Array para almacenar los datos
@@ -44,25 +65,37 @@ switch($method){
             $data = $stmt->fetchAll();
 
             // Iterar sobre cada fila para calcular la diferencia de fecha y hora
-            foreach ($data as &$row) {
-                //columnas de la base de datos
-                $startTime = $row['inicio_compe'];
+            // Además de parsear las filas de fecha inicio y final
+            /*foreach ($data as &$row) {
+
+                // Parsear las fechas antes de enviar an front
+                /*$row['inicio_compe'] = parsearFechaJS($row['inicio_compe']);
+                $row['final_compe'] = parsearFechaJS($row['final_compe']);*/
+
+                //se asigna el contenido de las columnas de la base de datos a las variables
+                /*$startTime = $row['inicio_compe'];
                 $endTime = $row['final_compe'];
 
                 // Convertir las cadenas de fecha y hora en objetos DateTime con el formato adecuado
-                $startDateTime = DateTime::createFromFormat('Y-m-d H:i:s', $startTime);
-                $endDateTime = DateTime::createFromFormat('Y-m-d H:i:s', $endTime);
-
+                //y se parsean de nuevo para que estén en el formato admitido por la clase diff
+                $startDateTime = DateTime::createFromFormat('Y-m-d H:i:s', parsearFecha($startTime));
+                $endDateTime = DateTime::createFromFormat('Y-m-d H:i:s', parsearFecha($endTime));
+                //Si existen las fecha de tipo DateTime
                 if ($startDateTime && $endDateTime) {
+
                     // Calcular la diferencia entre las dos fechas
                     $interval = $startDateTime->diff($endDateTime);
-                    // Añadir la diferencia al array de resultados
+
+                    // Añadir la diferencia al array de resultados 
+                    //para que el Front-End acceda a esos resultados 
                     $row['diferencia'] = $interval->format('%d días, %h horas, %i minutos');
+                
                 } else {
+                    //Se muestra en la columna de Horas
                     $row['diferencia'] = 'Formato de fecha y hora no válido';
                 }
         
-            }
+            }*/
             // Devuelve los datos en formato JSON
             echo json_encode($data);
         }
@@ -72,8 +105,9 @@ switch($method){
         // Decodifica los datos JSON enviados en el cuerpo de la solicitud
         $input = json_decode(file_get_contents('php://input'), true);
         // Recupera los valores de 'nombre', 'apellido' y 'telefono'
-        $identificacion_compe = $input['identificacion_compe'];
-        $nombre_compe = $input['nombre_compe'];
+        //$identificacion_compe = $input['identificacion_compe'];
+        //$nombre_compe = $input['nombre_compe'];
+        $colaborador_id_compe = $input['colaborador_id_compe'];
         $descripcion_compe = $input['descripcion_compe'];
         $inicio_compe = $input['inicio_compe'];
         $final_compe = $input['final_compe'];
@@ -85,10 +119,12 @@ switch($method){
         $fechaFinal = parsearFecha($final_compe);
 
         // Consulta SQL para insertar un nuevo registro en la tabla 'clientes' accion
-        $sql = "INSERT INTO prueba.compensatorios (identificacion_compe, nombre_compe, descripcion_compe, inicio_compe, final_compe, validacion_compe) VALUES (:identificacion_compe, :nombre_compe, :descripcion_compe, :inicio_compe, :final_compe, :validacion_compe)";
+        $sql = "INSERT INTO prueba.compensatorios (colaborador_id_compe, descripcion_compe, inicio_compe, final_compe, validacion_compe) 
+        VALUES (:colaborador_id_compe, :descripcion_compe, :inicio_compe, :final_compe, :validacion_compe)";
+        //se prepara la consulta para la posterior ejecición, y así evitar inyección de código sql
         $stmt = $pdo->prepare($sql);
         // Verifica si la consulta se ejecuta correctamente
-        if ($stmt->execute(['identificacion_compe' => $identificacion_compe,':nombre_compe' => $nombre_compe, ':descripcion_compe' => $descripcion_compe, ':inicio_compe' => $fechaInicio, ':final_compe' => $fechaFinal, ':validacion_compe' => $validacion_compe]) === TRUE) {
+        if ($stmt->execute([':colaborador_id_compe' => $colaborador_id_compe, ':descripcion_compe' => $descripcion_compe, ':inicio_compe' => $fechaInicio, ':final_compe' => $fechaFinal, ':validacion_compe' => $validacion_compe]) === TRUE) {
             echo json_encode(array("message" => "Registro creado con éxito"));
         } else {
             echo json_encode(array("message" => "Error al crear registro: " . $e->getMessage()));
@@ -96,6 +132,65 @@ switch($method){
         break;
     case 'PUT':
         // Procesar solicitud PUT
+        // Decodifica los datos JSON enviados en el cuerpo de la solicitud
+        $input = json_decode(file_get_contents('php://input'), true);
+        // Recupera los valores de 'id', 'nombre', 'apellido' y 'telefono'
+        if (isset($input['id_compe'])) {
+            // Convierte el cuerpo de la solicitud PUT en un array asociativo
+            //json_decode(file_get_contents('php://input'), $_POST);
+            // Asigna el valor del parámetro 'id' al variable $id
+            $id_compe = $input['id_compe'];
+            //ID del colaborador
+            $colaborador_id_compe = $input['colaborador_id_compe'];
+            // Asigna el valor del parámetro 'nombre' al variable $nombre
+            $descripcion_compe = $input['descripcion_compe'];
+            // Asigna el valor del parámetro 'apellido' al variable $apellido
+            $inicio_compe = $input['inicio_compe'];
+            //Fecha de final compensatorio
+            $final_compe = $input['final_compe'];
+            // Asigna el valor del parámetro 'telefono' al variable $telefono
+            $validacion_compe = $input['validacion_compe'];
+            //Sentencia SQL
+            $sql = "UPDATE prueba.compensatorios SET 
+            colaborador_id_compe = :colaborador_id_compe, 
+            descripcion_compe = :descripcion_compe, 
+            inicio_compe = :inicio_compe, final_compe = :final_compe, 
+            validacion_compe = :validacion_compe  WHERE id_compe = :id_compe";
+            // Prepara la declaración SQL para actualizar un registro por ID
+            $stmt = $pdo->prepare($sql);
+            // Verifica si la preparación de la declaración falló
+            if (!$stmt) {
+                $response = array('message' => 'Error en la preparación de la declaración.');
+                echo json_encode($response);
+                exit();
+            }
+            // Vincula los parámetros $nombre, $apellido, $telefono y $id a los marcadores de posición en la declaración SQL
+            //$stmt->bind_param("sssi", $nombre, $apellido, $telefono, $id);
+            // Ejecuta la declaración SQL
+            if ($stmt->execute([':colaborador_id_compe' => $colaborador_id_compe, 
+            ':descripcion_compe' => $descripcion_compe, 
+            ':inicio_compe' => $inicio_compe,':final_compe' => $final_compe, 
+            ':validacion_compe' => $validacion_compe, ':id_compe' => $id_compe])) {
+
+                $response = array('success' => true);
+
+            } else {
+
+                //http_response_code(500);
+                $response = array('error' => 'Error al actualizar cliente.');
+
+            }
+
+            // Cierra la declaración preparada
+            //$stmt->close();
+
+        } else {
+
+            $response = array('message' => 'ID no especificado.');
+
+        }
+        // Devuelve la respuesta en formato JSON
+        echo json_encode($response);
 
         break;
     case 'DELETE':
@@ -206,6 +301,23 @@ function parsearFecha($fecha){
     //echo $fecha_formateada;
     //Retornamos la cadena que va a ser guardada en una variable, donde se llame a la función
     return $fecha_formateada;
+}
+
+function parsearFechaJS($fecha){
+    // Fecha y hora en formato 'Y-m-d H:i:s'
+    //$datetimeString = '2024-06-08 09:00:00';
+
+    // Crear un objeto DateTime a partir de la cadena de fecha y hora
+    $datetime = new DateTime($fecha);
+
+    // Formatear la fecha y hora en el nuevo formato
+    $formattedDate = $datetime->format('d/m/Y g:i A');
+
+    // Reemplazar el espacio entre A. M./P. M. con un espacio especial
+    $formattedDate = str_replace('AM', 'A. M.', $formattedDate);
+    $formattedDate = str_replace('PM', 'P. M.', $formattedDate);
+
+    return $formattedDate;
 }
 
 ?>

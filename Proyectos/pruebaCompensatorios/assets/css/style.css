@@ -67,3 +67,13 @@ body{
     background-color: #cdeeee;
     color: black;
 }
+
+#btn-actualizar{
+    background-color:#2e9c9d; 
+    color: white;
+}
+
+#btn-actualizar:hover{
+    background-color: #cdeeee;
+    color: black;
+}
