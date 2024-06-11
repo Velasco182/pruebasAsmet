@@ -108,22 +108,23 @@ INSERT IGNORE INTO `colaboradores` (`id_colab`, `identificacion_colab`, `nombre_
 -- Volcando estructura para tabla prueba.compensatorios
 CREATE TABLE IF NOT EXISTS `compensatorios` (
   `id_compe` int(11) NOT NULL AUTO_INCREMENT,
-  `identificacion_compe` bigint(10) DEFAULT NULL,
-  `nombre_compe` varchar(40) DEFAULT NULL,
+  `colaborador_id_compe` int DEFAULT NULL,
+  /*`nombre_compe` varchar(40) DEFAULT NULL,*/
   `descripcion_compe` text DEFAULT NULL,
   `inicio_compe` datetime DEFAULT NULL,
   `final_compe` datetime DEFAULT NULL,
-  `validacion_compe` varchar(10) DEFAULT NULL,
+  `validacion_compe` ENUM('Pendiente', 'Aceptado', 'Rechazado'),
+  FOREIGN KEY (colaborador_id_compe) REFERENCES colaboradores(id_colab),
   PRIMARY KEY (`id_compe`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Volcando datos para la tabla prueba.compensatorios: ~6 rows (aproximadamente)
-INSERT IGNORE INTO `compensatorios` (`id_compe`, `identificacion_compe`, `nombre_compe`, `descripcion_compe`, `inicio_compe`, `final_compe`, `validacion_compe`) VALUES
+/*INSERT IGNORE INTO `compensatorios` (`id_compe`, `identificacion_compe`, `nombre_compe`, `descripcion_compe`, `inicio_compe`, `final_compe`, `validacion_compe`) VALUES
 	(3, 2198765430, 'María del Carmen López', '3', '2024-06-06 15:00:00', '2024-06-06 16:00:00', 'Aceptado'),
 	(4, 2198765430, 'María del Carmen López', '4', '2024-06-01 12:00:00', '2024-06-01 16:00:00', 'Rechazado'),
 	(6, 8421356790, 'Sofía Gutiérrez', '1', '2024-06-01 13:00:00', '2024-06-06 14:00:00', 'Pendiente'),
 	(7, 5492736180, 'Eva Elena Díaz', 'Horas Extras.', '2024-06-06 16:00:00', '2024-06-06 17:00:00', 'Rechazado'),
-	(8, 8421356790, 'Sofía Gutiérrez', '2', '2024-06-06 16:00:00', '2024-06-06 17:00:00', 'Pendiente');
+	(8, 8421356790, 'Sofía Gutiérrez', '2', '2024-06-06 16:00:00', '2024-06-06 17:00:00', 'Pendiente');*/
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
