@@ -200,6 +200,20 @@ let renderizarCompensatorios = () => {
             let inicio = row.inicio_compe;
             let final = row.final_compe;
             let validacion = row.validacion_compe;
+
+            if(validacion == "Aceptado"){
+
+              return `<i class="btn btn-danger fa-solid fa-trash" data-id="${id_compensatorio}" onclick="eliminarCompensatorio('${id_compensatorio}')" disabled></i>`;
+
+            }else if(validacion == "Pendiente" || "Rechazado"){
+
+              return `  <i id="btn-validar" class="btn fa-solid fa-pen" style="background-color: #2e9c9d; color: white; :hover { background-color: #cdeeee; color: black; }" 
+                        type="button" data-bs-toggle="modal" data-bs-target="#actualizarModal" data-id="${row.id_compe}" 
+                        onclick="actualizarCompensatorio('${id_compensatorio}', '${id_colaborador}', 
+                        '${descripcion}', '${inicio}', '${final}', '${validacion}')"></i>
+                        <i class="btn btn-danger fa-solid fa-trash" data-id="${id_compensatorio}" onclick="eliminarCompensatorio('${id_compensatorio}')"></i>
+                        `;
+            }
             /*let colaborador = {
                         id,
                         identificacion,
@@ -211,13 +225,7 @@ let renderizarCompensatorios = () => {
                     }*/
             //console.table(colaborador);
             // Aquí puedes personalizar los botones de acciones (editar, eliminar, etc.)
-            return `
-                        <i id="btn-validar" class="btn fa-solid fa-pen" style="background-color: #2e9c9d; color: white; :hover { background-color: #cdeeee; color: black; }" 
-                        type="button" data-bs-toggle="modal" data-bs-target="#actualizarModal" data-id="${row.id_compe}" 
-                        onclick="actualizarCompensatorio('${id_compensatorio}', '${id_colaborador}', 
-                        '${descripcion}', '${inicio}', '${final}', '${validacion}')"></i>
-                        <i class="btn btn-danger fa-solid fa-trash" data-id="${id_compensatorio}" onclick="eliminarCompensatorio('${id_compensatorio}')"></i>
-                        `;
+            
           },
         },
       ],
