@@ -289,13 +289,13 @@
     </script>
 <?php
 
-  $formattedMeridian = formatMeridianIndicator('12/06/2024 01:00 P. M.');
-  $formattedMeridianReverse = formatMeridianIndicatorReverse($formattedMeridian); // Salida: 2024-06-12 13
-  echo $formattedMeridian; // Output: 12/06/2024 01:00PM
+  $formattedMeridian = formatearMeridiano('12/06/2024 01:00 PM');
+  $formattedMeridian2 = formatearMeridiano('12/06/2024 01:00 P. M.'); // Salida: 2024-06-12 13
+  echo $formattedMeridian; // Output: 12/06/2024 01:00 P. M.
   echo "<br>";
-  echo $formattedMeridianReverse; // Output: 12/06/2024 01:00PM
+  echo $formattedMeridian2; // Output: 12/06/2024 01:00PM
 
-  function formatMeridianIndicator($fecha) {
+  function formatearMeridiano($fecha) {
     //"12/06/2024 02:00 P. M."
     //Separo la cadena que llega por espacios
     $date_parts = preg_split('/\s+/u', $fecha);
@@ -320,6 +320,16 @@
     // Replace "P. M." with "PM"
     if ($formattedMeridian === 'P') {
       $formattedMeridian = str_replace('P. M.', 'PM', $fecha);
+    }
+
+    // Replace "A. M." with "AM"
+    if ($formattedMeridian === 'AM') {
+      $formattedMeridian = str_replace('AM', 'A. M.' , $fecha);
+    }
+  
+    // Replace "P. M." with "PM"
+    if ($formattedMeridian === 'PM') {
+      $formattedMeridian = str_replace('PM', 'P. M.' , $fecha);
     }
   
     return $formattedMeridian;
@@ -354,7 +364,7 @@
   
     return $formattedMeridian;
 
-    
+
   }
 
 ?>
