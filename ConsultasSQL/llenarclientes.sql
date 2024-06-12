@@ -8,6 +8,8 @@ UPDATE prueba.compensatorios SET
             final_compe = CONVERT(STR_TO_DATE("12/06/2024 05:00 PM", '%d/%m/%Y %l:%i %p'), DATETIME), 
             validacion_compe = "Aceptado"  WHERE id_compe = 47;
 
+            
+
 /*INSERT INTO prueba.compensatorios (colaborador_id_compe, descripcion_compe, inicio_compe, final_compe, validacion_compe)
 VALUES (51, "Prueba DB 2", 
 CONVERT(STR_TO_DATE("12/06/2024 01:00 P. M.", '%d/%m/%Y %l:%i %p'),DATETIME),

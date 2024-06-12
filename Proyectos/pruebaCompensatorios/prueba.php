@@ -353,6 +353,8 @@
     }
   
     return $formattedMeridian;
+
+    
   }
 
 ?>
