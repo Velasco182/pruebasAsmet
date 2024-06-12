@@ -11,16 +11,25 @@ const rutaCompensatorios =
 let formularioCompensatorios = document.getElementById(
   "formularioCompensatorios"
 );
+let formularioActualizarCompensatorios = document.getElementById(
+  "formularioActualizarCompensatorios"
+);
 let btnEnviarCompensatorio = document.getElementById("btn-accept");
 let btnValidarCompensatorio = document.getElementById("btn-validar");
-let btnCerrar = document.getElementById("btn-cerrar");
-let btnClose = document.getElementById("btn-close");
+let btnCerrar = document.querySelector("#btn-cerrar");
+let btnClose = document.querySelector("#btn-close");
 
 let colaboradoresF = document.querySelector("#colaboradores");
 let descripcion_compeF = document.querySelector("#descripcion");
 let inicio_compeF = document.querySelector("#inicio");
 let final_compeF = document.querySelector("#final");
 let validacion_compeF = document.querySelector("#validacion");
+
+//let colaboradoresA = document.querySelector("#colaboradores");
+let descripcion_compeA = document.querySelector("#descripcionA");
+let inicio_compeA = document.querySelector("#inicioA");
+let final_compeA = document.querySelector("#finalA");
+let validacion_compeA = document.querySelector("#validacionA");
 
 ///#################### Instancia de los campos de fecha y hora ##########################
 let inicioPicker = document.getElementById("inicioDateTimePicker");
@@ -38,36 +47,45 @@ document.addEventListener("DOMContentLoaded", function () {
   renderizarCompensatorios();
   //Configuración del DateTimePicker
   dateTimePicker(inicioPicker, finalPicker);
-  //Evento de escucha para el boton de guardar compensatorio
-  btnEnviarCompensatorio.addEventListener("click", crearCompensatorio);
   //Evento de escucha para el boton de validar compensatorios
   //btnValidarCompensatorio.addEventListener("click", crearCompensatorio);
-  //Evento al cerrar o cancelar modal//Borrar campos del formulario
-  btnCerrar.addEventListener("click", formularioCompensatorios.reset());
-  btnClose.addEventListener("click", formularioCompensatorios.reset());
+  clarearFormulario();
 });
+
+let clarearFormulario = () =>{
+  //Evento al cerrar o cancelar modal//Borrar campos del formulario
+  btnCerrar.addEventListener("click", ()=>{
+    formularioCompensatorios.reset();
+    formularioActualizarCompensatorios.reset()
+  });
+
+  btnClose.addEventListener("click", ()=>{
+    formularioCompensatorios.reset();
+    formularioActualizarCompensatorios.reset();
+  });
+};
 
 ///#################### CIERRO DOM ##########################
 ///#################### FUNCIÓN FLECHA PARA MÉTODO CREATE ##########################
 let crearCompensatorio = () => {
   //formularioCompensatorios.addEventListener('submit',  function (e){
-  //e.preventDefault();
+    //e.preventDefault();
 
-  //Instancia de los campos del formulario
+    //Instancia de los campos del formulario
   let colaboradores = colaboradoresF.value;
-
+  
   let descripcion_compe = descripcion_compeF.value;
   let inicio_compe = inicio_compeF.value;
   let final_compe = final_compeF.value;
   let validacion_compe = validacion_compeF.value;
-
+  
   //console.log(id_colab_compe);
   let colaborador_id_compe = id_colab_compe;
   //console.log(colaborador_id_compe);
-
+  
   /*console.info("INI: "+inicio);
     console.info("INI: "+final);
-
+    
     let inicio_compe = parsearFecha(inicio);
     let final_compe = parsearFecha(final);
 
@@ -81,7 +99,7 @@ let crearCompensatorio = () => {
   let identificacion_compe = match[2];
 
   /*if(identificacion_compe == '' || nombre_compe == '' || descripcion_compe == '' || inicio_compe == '' || final_compe == ''){
-      Swal.fire({
+    Swal.fire({
         title: "Atención",
         text: "Todos los campos son obligatorios.",
         icon: "error"
@@ -89,8 +107,8 @@ let crearCompensatorio = () => {
       return false;
     }*/
 
-  //Modales personalizados de SweetAlert2
-  Swal.fire({
+    //Modales personalizados de SweetAlert2
+    Swal.fire({
     title: "¿Deseas guardar el Compensatorio?",
     showDenyButton: true,
     showCancelButton: true,
@@ -100,7 +118,7 @@ let crearCompensatorio = () => {
     /* Read more about isConfirmed, isDenied below */
     if (result.isConfirmed) {
       Swal.fire("Guardado con éxito", "", "success");
-
+      
       fetch(rutaCompensatorios, {
         method: "POST",
         headers: {
@@ -116,7 +134,7 @@ let crearCompensatorio = () => {
           validacion_compe,
         }),
       })
-        .then((response) => response.json())
+      .then((response) => response.json())
         .then((data) => {
           console.log(data);
           //Si es confirmada el modal, cerramos el modal del registro del compensatorio
@@ -127,16 +145,18 @@ let crearCompensatorio = () => {
           formularioCompensatorios.reset();
         })
         .catch((error) =>
-          console.error("Error al crear Compensatorio:", error)
+        console.error("Error al crear Compensatorio:", error)
         );
-    } else if (result.isDenied) {
-      Swal.fire("Se descartó el compensatorio", "", "info");
+      } else if (result.isDenied) {
+        Swal.fire("Se descartó el compensatorio", "", "info");
     }
   });
-
+  
   //});
 };
 ///#################### CIERRO CREATE ##########################
+//Evento de escucha para el boton de guardar compensatorio
+btnEnviarCompensatorio.addEventListener("click", crearCompensatorio);
 ///#################### FUNCIÓN FLECHA PARA MÉTODO READ (COMPENSATORIOS) ##########################
 let renderizarCompensatorios = () => {
   $(document).ready(function () {
@@ -171,6 +191,7 @@ let renderizarCompensatorios = () => {
           targets: 7,
           className: "text-center",
           render: function (row) {
+            clarearFormulario();
             let id_compensatorio = row.id_compe;
             /*let identificacion = row.identificacion_colab;
                     let nombre = row.nombre_colab;*/
@@ -192,7 +213,7 @@ let renderizarCompensatorios = () => {
             // Aquí puedes personalizar los botones de acciones (editar, eliminar, etc.)
             return `
                         <i id="btn-validar" class="btn fa-solid fa-pen" style="background-color: #2e9c9d; color: white; :hover { background-color: #cdeeee; color: black; }" 
-                        type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="${row.id_compe}" 
+                        type="button" data-bs-toggle="modal" data-bs-target="#actualizarModal" data-id="${row.id_compe}" 
                         onclick="actualizarCompensatorio('${id_compensatorio}', '${id_colaborador}', 
                         '${descripcion}', '${inicio}', '${final}', '${validacion}')"></i>
                         <i class="btn btn-danger fa-solid fa-trash" data-id="${id_compensatorio}" onclick="eliminarCompensatorio('${id_compensatorio}')"></i>
@@ -219,40 +240,172 @@ let renderizarCompensatorios = () => {
   });
 };
 ///#################### CIERRO READ COMPENSATORIOS ##########################
+///################# FUNCIÓN FLECHA PARA HACER GET POR ID A COLABORADORES #########################
+let mostrarColaboradorID = (id) => {
+  fetch(`${rutaColaboradores}?id=${id}`)
+    //Manejo de la respuesta
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Sin acceso a internet");
+      }
+      //Devuelve una promesa
+      return response.json();
+    })
+    //Manejo de datos recibidos
+    .then((data) => {
+      //renderTable(data);
+      console.table(data);
+
+      let nombre = data.nombre_colab;
+      let identificacion = data.identificacion_colab;
+
+      console.table(data.id_colab, nombre, identificacion);
+
+      /*actualizarNombre.value = nombre;
+      actualizarApellido.value = apellido;
+      actualizarTelefono.value = telefono;*/
+
+      //validacion();
+    })
+    //Manejo de errores
+    .catch((err) => console.error("Error al obtener datos: ", err));
+};
+///################################ CIERRO GET POR ID ##################################
+///################# FUNCIÓN FLECHA PARA HACER GET POR ID A COLABORADORES #########################
+let mostrarCompensatorioID = (id) => {
+  fetch(`${rutaCompensatorios}?id=${id}`)
+    //Manejo de la respuesta
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Sin acceso a internet");
+      }
+      //Devuelve una promesa
+      return response.json();
+    })
+    //Manejo de datos recibidos
+    .then((data) => {
+      //renderTable(data);
+      console.table(data);
+
+
+
+      let nombreA = data.nombre;
+      let apellidoA = data.apellido;
+      let telefonoA = data.telefono;
+
+      console.table(data.id, nombreA, apellidoA, telefonoA);
+
+      actualizarNombre.value = nombreA;
+      actualizarApellido.value = apellidoA;
+      actualizarTelefono.value = telefonoA;
+
+      //validacion();
+    })
+    //Manejo de errores
+    .catch((err) => console.error("Error al obtener datos: ", err));
+};
+///################################ CIERRO GET POR ID ##################################
 ///#################### FUNCIÓN FLECHA PARA MÉTODO PUT ##########################
 let actualizarCompensatorio = (
-  id_compensatorio,
+  id_compe,
   id_colaborador,
-  descripcion,
-  inicio,
-  final,
-  validacion
+  descripcion_compe,
+  inicio_compe,
+  final_compe,
+  validacion_compe
 ) => {
 
   let compensatorio = {
-    id_compensatorio,
+    id_compe,
     id_colaborador,
-    descripcion,
-    inicio,
-    final,
-    validacion,
+    descripcion_compe,
+    inicio_compe,
+    final_compe,
+    validacion_compe,
   };
+
 
   console.table(compensatorio);
 
-  let actualizarModal = $("#exampleModal");
+  /*let actualizarModal = $("#exampleModal");
   const modalTitle = document.querySelector("#exampleModal .modal-title");
 
   modalTitle.textContent = "Actualizar Compensatorio";
   let botonActualizar = document.querySelector(".modal-footer #btn-accept");
 
-  botonActualizar.setAttribute('id', "btn-actualizar");
-  botonActualizar.textContent = 'Actualizar';
+  botonActualizar.removeAttribute('id');
 
-  descripcion_compeF.value = descripcion;
-  inicio_compeF.value = inicio;
-  final_compeF.value = final;
-  validacion_compeF.value = validacion;
+  botonActualizar.setAttribute('id', "btn-actualizar");
+  botonActualizar.textContent = 'Actualizar';*/
+
+  let colaborador = document.querySelector("#formularioActualizarCompensatorios #colaboradores");
+  colaborador.value = id_colaborador;
+  //colaboradoresF.value = id_colaborador;
+  descripcion_compeA.value = descripcion_compe;
+  inicio_compeA.value = inicio_compe;
+  final_compeA.value = final_compe;
+  validacion_compeA.value = validacion_compe;
+  
+  let btnEditar = document.querySelector("#btn-actualizar");
+  
+  btnEditar.addEventListener('click', function (){
+
+    $(colaborador).on("input", function () {
+      var input = $(this).val();
+      var option = $("#collaborators option").filter(function () {
+        return this.value === input;
+      });
+
+      var id = option.attr("data-id");
+      console.log(id);
+      if (id !== undefined) {
+        let colaborador_id_compe = id;
+        //crearCompensatorio(id);
+        console.log("ID del colaborador seleccionado:", id);
+
+          //?id=${id}
+          fetch(`${rutaCompensatorios}?id=${id_compe}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id_compe, colaborador_id_compe, descripcion_compe, inicio_compe, final_compe, validacion_compe }),
+          })
+            //Manejo de la respuesta
+            .then(async (response) => {
+              if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text);
+              }
+              return response.json();
+            })
+            //Manejo de los datos recibidos
+            .then((data) => {
+              // Muestra un mensaje en la consola y refresca los datos en la tabla
+              console.table(data);
+              // Recargar la página actual con los datos actualizados
+              if (data != null) {
+                //location.reload(true);
+                // Cierra el modal
+                //modalInstance.hide();
+                $('#actualizarModal').modal('hide');
+                //validacion();
+              }
+              //validacion();
+            })
+            //Manejo de errores
+            .catch((error) => console.error("Error:", error));
+
+      } else {
+        console.log("No se encontró el ID para el colaborador seleccionado.");
+      }
+    });
+
+    console.log("Actualizar BTN");
+
+  });
+
+
 
 };
 ///#################### CIERRO PUT ##########################
@@ -393,8 +546,10 @@ let dateTimePicker = (inicio, final) => {
   //new tempusDominus.TempusDominus(final);
   let configuracionPicker = {
     localization: {
-      //T
-      format: "dd/MM/yyyy h:mm T",
+      // T
+      format: "dd/MM/yyyy hh:mm T",
+      locale: 'en-CO'
+      //format: form,
     },
     display: {
       icons: {
@@ -415,9 +570,9 @@ let dateTimePicker = (inicio, final) => {
       toolbarPlacement: "bottom",
       keepOpen: false,
       buttons: {
-        today: false,
-        clear: false,
-        close: false,
+        today: true,
+        clear: true,
+        close: true,
       },
       components: {
         calendar: true,
@@ -437,6 +592,8 @@ let dateTimePicker = (inicio, final) => {
     },
   };
 
+  //tempusDominus.extend(tempusDominus.plugins.moment_parse, 'dd/MM/yyyy hh:mm A');
+
   let inicioP = new tempusDominus.TempusDominus(inicio, configuracionPicker);
 
   let finalP = new tempusDominus.TempusDominus(
@@ -447,6 +604,7 @@ let dateTimePicker = (inicio, final) => {
     
   }*/
   );
+
 
   //using event listeners
   inicio.addEventListener(tempusDominus.Namespace.events.change, (e) => {

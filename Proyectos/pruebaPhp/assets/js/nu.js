@@ -142,6 +142,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 - descripcion: porque del compensatorio. |YA|
 - aceptado o denegado |FALTA| (Validar estados) |AVANZADO|
+- si está aceptado no se puede editar ni eliminar, sólo se puede modificar si es pendiente o rechazado
 
 ----Resultado para el admin----
 columnas: 
@@ -152,14 +153,14 @@ columnas:
 + 6.diferencia horas (Horas compensatorias)(NO en DB)
 + 7.Validación (Aceptado o Denegado)
 
-- lista horas compensatorias hecha desde el backend, no en la db. |FALTA|
+- lista horas compensatorias hecha desde el backend, no en la db. |YA|
 
 ¿El resultado se debe reflejar en una tabla a la cual sólo tiene acceso el admin?, lo que llamo Resultado!
 
-Hacer un join con la tabla de colaboradores para no tener datos duplicados |FALTA|
+Hacer un join con la tabla de colaboradores para no tener datos duplicados |YA|
 Mejorar la nomenclatura de las columnas de las dos tablas, para identificar mejor |YA|
 Hacer envío de datos después de aceptar, no antes, no solo mostrar la alerta y ya |YA|
-hacer un select en la base de datos para comparar los campos de fecha y hora |FALTA|
+hacer un select en la base de datos para comparar los campos de fecha y hora |YA|
 cambiar el tipo de dato a datetime |YA|
 (pediente rechazado y aceptado) estados para la validación del compensatorio -No chekbox- Select |YA|
 Cuando cierre el modal clarear el formulario |YA|

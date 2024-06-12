@@ -45,11 +45,18 @@ switch($method){
                     identificacion_colab,
                     nombre_colab,
                     descripcion_compe,
+                    /*De esta forma formateamos el como se ve en la tabla de nuestro front la consulta
+                    Aunque en la DB esté en formato DATETIME, la tabla se verá dia/mes/año hora:minuto y si es am o pm*/
                     DATE_FORMAT(inicio_compe, '%d/%m/%Y %l:%i %p') AS inicio_compe,
                     DATE_FORMAT(final_compe, '%d/%m/%Y %l:%i %p') AS final_compe,
+                    /*De esta forma calculamos las horas, pero no es tan funcional ya que genera la info en formato decimal, 
+                    que puede ser algo más Confuso al final
                     EXTRACT(HOUR FROM (final_compe - inicio_compe)) + 
                     (EXTRACT(DAY FROM (final_compe - inicio_compe)) * 24) +
                     (EXTRACT(MINUTE FROM (final_compe - inicio_compe)) / 60) AS diferencia,
+                    De esta forma podemos calcular las horas que vienen de la db de una manera más sencilla, sólo se crea una casilla, 
+                    No viene directamente de la base de datos, esto en MySQL con MariaDB*/
+                    TIMEDIFF(final_compe, inicio_compe) AS diferencia,
                     validacion_compe
                 FROM 
                     prueba.compensatorios
@@ -96,6 +103,7 @@ switch($method){
                 }
         
             }*/
+            
             // Devuelve los datos en formato JSON
             echo json_encode($data);
         }
@@ -115,16 +123,21 @@ switch($method){
         //$accion = $cadena['accion'];
 
         //Convertir a DateTime
-        $fechaInicio = parsearFecha($inicio_compe);
-        $fechaFinal = parsearFecha($final_compe);
+        /*$fechaInicio = parsearFechaJS($inicio_compe);
+        $fechaFinal = parsearFechaJS($final_compe);*/
+        $fechaInicio = formatMeridianIndicator($inicio_compe);
+        $fechaFinal = formatMeridianIndicator($final_compe);
 
         // Consulta SQL para insertar un nuevo registro en la tabla 'clientes' accion
         $sql = "INSERT INTO prueba.compensatorios (colaborador_id_compe, descripcion_compe, inicio_compe, final_compe, validacion_compe) 
-        VALUES (:colaborador_id_compe, :descripcion_compe, :inicio_compe, :final_compe, :validacion_compe)";
+        VALUES (:colaborador_id_compe, :descripcion_compe, 
+        CONVERT(STR_TO_DATE(:inicio_compe, '%d/%m/%Y %l:%i %p'),DATETIME),
+        CONVERT(STR_TO_DATE(:final_compe, '%d/%m/%Y %l:%i %p'), DATETIME), 
+        :validacion_compe)";
         //se prepara la consulta para la posterior ejecición, y así evitar inyección de código sql
         $stmt = $pdo->prepare($sql);
         // Verifica si la consulta se ejecuta correctamente
-        if ($stmt->execute([':colaborador_id_compe' => $colaborador_id_compe, ':descripcion_compe' => $descripcion_compe, ':inicio_compe' => $fechaInicio, ':final_compe' => $fechaFinal, ':validacion_compe' => $validacion_compe]) === TRUE) {
+        if ($stmt->execute([':colaborador_id_compe' => $colaborador_id_compe, ':descripcion_compe' => $descripcion_compe, ':inicio_compe' => $inicio_compe, ':final_compe' => $final_compe, ':validacion_compe' => $validacion_compe]) === TRUE) {
             echo json_encode(array("message" => "Registro creado con éxito"));
         } else {
             echo json_encode(array("message" => "Error al crear registro: " . $e->getMessage()));
@@ -154,7 +167,9 @@ switch($method){
             $sql = "UPDATE prueba.compensatorios SET 
             colaborador_id_compe = :colaborador_id_compe, 
             descripcion_compe = :descripcion_compe, 
-            inicio_compe = :inicio_compe, final_compe = :final_compe, 
+            /*inicio_compe = :inicio_compe, final_compe = :final_compe, */
+            inicio_compe = CONVERT(STR_TO_DATE(:inicio_compe, '%d/%m/%Y %l:%i %p'),DATETIME),
+            final_compe = CONVERT(STR_TO_DATE(:final_compe, '%d/%m/%Y %l:%i %p'), DATETIME),
             validacion_compe = :validacion_compe  WHERE id_compe = :id_compe";
             // Prepara la declaración SQL para actualizar un registro por ID
             $stmt = $pdo->prepare($sql);
@@ -319,5 +334,36 @@ function parsearFechaJS($fecha){
 
     return $formattedDate;
 }
+
+function formatMeridianIndicator($fecha) {
+    //"12/06/2024 02:00 P. M."
+    //Separo la cadena que llega por espacios
+    $date_parts = preg_split('/\s+/u', $fecha);
+    //Defino el primer tercio como fecha
+    $date_day = $date_parts[0];
+    //Defino el segundo tercio como hora
+    $date_time = $date_parts[1];
+    //Defino la tercera posición del arreglo como AM o PM
+    $ampm = $date_parts[2];
+    
+    // Remove space and dots[' ', ]
+    $formattedMeridian = str_replace('.', '', $ampm);
+  
+    // Convert to uppercase
+    $formattedMeridian = strtoupper($formattedMeridian);
+  
+    // Replace "A. M." with "AM"
+    if ($formattedMeridian === 'A') {
+      $formattedMeridian = str_replace('A. M.', 'AM', $fecha);
+    }
+  
+    // Replace "P. M." with "PM"
+    if ($formattedMeridian === 'P') {
+      $formattedMeridian = str_replace('P. M.', 'PM', $fecha);
+    }
+  
+    return $formattedMeridian;
+  }
+  
 
 ?>

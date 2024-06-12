@@ -287,6 +287,75 @@
       console.log(fechaMySQL); // Salida: 2024-06-04 08:00:00
 
     </script>
+<?php
+
+  $formattedMeridian = formatMeridianIndicator('12/06/2024 01:00 P. M.');
+  $formattedMeridianReverse = formatMeridianIndicatorReverse($formattedMeridian); // Salida: 2024-06-12 13
+  echo $formattedMeridian; // Output: 12/06/2024 01:00PM
+  echo "<br>";
+  echo $formattedMeridianReverse; // Output: 12/06/2024 01:00PM
+
+  function formatMeridianIndicator($fecha) {
+    //"12/06/2024 02:00 P. M."
+    //Separo la cadena que llega por espacios
+    $date_parts = preg_split('/\s+/u', $fecha);
+    //Defino el primer tercio como fecha
+    $date_day = $date_parts[0];
+    //Defino el segundo tercio como hora
+    $date_time = $date_parts[1];
+    //Defino la tercera posición del arreglo como AM o PM
+    $ampm = $date_parts[2];
+    
+    // Remove space and dots[' ', ]
+    $formattedMeridian = str_replace('.', '', $ampm);
+  
+    // Convert to uppercase
+    $formattedMeridian = strtoupper($formattedMeridian);
+  
+    // Replace "A. M." with "AM"
+    if ($formattedMeridian === 'A') {
+      $formattedMeridian = str_replace('A. M.', 'AM', $fecha);
+    }
+  
+    // Replace "P. M." with "PM"
+    if ($formattedMeridian === 'P') {
+      $formattedMeridian = str_replace('P. M.', 'PM', $fecha);
+    }
+  
+    return $formattedMeridian;
+  }
+
+  function formatMeridianIndicatorReverse($fecha) {
+    //"12/06/2024 02:00 P. M."
+    //Separo la cadena que llega por espacios
+    $date_parts = preg_split('/\s+/u', $fecha);
+    //Defino el primer tercio como fecha
+    $date_day = $date_parts[0];
+    //Defino el segundo tercio como hora
+    $date_time = $date_parts[1];
+    //Defino la tercera posición del arreglo como AM o PM
+    $ampm = $date_parts[2];
+    
+    // Remove space and dots[' ', ]
+    $formattedMeridian = str_replace('.', '', $ampm);
+  
+    // Convert to uppercase
+    $formattedMeridian = strtoupper($formattedMeridian);
+  
+    // Replace "A. M." with "AM"
+    if ($formattedMeridian === 'AM') {
+      $formattedMeridian = str_replace('AM', 'A. M.' , $fecha);
+    }
+  
+    // Replace "P. M." with "PM"
+    if ($formattedMeridian === 'PM') {
+      $formattedMeridian = str_replace('PM', 'P. M.' , $fecha);
+    }
+  
+    return $formattedMeridian;
+  }
+
+?>
 
   </body>
 </html>
