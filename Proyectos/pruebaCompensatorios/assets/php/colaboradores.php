@@ -26,6 +26,29 @@ if (isset($_GET['id_colab'])) {
     echo json_encode($data);*/
 
     //$stmt->close();
+} if (isset($_GET['identificacion_colab'])) {
+    // Obtener un solo cliente por ID
+    $identificacion_colab = $_GET['identificacion_colab'];
+    $stmt = $pdo->prepare("SELECT * FROM prueba.colaboradores WHERE identificacion_colab = :identificacion_colab");
+    //$stmt->bind_param("i", $id);
+    $stmt->execute([':identificacion_colab'=>$identificacion_colab]);
+    //$result = $stmt->get_result();
+    $data = $stmt->fetch();
+
+    if(!$data){
+        $data = [];
+    }
+
+    echo json_encode($data);
+
+    /*$data = array();
+    if ($result->num_rows > 0) {
+        $data = $result->fetch_assoc();
+    }
+    header('Content-Type: application/json');
+    echo json_encode($data);*/
+
+    //$stmt->close();
 } else {
     // Obtiene la solicitud de DataTables
     $request = $_REQUEST;

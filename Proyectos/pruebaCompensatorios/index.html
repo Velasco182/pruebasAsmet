@@ -76,8 +76,10 @@
 
         <div id="contenedorTabla" class="card shadow-sm">
             <div class="card-body table-responsive">
+                
                 <table id="tableCompensatorios" style="width:100%"
-                    class="shadow-sm display nowrap table table-success table-striped table-hover">
+                    class=" table table-hover table-bordered no-footer shadow-sm display nowrap">
+                    <!--table table-success table-striped table-hover-->
                     <thead>
                         <tr>
                             <th class="col">Identificación</th>
@@ -99,7 +101,7 @@
     <!--Modal de registro Compensatorios -->
     <div class="modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div style="background-color: #2e9c9d; color: white;" class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Crea un Compensatorio</h5>
@@ -108,26 +110,27 @@
                 <div class="modal-body">
                     <form method="submit" id="formularioCompensatorios" class="row g-3  was-validated  " onclick="">
                         <div class="form-floating">
-                            <input class="form-control" list="collaborators" id="colaboradores"
-                                placeholder="Ingresa tu número de Identificación" required>
+                            <input class="form-control" data-live-search="true" list="collaborators" id="colaboradores"
+                            placeholder="Ingresa tu número de Identificación" required>
                             <datalist id="collaborators">
-                                <!--<option value="5551234">
-                                <option value="5555678">
-                                <option value="5558765">
-                                <option value="5554321">
-                                <option value="5556789">-->
-                            </datalist>
+                                <!--form-floating <option value="5551234">
+                                    <option value="5555678">
+                                        <option value="5558765">
+                                            <option value="5554321">
+                                                <option value="5556789">-->
+                                                </datalist>
+                                                <!--<select class="form-select" id="colaboradores" aria-label="Colaboradores" required>
+                                                    <option selected>Seleccionar Colaborador</option>
+                                                    <option value="1">5551234</option>
+                                                    <option value="2">5555678</option>
+                                                    <option value="3">5558765</option>
+                                                    <option value="4">5554321</option>
+                                                    <option value="5">5556789</option>
+                                                    <option value="6">Three</option>
+                                                </select>
+                                                <label for="colaboradores">Seleccionar Colaborador</label> </select>-->
+                                                
                             <label for="colaboradores" class="form-label">Selecciona el colaborador</label>
-                            <!--<select class="form-select" id="colaboradores" aria-label="Colaboradores" required>
-                              <option selected>Seleccionar Colaborador</option>
-                              <option value="1">5551234</option>
-                              <option value="2">5555678</option>
-                              <option value="3">5558765</option>
-                              <option value="4">5554321</option>
-                              <option value="5">5556789</option>
-                              <option value="6">Three</option>
-                            </select>
-                            <label for="colaboradores">Seleccionar Colaborador</label>-->
                         </div>
                         <div class="form-floating">
                             <textarea type="text" class="form-control" placeholder="Descripción del Compensatorio"
@@ -172,7 +175,8 @@
                         </div>
                     </form>
                 </div>
-                <div style="background-color: #cdeeee;" class="modal-footer">
+                <!--style="background-color: #cdeeee;" -->
+                <div class="modal-footer">
                     <button type="button" id="btn-cerrar" class="btn btn-secondary"
                         data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn" id="btn-accept">Guardar</button>
@@ -184,7 +188,7 @@
     <!--Modal de actualizar Compensatorios -->
     <div class="modal fade" id="actualizarModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div style="background-color: #2e9c9d; color: white;" class="modal-header">
                     <h5 class="modal-title" id="actualizarModalLabel">Actualizar Compensatorio</h5>
@@ -194,7 +198,7 @@
                     <form method="submit" id="formularioActualizarCompensatorios" class="row g-3  was-validated  " onclick="">
                         <div class="form-floating">
                             <input class="form-control" list="collaborators" id="colaboradores"
-                                placeholder="Ingresa tu número de Identificación" required>
+                                placeholder="Ingresa tu número de Identificación" required disabled>
                             <datalist id="collaborators">
                             </datalist>
                             <label for="colaboradores" class="form-label">Selecciona el colaborador</label>
@@ -239,7 +243,8 @@
                         </div>
                     </form>
                 </div>
-                <div style="background-color: #cdeeee;" class="modal-footer">
+                <!--style="background-color: #cdeeee;" -->
+                <div class="modal-footer">
                     <button type="button" id="btn-cerrar" class="btn btn-secondary"
                         data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn" id="btn-actualizar">Actualizar</button>

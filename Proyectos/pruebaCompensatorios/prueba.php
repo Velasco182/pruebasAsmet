@@ -289,11 +289,11 @@
     </script>
 <?php
 
-  $formattedMeridian = formatearMeridiano('12/06/2024 01:00 PM');
-  $formattedMeridian2 = formatearMeridiano('12/06/2024 01:00 P. M.'); // Salida: 2024-06-12 13
+  $formattedMeridian = formatearMeridiano("12/06/2024 01:00 PM");
+  $formattedMeridian2 = formatearMeridiano("12/06/2024 01:00 P. M.");
   echo $formattedMeridian; // Output: 12/06/2024 01:00 P. M.
   echo "<br>";
-  echo $formattedMeridian2; // Output: 12/06/2024 01:00PM
+  echo $formattedMeridian2; // Output: 12/06/2024 01:00 PM
 
   function formatearMeridiano($fecha) {
     //"12/06/2024 02:00 P. M."

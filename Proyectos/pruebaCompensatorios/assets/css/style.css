@@ -27,7 +27,7 @@ body{
 }
 
 #contenedorTabla{
-    background-color: #2e9c9d;
+    /*background-color: #2e9c9d;*/
     border-radius: 15px;
 }
 
@@ -66,6 +66,15 @@ body{
 #btn-validar:hover{
     background-color: #cdeeee;
     color: black;
+}
+
+#btn-eliminar{
+    background-color:#d92127; 
+    color: white;
+}
+
+#btn-eliminar:hover{
+    background-color: #ed8380;
 }
 
 #btn-actualizar{
