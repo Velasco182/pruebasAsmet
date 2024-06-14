@@ -76,6 +76,7 @@ body{
 #btn-eliminar:hover{
     background-color: #ed8380;
     color: black;
+    transition: animation 0.5s ease-in-out;
 }
 
 #btn-actualizar{

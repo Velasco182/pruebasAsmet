@@ -354,10 +354,10 @@ function formatearMeridiano($fecha) {
     //Defino el segundo tercio como hora
     $date_time = $date_parts[1];
     //Defino la tercera posición del arreglo como AM o PM
-    $ampm = $date_parts[2];
+    $ap = $date_parts[2];
     
     // Remove space and dots[' ', ]
-    $formattedMeridian = str_replace('.', '', $ampm);
+    $formattedMeridian = str_replace('.', '', $ap);
   
     // Convert to uppercase
     $formattedMeridian = strtoupper($formattedMeridian);

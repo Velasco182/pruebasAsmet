@@ -1,6 +1,6 @@
 //http://localhost/sena/Proyectos/pruebaPhp/index.html
 //Ruta para ejecución del Fetch en este caso el back.php
-let ruta = "/sena/Proyectos/pruebaPhp/assets/php/back.php";
+let ruta = "/sena/Proyectos_Prueba/pruebaPhp/assets/php/back.php";
 ///console.log(ruta+'?id=${id}');
 let dataLoaded = false;
 // Instancia del formulario y boton de crear y actualizar Cliente

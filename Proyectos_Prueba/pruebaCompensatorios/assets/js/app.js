@@ -4,9 +4,9 @@ let id_colab_compeA;
 
 //Rutas para hacer las peticiones del backend a la db
 const rutaColaboradores =
-  "/sena/Proyectos/pruebaCompensatorios/assets/php/colaboradores.php";
+  "/sena/Proyectos_Prueba/pruebaCompensatorios/assets/php/colaboradores.php";
 const rutaCompensatorios =
-  "/sena/Proyectos/pruebaCompensatorios/assets/php/compensatorios.php";
+  "/sena/Proyectos_Prueba/pruebaCompensatorios/assets/php/compensatorios.php";
 
 /*const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))*/
@@ -226,7 +226,7 @@ let renderizarCompensatorios = () => {
 
             if (validacion == "Aceptado") {
 
-              return `<span class="badge badge-success bg-success" title="Compensatorio validado correctamente">Validado</span>`;
+              return `<span class="badge bg-success" title="Compensatorio validado correctamente">Validado</span>`;
 
             } else if (validacion == "Pendiente" || "Rechazado") {
 
@@ -426,10 +426,22 @@ let actualizarCompensatorio = (
 
   btnEditar.addEventListener("click", () => {
 
-    let descripcion_compe = descripcion_compeA.value;
-    let inicio_compe = inicio_compeA.value;
-    let final_compe = final_compeA.value;
-    let validacion_compe = validacion_compeA.value;
+    let descripcion_compeAA = descripcion_compeA.value;
+    let inicio_compeAA = inicio_compeA.value;
+    let final_compeAA = final_compeA.value;
+    let validacion_compeAA = validacion_compeA.value;
+
+    let compensatorio = {
+      colaborador_id_compe,
+      id_compe,
+      id_colaborador,
+      descripcion_compeAA,
+      inicio_compeAA,
+      final_compeAA,
+      validacion_compeAA,
+    };
+
+    console.table(compensatorio);
 
     //Modales personalizados de SweetAlert2
     Swal.fire({
@@ -446,49 +458,60 @@ let actualizarCompensatorio = (
       /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
         //Swal.fire("¡Guardado con éxito!", "", "success");
-      
-        Swal.fire({
-          confirmButtonColor: "#2e9c9d",
-          title: "¡Actualizado con éxito!",
-          text: "Compensatorio actualizado exitosamente.",
-          icon: "success"
-        });
 
-        //?id=${id}
-        fetch(`${rutaCompensatorios}?id=${id_compe}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ id_compe, colaborador_id_compe, descripcion_compe, inicio_compe, final_compe, validacion_compe }),
-        })
-          //Manejo de la respuesta
-          .then(async (response) => {
-            if (!response.ok) {
-              const text = await response.text();
-              throw new Error(text);
-            }
-            return response.json();
-          })
-          //Manejo de los datos recibidos
-          .then((data) => {
-            // Muestra un mensaje en la consola y refresca los datos en la tabla
-            console.table(data);
-            // Recargar la página actual con los datos actualizados
-            if (data != null) {
-              // Cierra el modal
-              //Si es confirmada el modal, cerramos el modal del registro del compensatorio
-              $('#actualizarModal').modal('hide');
-              //y recargamos la tabla para obtener todos los compensatorios actualizados
-              tableCompensatorios.ajax.reload();
-              //Borrar campos del formulario
-              formularioCompensatorios.reset();
-            }
-            //validacion();
-          })
-          //Manejo de errores
-          .catch((error) => console.error("Error:", error));
+        if((inicio_compeAA >= final_compeAA)||(inicio_compeAA === final_compeAA)){
 
+          Swal.fire({
+            confirmButtonColor: "#2e9c9d",
+            title: "Error",
+            text: "¡La fecha de inicio y fin no pueden ser iguales!",
+            icon: "info"
+          });
+
+        }else if(inicio_compe.isNull){
+
+          Swal.fire({
+            confirmButtonColor: "#2e9c9d",
+            title: "¡Actualizado con éxito!",
+            text: "Compensatorio actualizado exitosamente.",
+            icon: "success"
+          });
+  
+          //?id=${id}
+          fetch(`${rutaCompensatorios}?id_compe=${id_compe}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id_compe, colaborador_id_compe, descripcion_compe, inicio_compe, final_compe, validacion_compe }),
+          })
+            //Manejo de la respuesta
+            .then(async (response) => {
+              if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text);
+              }
+              return response.json();
+            })
+            //Manejo de los datos recibidos
+            .then((data) => {
+              // Muestra un mensaje en la consola y refresca los datos en la tabla
+              console.table(data);
+              // Recargar la página actual con los datos actualizados
+              if (data != null) {
+                // Cierra el modal
+                //Si es confirmada el modal, cerramos el modal del registro del compensatorio
+                $('#actualizarModal').modal('hide');
+                //y recargamos la tabla para obtener todos los compensatorios actualizados
+                tableCompensatorios.ajax.reload();
+                //Borrar campos del formulario
+                formularioCompensatorios.reset();
+              }
+              //validacion();
+            })
+            //Manejo de errores
+            .catch((error) => console.error("Error:", error));
+        }
       } /*else if (result.isDenied) {
         Swal.fire("Se descartó la actualización del Compensatorio", "", "info");
       }*/

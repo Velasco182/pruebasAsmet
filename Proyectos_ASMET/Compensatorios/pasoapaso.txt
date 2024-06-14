@@ -1,0 +1,30 @@
+//sumo las horas consumidas
+					/*$horasGastadas = getGastadas($ID_FUNCIONARIO);
+
+					$totalDisponible = $horasCom - $horasGastadas;
+
+					if($strHoras>$totalDisponible){
+						//error no se puede gastar mas de lo que tengpo dis´ponible
+					}else{
+						//guaerde
+					}
+					*/
+					-- 
+
+					-- Recuperar informacion de la insercion en conjunto del selector y pasar esa informacion a una variable para imprimirla 
+						en el correo
+					-- Habilitar boton de edicion para el rol de funcionario siempre y cuando este en estado pendiente, si esa solicitud 
+						pasa a estado "aprobado" o "rechazado" desaparecer boton de edicion
+					-- Si la solicitud esta en estado "aprobado" deshabilitar ese boton y desaparecer el boton de "rechazo"
+					-- Si la solicitud esta en estado "rechazado" deshabilitar ese boton y desaparecer el boton de "aprobacion"
+					-- Ajustar formulario a textarea 
+
+
+					TXT'S HTML
+
+					-- txtFechaInicio
+					-- txtFechaFin
+					-- txtActividad 
+					-- txtTrabajoRequerido 
+					-- txtEstado 
+					-- ListaUsuarios. 

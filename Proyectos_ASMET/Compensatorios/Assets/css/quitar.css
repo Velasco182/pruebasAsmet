@@ -1,0 +1,57 @@
+
+/* Estilos CSS */
+
+input[type="file"] {
+    color: transparent;
+    border: transparent;
+    display: none;
+}
+
+.control-label{
+    width: 50px;
+    height: 50px;
+    font-weight: 40px;
+    align-items: center;
+    text-align: center;
+    box-sizing: border-box;
+    border-color: #9090;
+    grid-area: inherit;
+    box-sizing: border-box;
+}
+
+.required{
+    grid-template-columns: repeat(
+        'colum1'
+        'colum2'
+        'colum3'
+        'colum4'
+    ); 
+}
+
+.form-control{
+    width: 50%;
+    height: 50%;
+    color: transparent;
+}
+
+@media (max-heigt: 1080px){
+    .control-label{
+        width: 10px;
+        height: 10px;
+        font-weight: 20px;
+        text-align: left;
+        grid-area: inherit;
+    }
+    .required{
+        grid-template-columns: repeat(
+            'colum1'
+            'colum2'
+        );
+        /* font-size: 3.5rem; */
+    }
+    .form-control{
+        width: 10%;
+        height: 10%;
+        color: transparent;
+    }
+}
