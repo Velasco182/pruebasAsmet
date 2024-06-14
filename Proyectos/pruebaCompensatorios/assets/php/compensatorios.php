@@ -138,9 +138,15 @@ switch($method){
         //se prepara la consulta para la posterior ejecición, y así evitar inyección de código sql
         $stmt = $pdo->prepare($sql);
         // Verifica si la consulta se ejecuta correctamente
-        if ($stmt->execute([':colaborador_id_compe' => $colaborador_id_compe, ':descripcion_compe' => $descripcion_compe, ':inicio_compe' => $fechaInicio, ':final_compe' => $fechaFinal, ':validacion_compe' => $validacion_compe]) === TRUE) {
+        if ($stmt->execute([':colaborador_id_compe' => $colaborador_id_compe, 
+            ':descripcion_compe' => $descripcion_compe, 
+            ':inicio_compe' => $fechaInicio, ':final_compe' => $fechaFinal, 
+            ':validacion_compe' => $validacion_compe]) === TRUE) {
+
             echo json_encode(array("message" => "Registro creado con éxito"));
+
         } else {
+
             echo json_encode(array("message" => "Error al crear registro: " . $e->getMessage()));
         }
         break;
@@ -165,8 +171,8 @@ switch($method){
             // Asigna el valor del parámetro 'telefono' al variable $telefono
             $validacion_compe = $input['validacion_compe'];
             //Formatear
-            $fechaInicio = formatearMeridiano($inicio_compe);
-            $fechaFinal = formatearMeridiano($final_compe);
+            /*$fechaInicio = formatearMeridiano($inicio_compe);
+            $fechaFinal = formatearMeridiano($final_compe);*/
             //Sentencia SQL
             $sql = "UPDATE prueba.compensatorios SET 
             colaborador_id_compe = :colaborador_id_compe, 
@@ -188,7 +194,7 @@ switch($method){
             // Ejecuta la declaración SQL
             if ($stmt->execute([':colaborador_id_compe' => $colaborador_id_compe, 
             ':descripcion_compe' => $descripcion_compe, 
-            ':inicio_compe' => $fechaInicio,':final_compe' => $fechaFinal, 
+            ':inicio_compe' => $inicio_compe,':final_compe' => $final_compe, 
             ':validacion_compe' => $validacion_compe, ':id_compe' => $id_compe])) {
 
                 $response = array('success' => true);
@@ -358,12 +364,12 @@ function formatearMeridiano($fecha) {
   
     // Replace "A. M." with "AM"
     if ($formattedMeridian === 'A') {
-      $formattedMeridian = str_replace('A. M.', 'AM', $fecha);
+      $formattedMeridian = str_replace('A', 'AM', $fecha);
     }
   
     // Replace "P. M." with "PM"
     if ($formattedMeridian === 'P') {
-      $formattedMeridian = str_replace('P. M.', 'PM', $fecha);
+      $formattedMeridian = str_replace('P', 'PM', $fecha);
     }
 
     // Replace "A. M." with "AM"

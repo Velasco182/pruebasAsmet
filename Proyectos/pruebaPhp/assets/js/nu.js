@@ -129,6 +129,8 @@ document.addEventListener('DOMContentLoaded', function(){
         //Funcionó ok!
         Función checkdate
 
+        Compensatrios al 70%, método put funcionando. No sirve el parseo, hay que seguir intentando. Sólo funciona en Inglés. Falta hacer pruebas y validar campos de fecha
+
             -- Compensatorios --
 
 - Formulario para registro de horas |YA|

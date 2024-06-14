@@ -64,7 +64,7 @@ body{
 }
 
 #btn-validar:hover{
-    background-color: #cdeeee;
+    background-color: #66bbba;
     color: black;
 }
 
@@ -75,6 +75,7 @@ body{
 
 #btn-eliminar:hover{
     background-color: #ed8380;
+    color: black;
 }
 
 #btn-actualizar{

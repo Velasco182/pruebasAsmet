@@ -33,7 +33,7 @@
                 <img src="./assets/img/logo2.png" alt="Logo" width="100" height="50"
                     class="d-inline-block align-text-top">
             </a>
-            <h1 style="color: white;" class="fw-bold text-uppercase no-select">Compensatorios</h1>
+            <h3 style="color: white;" class="fw-bold text-uppercase no-select md-3">Compensatorios</h3>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
@@ -43,12 +43,12 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex justify-content-evenly">
                     <li class="nav-item">
                         <button id="btn-mine" class="btn" aria-current="page" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">Crear nuevo</button>
+                            data-bs-target="#exampleModal"><i class="">Nuevo</i></button>
                     </li>
-                    <li class="nav-item">
+                    <!--<li class="nav-item">
                         <button id="btn-mine" class="btn" href="#contenedorTabla">Validar</button>
                     </li>
-                    <!--<li class="nav-item dropdown">
+                    <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Dropdown
                     </a>
@@ -75,7 +75,7 @@
     <div id="contenido" class="container card shadow">
 
         <div id="contenedorTabla" class="card shadow-sm">
-            <div class="card-body table-responsive">
+            <div class="card-body table-responsive" style="margin-right: 17px;">
                 
                 <table id="tableCompensatorios" style="width:100%"
                     class=" table table-hover table-bordered no-footer shadow-sm display nowrap">
@@ -253,6 +253,8 @@
         </div>
     </div>
 
+
+
     <!--Script de JS-->
     <script src="./assets/js/app.js"></script>
 
@@ -281,8 +283,9 @@
     <!--SweetAlert2-->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!--parsear la fecha y hora y luego formatearla para MySQL-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
-    <!--<script src="././assets/js/moment.js"></script>-->
+    <!--<script src="././assets/js/moment.min.js"></script>
+    https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js-->
+    <script src="././assets/js/moment.js"></script>
 </body>
 
 </html>

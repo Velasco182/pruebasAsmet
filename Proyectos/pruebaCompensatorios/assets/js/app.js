@@ -552,6 +552,7 @@ let eliminarCompensatorio = (id_compe) => {
           .catch((error) => console.error("Error:", error));
 
         Swal.fire({
+          confirmButtonColor: "#2e9c9d",
           title: "¡Eliminado!",
           text: "Compensatorio eliminado Exitosamente.",
           icon: "success"

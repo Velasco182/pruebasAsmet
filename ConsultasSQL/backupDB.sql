@@ -50,81 +50,50 @@ CREATE TABLE IF NOT EXISTS `colaboradores` (
   `identificacion_colab` bigint(10) DEFAULT NULL,
   `nombre_colab` varchar(40) DEFAULT NULL,
   PRIMARY KEY (`id_colab`)
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla prueba.colaboradores: ~50 rows (aproximadamente)
+-- Volcando datos para la tabla prueba.colaboradores: ~18 rows (aproximadamente)
 INSERT IGNORE INTO `colaboradores` (`id_colab`, `identificacion_colab`, `nombre_colab`) VALUES
 	(1, 8421356790, 'Sofía Gutiérrez'),
 	(2, 6543987211, 'Juan Carlos Pérez'),
 	(3, 2198765430, 'María del Carmen López'),
 	(4, 9834210967, 'Pedro José García'),
 	(5, 4678901234, 'Lucía Elena Sánchez'),
-	(6, 1357924680, 'Carlos Alberto Martínez'),
 	(7, 7531924680, 'Ana Isabel Díaz'),
-	(8, 3948271560, 'Javier Francisco González'),
 	(9, 6289417530, 'Elena María Hernández'),
-	(10, 8173625490, 'Miguel Ángel Álvarez'),
-	(11, 5492736180, 'Cristina Sofía Torres'),
 	(12, 9827341560, 'Rafael Antonio Moreno'),
-	(13, 7539842100, 'Isabel María Jiménez'),
-	(14, 6543210987, 'Francisco Javier Gómez'),
 	(15, 2193847560, 'Laura Elena Sánchez'),
-	(16, 4671238900, 'Héctor Manuel Ramírez'),
-	(17, 9834562100, 'Sandra Elena López'),
-	(18, 1357924680, 'Óscar Antonio García'),
-	(19, 7531924680, 'María José Hernández'),
-	(20, 3948271560, 'Jesús María Díaz'),
-	(21, 6289417530, 'Carmen Elena Pérez'),
-	(22, 8173625490, 'Alejandro Francisco Sánchez'),
-	(23, 5492736180, 'Verónica Elena Gómez'),
-	(24, 9827341560, 'Fernando Antonio González'),
-	(25, 7539842100, 'María del Carmen López'),
 	(26, 6543210987, 'Ricardo Antonio Torres'),
-	(27, 2193847560, 'Sonia Elena Hernández'),
 	(28, 4671238900, 'Manuel Antonio Álvarez'),
-	(29, 9834562100, 'Eva Elena Díaz'),
-	(30, 1357924680, 'Jorge Antonio Moreno'),
-	(31, 7531924680, 'Cristina Sofía Jiménez'),
 	(32, 3948271560, 'Luis Antonio Gutiérrez'),
-	(33, 6289417530, 'María Teresa García'),
-	(34, 8173625490, 'Pedro Antonio Ramírez'),
 	(35, 5492736180, 'Sandra Elena Sánchez'),
-	(36, 9827341560, 'Óscar Antonio López'),
-	(37, 7539842100, 'María José García'),
-	(38, 6543210987, 'Jesús Antonio Díaz'),
-	(39, 2193847560, 'Carmen Elena Pérez'),
-	(40, 4671238900, 'Alejandro Antonio Sánchez'),
 	(41, 9834562100, 'Verónica Elena Gómez'),
 	(42, 1357924680, 'Fernando Antonio González'),
-	(43, 7531924680, 'María del Carmen López'),
-	(44, 3948271560, 'Ricardo Antonio Torres'),
-	(45, 6289417530, 'Sonia Elena Hernández'),
 	(46, 8173625490, 'Manuel Antonio Álvarez'),
-	(47, 5492736180, 'Eva Elena Díaz'),
-	(48, 9827341560, 'Jorge Antonio Moreno'),
 	(49, 7539842100, 'Cristina Sofía Jiménez'),
-	(50, 6543210987, 'Luis Antonio Gutiérrez');
+	(51, 1061804052, 'Rubén Velasco');
 
 -- Volcando estructura para tabla prueba.compensatorios
 CREATE TABLE IF NOT EXISTS `compensatorios` (
   `id_compe` int(11) NOT NULL AUTO_INCREMENT,
-  `colaborador_id_compe` int DEFAULT NULL,
-  /*`nombre_compe` varchar(40) DEFAULT NULL,*/
+  `colaborador_id_compe` int(11) DEFAULT NULL,
   `descripcion_compe` text DEFAULT NULL,
   `inicio_compe` datetime DEFAULT NULL,
   `final_compe` datetime DEFAULT NULL,
-  `validacion_compe` ENUM('Pendiente', 'Aceptado', 'Rechazado'),
-  FOREIGN KEY (colaborador_id_compe) REFERENCES colaboradores(id_colab),
-  PRIMARY KEY (`id_compe`)
+  `validacion_compe` enum('Pendiente','Aceptado','Rechazado') DEFAULT NULL,
+  PRIMARY KEY (`id_compe`),
+  KEY `colaborador_id_compe` (`colaborador_id_compe`),
+  CONSTRAINT `compensatorios_ibfk_1` FOREIGN KEY (`colaborador_id_compe`) REFERENCES `colaboradores` (`id_colab`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla prueba.compensatorios: ~6 rows (aproximadamente)
-/*INSERT IGNORE INTO `compensatorios` (`id_compe`, `identificacion_compe`, `nombre_compe`, `descripcion_compe`, `inicio_compe`, `final_compe`, `validacion_compe`) VALUES
-	(3, 2198765430, 'María del Carmen López', '3', '2024-06-06 15:00:00', '2024-06-06 16:00:00', 'Aceptado'),
-	(4, 2198765430, 'María del Carmen López', '4', '2024-06-01 12:00:00', '2024-06-01 16:00:00', 'Rechazado'),
-	(6, 8421356790, 'Sofía Gutiérrez', '1', '2024-06-01 13:00:00', '2024-06-06 14:00:00', 'Pendiente'),
-	(7, 5492736180, 'Eva Elena Díaz', 'Horas Extras.', '2024-06-06 16:00:00', '2024-06-06 17:00:00', 'Rechazado'),
-	(8, 8421356790, 'Sofía Gutiérrez', '2', '2024-06-06 16:00:00', '2024-06-06 17:00:00', 'Pendiente');*/
+-- Volcando datos para la tabla prueba.compensatorios: ~1 rows (aproximadamente)
+INSERT IGNORE INTO `compensatorios` (`id_compe`, `colaborador_id_compe`, `descripcion_compe`, `inicio_compe`, `final_compe`, `validacion_compe`) VALUES
+	(1, 1, 'Prueba DB Act', '2024-06-14 08:00:00', '2024-06-14 08:38:00', 'Pendiente'),
+	(4, 3, 'Prueba 3', '2024-06-14 08:00:00', '2024-06-14 10:00:00', 'Rechazado'),
+	(5, 2, 'Prueba 2', '2024-06-10 07:00:00', '2024-06-10 17:00:00', 'Rechazado'),
+	(6, 4, 'Prueba 4', '2024-06-13 17:00:00', '2024-06-13 20:00:00', 'Rechazado'),
+	(7, 5, 'Prueba 5', '2024-06-11 19:00:00', '2024-06-11 23:00:00', 'Pendiente'),
+	(8, 51, 'Prueba 6', '2024-06-14 07:00:00', '2024-06-14 17:00:00', 'Aceptado');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
