@@ -223,7 +223,7 @@ let renderizarCompensatorios = () => {
 
             if (validacion == "Aceptado") {
 
-              return `<button class="btn btn-danger fa-solid fa-trash" disabled></button>`;
+              return `<span class="badge badge-success bg-success" title="Compensatorio validado correctamente">Validado</span>`;
 
             } else if (validacion == "Pendiente" || "Rechazado") {
 
@@ -251,18 +251,6 @@ let renderizarCompensatorios = () => {
                         <i class="fa fa-solid fa-trash" aria-hidden="true"></i></button>
                         `;
             }
-            /*let colaborador = {
-                        id,
-                        identificacion,
-                        nombre,
-                        descripcion,
-                        inicio,
-                        final,
-                        validacion,
-                    }*/
-            //console.table(colaborador);
-            // Aquí puedes personalizar los botones de acciones (editar, eliminar, etc.)
-
           },
         },
       ],
