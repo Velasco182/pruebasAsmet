@@ -171,8 +171,8 @@ switch($method){
             // Asigna el valor del parámetro 'telefono' al variable $telefono
             $validacion_compe = $input['validacion_compe'];
             //Formatear
-            /*$fechaInicio = formatearMeridiano($inicio_compe);
-            $fechaFinal = formatearMeridiano($final_compe);*/
+            $fechaInicio = formatearMeridiano($inicio_compe);
+            $fechaFinal = formatearMeridiano($final_compe);
             //Sentencia SQL
             $sql = "UPDATE prueba.compensatorios SET 
             colaborador_id_compe = :colaborador_id_compe, 
@@ -194,7 +194,7 @@ switch($method){
             // Ejecuta la declaración SQL
             if ($stmt->execute([':colaborador_id_compe' => $colaborador_id_compe, 
             ':descripcion_compe' => $descripcion_compe, 
-            ':inicio_compe' => $inicio_compe,':final_compe' => $final_compe, 
+            ':inicio_compe' => $fechaInicio,':final_compe' => $fechaFinal, 
             ':validacion_compe' => $validacion_compe, ':id_compe' => $id_compe])) {
 
                 $response = array('success' => true);

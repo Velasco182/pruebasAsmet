@@ -64,7 +64,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.5"></script>
   </head>
   <body>
-    <div class="container">
+    <div class="container card p-3 m-3 shadow-sm">
       <h2>Bootstrap DateTimePicker Example</h2>
       <div class="form-group">
         <label for="datetimepicker">Select Date and Time:</label>
@@ -89,7 +89,7 @@
       </div>
     </div>
 
-    <div class="row container">
+    <div class="row container card p-3 m-3 shadow-sm">
       <div class="col-sm-12" id="htmlTarget">
         <label for="datetimepicker1Input" class="form-label">Picker</label>
         <div
@@ -115,6 +115,7 @@
       </div>
     </div>
 
+    <div class="container card p-3 m-3 shadow-sm">
     <?php
     // Fecha y hora en formato 'Y-m-d H:i:s'
     $datetimeString = '2024-06-08 09:00:00';
@@ -130,8 +131,210 @@
     $formattedDate = str_replace('PM', 'P. M.', $formattedDate);
 
     echo $formattedDate; // Imprime: 06/08/2024 9:00 A. M.
-    ?>
 
+    $formattedMeridian = formatearMeridiano("12/06/2024 01:00 PM");
+    $formattedMeridian2 = formatearMeridiano("12/06/2024 01:00 P. M.");
+    echo $formattedMeridian; // Output: 12/06/2024 01:00 P. M.
+    echo "<br>";
+    echo $formattedMeridian2; // Output: 12/06/2024 01:00 PM
+
+    function formatearMeridiano($fecha) {
+      //"12/06/2024 02:00 P. M."
+      //Separo la cadena que llega por espacios
+      $date_parts = preg_split('/\s+/u', $fecha);
+      //Defino el primer tercio como fecha
+      $date_day = $date_parts[0];
+      //Defino el segundo tercio como hora
+      $date_time = $date_parts[1];
+      //Defino la tercera posición del arreglo como AM o PM
+      $ampm = $date_parts[2];
+      
+      // Remove space and dots[' ', ]
+      $formattedMeridian = str_replace('.', '', $ampm);
+    
+      // Convert to uppercase
+      $formattedMeridian = strtoupper($formattedMeridian);
+    
+      // Replace "A. M." with "AM"
+      if ($formattedMeridian === 'A') {
+        $formattedMeridian = str_replace('A. M.', 'AM', $fecha);
+      }
+    
+      // Replace "P. M." with "PM"
+      if ($formattedMeridian === 'P') {
+        $formattedMeridian = str_replace('P. M.', 'PM', $fecha);
+      }
+
+      // Replace "A. M." with "AM"
+      if ($formattedMeridian === 'AM') {
+        $formattedMeridian = str_replace('AM', 'A. M.' , $fecha);
+      }
+    
+      // Replace "P. M." with "PM"
+      if ($formattedMeridian === 'PM') {
+        $formattedMeridian = str_replace('PM', 'P. M.' , $fecha);
+      }
+    
+      return $formattedMeridian;
+    }
+
+    function formatMeridianIndicatorReverse($fecha) {
+      //"12/06/2024 02:00 P. M."
+      //Separo la cadena que llega por espacios
+      $date_parts = preg_split('/\s+/u', $fecha);
+      //Defino el primer tercio como fecha
+      $date_day = $date_parts[0];
+      //Defino el segundo tercio como hora
+      $date_time = $date_parts[1];
+      //Defino la tercera posición del arreglo como AM o PM
+      $ampm = $date_parts[2];
+      
+      // Remove space and dots[' ', ]
+      $formattedMeridian = str_replace('.', '', $ampm);
+    
+      // Convert to uppercase
+      $formattedMeridian = strtoupper($formattedMeridian);
+    
+      // Replace "A. M." with "AM"
+      if ($formattedMeridian === 'AM') {
+        $formattedMeridian = str_replace('AM', 'A. M.' , $fecha);
+      }
+    
+      // Replace "P. M." with "PM"
+      if ($formattedMeridian === 'PM') {
+        $formattedMeridian = str_replace('PM', 'P. M.' , $fecha);
+      }
+    
+      return $formattedMeridian;
+
+
+    }
+  ?>
+    </div>
+
+    <div class="container card p-3 m-3 shadow">
+      <div class="p-3">
+      <button style="background-color: #2e9c9d; color:white;" id="btn-mine" class="btn" aria-current="page" data-bs-toggle="modal" 
+        data-bs-target="#exampleModal" data-bs-whatever="Nuevo Compensatorio">
+        <i class="fa-solid fa-circle-plus fa-lg"></i>
+        &nbsp;&nbsp;Nuevo
+      </button>
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="Nuevo user1" data-modal-id="user1">Edit User 1</button>
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="Nuevo user2" data-modal-id="user2">Edit User 2</button>
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="Nuevo product1" data-modal-id="product1">Edit Product 1</button>
+
+      </div>
+    </div>
+
+    <!-- Modal editar y crear Compensatorios prueba -->
+    <div class="modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div style="background-color: #2e9c9d; color: white;" class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Crea un Compensatorio</h5>
+                    <button id="btn-close" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="submit" id="formularioCompensatorios" class="row g-3  was-validated  " onclick="">
+                        <div class="form-floating">
+                            <input class="form-control" data-live-search="true" list="collaborators" id="colaboradores"
+                            placeholder="Ingresa tu número de Identificación" required>
+                            <datalist id="collaborators">
+                                <!--form-floating <option value="5551234">
+                                    <option value="5555678">
+                                        <option value="5558765">
+                                            <option value="5554321">
+                                                <option value="5556789">-->
+                                                </datalist>
+                                                <!--<select class="form-select" id="colaboradores" aria-label="Colaboradores" required>
+                                                    <option selected>Seleccionar Colaborador</option>
+                                                    <option value="1">5551234</option>
+                                                    <option value="2">5555678</option>
+                                                    <option value="3">5558765</option>
+                                                    <option value="4">5554321</option>
+                                                    <option value="5">5556789</option>
+                                                    <option value="6">Three</option>
+                                                </select>
+                                                <label for="colaboradores">Seleccionar Colaborador</label> </select>-->
+                                                
+                            <label for="colaboradores" class="form-label">Selecciona el colaborador</label>
+                        </div>
+                        <div class="form-floating">
+                            <textarea type="text" class="form-control" placeholder="Descripción del Compensatorio"
+                                id="descripcion" name="descripcion" required></textarea>
+                            <label for="descripcion">Descripción del Compensatorio</label>
+                        </div>
+
+                        <!--<input type="datetime-local"
+                                value="2023-01-01T12:00" />-->
+
+                        <div id="htmlTarget">
+                            <label for="inicio" class="form-label">Inicio</label>
+                            <div class="input-group input-append date" id="inicioDateTimePicker" data-td-target-input="nearest"
+                                data-td-target-toggle="nearest">
+                                
+                                <input id="inicio" type="text" class="form-control was-validated"
+                                    data-td-target="#inicioDateTimePicker" placeholder="Inicio" required/>
+                                <span class="input-group-text" data-td-target="#inicioDateTimePicker" data-td-toggle="datetimepicker">
+                                        <i class="fa-regular fa-calendar-days fa-beat"></i>
+                                </span>
+                            </div>
+                            
+                            <label for="final" class="mt-3 form-label">Final</label>
+                            <div class="input-group input-append date" id="finalDateTimePicker" data-td-target-input="nearest"
+                                data-td-target-toggle="nearest">
+                                
+                                <input id="final" type="text" class="form-control was-validated"
+                                    data-td-target="#finalDateTimePicker" placeholder="Final" required/>
+                                <span class="input-group-text" data-td-target="#finalDateTimePicker" data-td-toggle="datetimepicker">
+                                        <i class="fa-regular fa-calendar-days fa-beat"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div id="" class="form-check me-2">
+                            <label class="" for="validacion">Validar Compensatorio</label>
+                            <select class="col-md-6 mt-2 form-select form-control was-validated" id="validacion" required>
+                                <option value="Pendiente" selected>Pendiente</option>
+                                <option value="Aceptado">Aceptado</option>
+                                <option value="Rechazado">Rechazado</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <!--style="background-color: #cdeeee;" -->
+                <div class="modal-footer">
+                    <button type="button" id="btn-cerrar" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn" id="btn-accept">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+      const exampleModal = document.getElementById('exampleModal')
+      if (exampleModal) {
+        exampleModal.addEventListener('show.bs.modal', event => {
+          // Button that triggered the modal
+          const button = event.relatedTarget
+          // Extract info from data-bs-* attributes
+          const recipient = button.getAttribute('data-bs-whatever')
+          // If necessary, you could initiate an Ajax request here
+          // and then do the updating in a callback.
+
+          // Update the modal's content.
+          const modalTitle = exampleModal.querySelector('.modal-title')
+          const modalBodyInput = exampleModal.querySelector('.modal-body input')
+
+          modalTitle.textContent = `${recipient}`
+          modalBodyInput.value = recipient
+        })
+      }
+
+    </script>
 
     <script>
       //import {computePosition} from 'https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.5/+esm';
@@ -287,87 +490,6 @@
       console.log(fechaMySQL); // Salida: 2024-06-04 08:00:00
 
     </script>
-<?php
-
-  $formattedMeridian = formatearMeridiano("12/06/2024 01:00 PM");
-  $formattedMeridian2 = formatearMeridiano("12/06/2024 01:00 P. M.");
-  echo $formattedMeridian; // Output: 12/06/2024 01:00 P. M.
-  echo "<br>";
-  echo $formattedMeridian2; // Output: 12/06/2024 01:00 PM
-
-  function formatearMeridiano($fecha) {
-    //"12/06/2024 02:00 P. M."
-    //Separo la cadena que llega por espacios
-    $date_parts = preg_split('/\s+/u', $fecha);
-    //Defino el primer tercio como fecha
-    $date_day = $date_parts[0];
-    //Defino el segundo tercio como hora
-    $date_time = $date_parts[1];
-    //Defino la tercera posición del arreglo como AM o PM
-    $ampm = $date_parts[2];
-    
-    // Remove space and dots[' ', ]
-    $formattedMeridian = str_replace('.', '', $ampm);
-  
-    // Convert to uppercase
-    $formattedMeridian = strtoupper($formattedMeridian);
-  
-    // Replace "A. M." with "AM"
-    if ($formattedMeridian === 'A') {
-      $formattedMeridian = str_replace('A. M.', 'AM', $fecha);
-    }
-  
-    // Replace "P. M." with "PM"
-    if ($formattedMeridian === 'P') {
-      $formattedMeridian = str_replace('P. M.', 'PM', $fecha);
-    }
-
-    // Replace "A. M." with "AM"
-    if ($formattedMeridian === 'AM') {
-      $formattedMeridian = str_replace('AM', 'A. M.' , $fecha);
-    }
-  
-    // Replace "P. M." with "PM"
-    if ($formattedMeridian === 'PM') {
-      $formattedMeridian = str_replace('PM', 'P. M.' , $fecha);
-    }
-  
-    return $formattedMeridian;
-  }
-
-  function formatMeridianIndicatorReverse($fecha) {
-    //"12/06/2024 02:00 P. M."
-    //Separo la cadena que llega por espacios
-    $date_parts = preg_split('/\s+/u', $fecha);
-    //Defino el primer tercio como fecha
-    $date_day = $date_parts[0];
-    //Defino el segundo tercio como hora
-    $date_time = $date_parts[1];
-    //Defino la tercera posición del arreglo como AM o PM
-    $ampm = $date_parts[2];
-    
-    // Remove space and dots[' ', ]
-    $formattedMeridian = str_replace('.', '', $ampm);
-  
-    // Convert to uppercase
-    $formattedMeridian = strtoupper($formattedMeridian);
-  
-    // Replace "A. M." with "AM"
-    if ($formattedMeridian === 'AM') {
-      $formattedMeridian = str_replace('AM', 'A. M.' , $fecha);
-    }
-  
-    // Replace "P. M." with "PM"
-    if ($formattedMeridian === 'PM') {
-      $formattedMeridian = str_replace('PM', 'P. M.' , $fecha);
-    }
-  
-    return $formattedMeridian;
-
-
-  }
-
-?>
 
   </body>
 </html>

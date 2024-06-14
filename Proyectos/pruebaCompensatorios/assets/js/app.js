@@ -39,6 +39,8 @@ let validacion_compeA = document.querySelector("#validacionA");
 ///#################### Instancia de los campos de fecha y hora ##########################
 let inicioPicker = document.getElementById("inicioDateTimePicker");
 let finalPicker = document.getElementById("finalDateTimePicker");
+let inicioPickerA = document.getElementById("inicioDateTimePickerA");
+let finalPickerA = document.getElementById("finalDateTimePickerA");
 
 //https://www.codexworld.com/bootstrap-datetimepicker-add-date-time-picker-input-field/
 
@@ -52,6 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
   renderizarCompensatorios();
   //Configuración del DateTimePicker
   dateTimePicker(inicioPicker, finalPicker);
+  dateTimePicker(inicioPickerA, finalPickerA);
   //Evento de escucha para el boton de validar compensatorios
   //btnValidarCompensatorio.addEventListener("click", crearCompensatorio);
   clarearFormulario();
