@@ -4,56 +4,56 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"></script>
-    Iconos
-    <script src="https://kit.fontawesome.com/466dd068aa.js" crossorigin="anonymous"></script>-->
-
-    <!--Bootstrap 5.3 CSS -->
+    <!-- Iconos -->
+    <script src="https://kit.fontawesome.com/466dd068aa.js" crossorigin="anonymous"></script>
+    <!---->
+    <!--Bootstrap 5.3 CSS 
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
-    />
-    <!--Iconos-->
+    />-->
+    <!--Iconos
 
     <script
       src="https://kit.fontawesome.com/466dd068aa.js"
       crossorigin="anonymous"
-    ></script>
+    ></script>-->
 
-    <!--JQuery-->
+    <!--JQuery
     <script
       src="https://code.jquery.com/jquery-3.7.1.js"
       integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
       crossorigin="anonymous"
-    ></script>
+    ></script>-->
 
-    <!--Bootstrap 5.3 JS -->
+    <!--Bootstrap 5.3 JS 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
-    ></script>
-    <!-- Popperjs -->
+    ></script>-->
+    <!-- Popperjs 
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
       integrity="sha256-BRqBN7dYgABqtY9Hd4ynE+1slnEw+roEPFzQ7TRRfcg="
       crossorigin="anonymous"
-    ></script>
-    <!-- Tempus Dominus JavaScript -->
+    ></script>-->
+    <!-- Tempus Dominus JavaScript 
     <script
       src="https://cdn.jsdelivr.net/npm/@eonasdan/tempus-dominus@6.9.4/dist/js/tempus-dominus.min.js"
       crossorigin="anonymous"
-    ></script>
+    ></script>-->
 
-    <!-- Tempus Dominus Styles -->
+    <!-- Tempus Dominus Styles 
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@eonasdan/tempus-dominus@6.9.4/dist/css/tempus-dominus.min.css"
@@ -61,7 +61,8 @@
     />
 
     <script src="https://cdn.jsdelivr.net/npm/@floating-ui/core@1.6.2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.5"></script>-->
+    
   </head>
   <body>
     <div class="container card p-3 m-3 shadow-sm">
@@ -338,9 +339,9 @@
 
     <script>
       //import {computePosition} from 'https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.5/+esm';
-      /*$(document).ready(function() {
+      $(document).ready(function() {
             $('#datetimepicker').datetimepicker({
-                format: 'DD-MM-YYYY HH:mm', // Change this format as needed
+              format: "DD/MM/yyyy hh:mm A",
                 icons: {
                     time: 'fa fa-clock',
                     date: 'fa fa-calendar',
@@ -353,11 +354,11 @@
                     close: 'fa fa-times'
                 }
             });
-        });*/
+        });
 
       //const picker = new tempusDominus.TempusDominus(document.getElementById('datetimepicker1'));
 
-      new tempusDominus.TempusDominus(
+      /*new tempusDominus.TempusDominus(
         document.getElementById("datetimepicker1"),
         {
           display: {
