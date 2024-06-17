@@ -26,3 +26,6 @@
 
     <script type="text/javascript" src="<?= media();?>/js/functions_admin.js"></script>
     <script src="<?= media(); ?>/js/<?= $data['page_functions_js']; ?>"></script>
+
+    <!-- Tempus Dominus - DateTimePicker - JS-->
+    <script type="text/javascript" src="<?= media();?>/js/tempus-dominus.min.js"></script>

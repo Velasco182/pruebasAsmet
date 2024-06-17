@@ -13,6 +13,9 @@
     <link rel="stylesheet" type="text/css" href="<?= media(); ?>/css/main.css">
     <link rel="stylesheet" type="text/css" href="<?= media();?>/css/bootstrap-select.min.css"> 
     <link rel="stylesheet" type="text/css" href="<?= media(); ?>/css/style.css">
+
+    <!-- Tempus Dominus - DateTimePicker - CSS -->
+    <link rel="stylesheet" type="text/css" href="<?= media(); ?>/css/tempus-dominus.min.css">
     
   </head>
   <body class="app sidebar-mini sidenav-toggled pace-done">

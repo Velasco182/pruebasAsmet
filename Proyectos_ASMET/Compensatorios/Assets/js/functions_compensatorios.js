@@ -1,13 +1,19 @@
 let tableCompensatorios;
 let rowTable = ""; 
 let divLoading = document.querySelector("#divLoading");
+
+let inicioPicker = document.querySelector('#txtFechaInicio');
+let finalPicker = document.querySelector('#txtFechaFin');
+
 document.addEventListener('DOMContentLoaded', function(){
+
+    ftnDateTimePickerConfiguration(inicioPicker, finalPicker);
 
     tableCompensatorios = $('#tableCompensatorios').dataTable({
         "aProcessing":true,
         "aServerSide":true,
         "language": {
-            "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
+            "url": "././Assets/js/spanish.json"
         },
         "ajax":{
             "url": " "+base_url+"/Compensatorios/getCompensatorios",
@@ -60,8 +66,8 @@ document.addEventListener('DOMContentLoaded', function(){
            
             e.preventDefault();
             
-            let strFechaInicio = document.querySelector('#txtFechaInicio').value;
-            let strFechaFin = document.querySelector('#txtFechaFin').value;
+            let strFechaInicio = inicioPicker.value;
+            let strFechaFin = finalPicker.value;
             let strDescripcionActividad = document.querySelector('#txtDescripcionActividad').value;
             let strActividad = document.querySelector('#txtActividad').value;
             let ListadoUsuarios = document.querySelector('#ListaUsuarios').value;
@@ -111,59 +117,145 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 },false);
 
-// Función para validar las fechas de inicio y fin
-// function validateDates() {
-//     var fechaInicio = new Date(document.getElementById('txtFechaInicio').value);
-//     var fechaFin = new Date(document.getElementById('txtFechaFin').value);
+/*// Función para validar las fechas de inicio y fin
+ function validateDates() {
+     var fechaInicio = new Date(document.getElementById('txtFechaInicio').value);
+     var fechaFin = new Date(document.getElementById('txtFechaFin').value);
 
-//     if (fechaInicio > fechaFin) {
-//         alert("La fecha de inicio debe ser igual o menor a la fecha de fin.");
-//         return false;
-//     }
+     if (fechaInicio > fechaFin) {
+         alert("La fecha de inicio debe ser igual o menor a la fecha de fin.");
+         return false;
+     }
 
-//     return true;
-// }
+     return true;
+ }
 
-// Validacion fecha y horas
-// document.addEventListener("DOMContentLoaded", function () {
-//     const txtFechaInicio = document.getElementById("txtFechaInicio");
-//     const txtFechaFin = document.getElementById("txtFechaFin");
-//     const formulario = document.getElementById("tuFormulario"); // Reemplaza "tuFormulario" con el ID de tu formulario
+ Validacion fecha y horas
+ document.addEventListener("DOMContentLoaded", function () {
+     const txtFechaInicio = document.getElementById("txtFechaInicio");
+     const txtFechaFin = document.getElementById("txtFechaFin");
+     const formulario = document.getElementById("tuFormulario"); // Reemplaza "tuFormulario" con el ID de tu formulario
 
-//     txtFechaInicio.addEventListener("input", validateDateTime);
-//     txtFechaFin.addEventListener("input", validateDateTime);
+     txtFechaInicio.addEventListener("input", validateDateTime);
+     txtFechaFin.addEventListener("input", validateDateTime);
 
-//     function validateDateTime() {
-//         const fechaInicio = new Date(txtFechaInicio.value);
-//         const fechaFin = new Date(txtFechaFin.value);
+     function validateDateTime() {
+         const fechaInicio = new Date(txtFechaInicio.value);
+         const fechaFin = new Date(txtFechaFin.value);
+         if (fechaInicio.getTime() === fechaFin.getTime()) {
+             txtFechaInicio.setCustomValidity("Las horas no pueden ser las mismas");
+         } else if (fechaInicio >= fechaFin) {
+             txtFechaInicio.setCustomValidity("La fecha de inicio debe ser mayor a la fecha fin");
+         } else if (fechaInicio.getHours() === fechaFin.getHours() && fechaInicio.getMinutes() === fechaFin.getMinutes()) {
+             txtFechaInicio.setCustomValidity("La fecha fin no puede ser mayor a la fecha de inicio");
+         } else {
+             txtFechaInicio.setCustomValidity("");
+             validateHours();
+         }
+     }
 
-//         if (fechaInicio.getTime() === fechaFin.getTime()) {
-//             txtFechaInicio.setCustomValidity("Las horas no pueden ser las mismas");
-//         } else if (fechaInicio >= fechaFin) {
-//             txtFechaInicio.setCustomValidity("La fecha de inicio debe ser mayor a la fecha fin");
-//         } else if (fechaInicio.getHours() === fechaFin.getHours() && fechaInicio.getMinutes() === fechaFin.getMinutes()) {
-//             txtFechaInicio.setCustomValidity("La fecha fin no puede ser mayor a la fecha de inicio");
-//         } else {
-//             txtFechaInicio.setCustomValidity("");
-//             validateHours();
-//         }
-//     }
+     // Validacion horas
+     function validateHours() {
+         const horaInicio = new Date(txtFechaInicio.value);
+         const horaFin = new Date(txtFechaFin.value);
 
-//     // Validacion horas
-//     function validateHours() {
-//         const horaInicio = new Date(txtFechaInicio.value);
-//         const horaFin = new Date(txtFechaFin.value);
+         if (horaInicio.getHours() >= horaFin.getHours() || (horaInicio.getHours() === horaFin.getHours() && horaInicio.getMinutes() >= horaFin.getMinutes())) {
+             txtFechaInicio.setCustomValidity("La hora de inicio debe ser anterior a la hora de fin.");
+         } else {
+             txtFechaInicio.setCustomValidity("");
+             if (fechaInicio >= fechaFin) {
+                 formulario.submit(); // Envía el formulario si fechaInicio es mayor o igual a fechaFin
+             }
+         }
+     }
+ });*/
 
-//         if (horaInicio.getHours() >= horaFin.getHours() || (horaInicio.getHours() === horaFin.getHours() && horaInicio.getMinutes() >= horaFin.getMinutes())) {
-//             txtFechaInicio.setCustomValidity("La hora de inicio debe ser anterior a la hora de fin.");
-//         } else {
-//             txtFechaInicio.setCustomValidity("");
-//             if (fechaInicio >= fechaFin) {
-//                 formulario.submit(); // Envía el formulario si fechaInicio es mayor o igual a fechaFin
-//             }
-//         }
-//     }
-// });
+function ftnDateTimePickerConfiguration(inicio, final){
+    //new tempusDominus.TempusDominus(inicio);
+    //new tempusDominus.TempusDominus(final);
+    let configuracionPicker = {
+      localization: {
+        // T
+        format: "dd/MM/yyyy hh:mm T",
+        locale: 'es-CO'
+        //format: form,
+      },
+      display: {
+        icons: {
+          type: "icons",
+          time: "fa-regular fa-clock fa-lg",
+          date: "fa-solid fa-calendar-plus",
+          up: "fa-solid fa-caret-up",
+          down: "fa-solid fa-caret-down",
+          previous: "fa-solid fa-angles-left",
+          next: "fa-solid fa-angles-right",
+          today: "fa-solid fa-calendar-check",
+          clear: "fa-solid fa-trash",
+          close: "fa-solid fa-xmark",
+        },
+        sideBySide: false,
+        calendarWeeks: false,
+        viewMode: "calendar",
+        toolbarPlacement: "bottom",
+        keepOpen: false,
+        buttons: {
+          today: true,
+          clear: true,
+          close: true,
+        },
+        components: {
+          calendar: true,
+          date: true,
+          month: true,
+          year: true,
+          decades: true,
+          clock: true,
+          hours: true,
+          minutes: true,
+          seconds: false,
+          //deprecated use localization.hourCycle = 'h24' instead
+          useTwentyfourHour: undefined,
+        },
+        inline: false,
+        theme: "light",
+      },
+    };
+  
+    //tempusDominus.extend(tempusDominus.plugins.moment_parse, 'dd/MM/yyyy hh:mm A');
+  
+    let inicioP = new tempusDominus.TempusDominus(inicio, configuracionPicker);
+  
+    let finalP = new tempusDominus.TempusDominus(
+      final,
+      configuracionPicker /*{
+     
+      useCurrent: false,
+      
+    }*/
+    );
+  
+  
+    //using event listeners
+    inicio.addEventListener(tempusDominus.Namespace.events.change, (e) => {
+      finalP.updateOptions({
+        restrictions: {
+          minDate: e.detail.date,
+        },
+      });
+    });
+  
+    //using subscribe method
+    const subscription = finalP.subscribe(
+      tempusDominus.Namespace.events.change,
+      (e) => {
+        inicioP.updateOptions({
+          restrictions: {
+            maxDate: e.date,
+          },
+        });
+      }
+    );
+};
 
 
 

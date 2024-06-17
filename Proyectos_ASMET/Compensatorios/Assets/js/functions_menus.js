@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function(){
 		"aProcessing":true,
 		"aServerSide":true,
         "language": {
-        	"url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
+        	"url": "././Assets/js/spanish.json"
         },
         "ajax":{
             "url": " "+base_url+"/Menus/getMenus",

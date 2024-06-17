@@ -1,6 +1,6 @@
 <?php 
 	//definir la constante para la ruta de la aplicacion
-	const BASE_URL = "http://localhost/test/Compensatorios/Compensatorios";
+	const BASE_URL = "http://localhost/sena/Proyectos_ASMET/Compensatorios";
 
 	//Datos de conexión a Base de Datos
 	const DB_HOST = "172.16.0.178";

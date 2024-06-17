@@ -24,16 +24,31 @@
               </div>
               <div class="form-row"> 
               </div>
-              <div class="form-row">
+              <div id="htmlTarget" class="form-row">
                 <div class="form-group col-md-6">
                   <label for="txtFechaInicio">Fecha y hora de inicio</label>
-                  <input type="datetime-local" class="form-control" id="txtFechaInicio" name="txtFechaInicio" required
-                    autocomplete="off">
+                  <div class="input-group input-append date" id="inicioDateTimePicker" data-td-target-input="nearest"
+                                data-td-target-toggle="nearest">
+                                
+                    <input id="txtFechaInicio" type="text" class="form-control was-validated" data-td-target="#inicioDateTimePicker" 
+                    placeholder="Inicio" required/>
+                        <span class="input-group-text" data-td-target="#inicioDateTimePicker" data-td-toggle="datetimepicker">
+                            <i class="fa-regular fa-calendar-days"></i>
+                        </span>
+                  </div>
                 </div>
+
                 <div class="form-group col-md-6">
                   <label for="txtFechaFin">Fecha y hora final</label>
-                  <input type="datetime-local" class="form-control" id="txtFechaFin" name="txtFechaFin" required
-                    autocomplete="off">
+                  <div class="input-group input-append date" id="finalDateTimePicker" data-td-target-input="nearest"
+                                data-td-target-toggle="nearest">
+                                
+                    <input id="txtFechaFin" type="text" class="form-control was-validated" data-td-target="#finalDateTimePicker" 
+                    placeholder="Final" required/>
+                        <span class="input-group-text" data-td-target="#finalDateTimePicker" data-td-toggle="datetimepicker">
+                            <i class="fa-regular fa-calendar-days"></i>
+                        </span>
+                  </div>
                 </div>
               </div>
               <div class="form-row">
