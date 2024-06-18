@@ -350,9 +350,11 @@ class Compensatorios extends Controllers{
 				// $arrData[$i]['COM_FECHA_INICIO']=formatearFechaYHora($arrData[$i]['COM_FECHA_INICIO'],"d/m/Y - h:i A");
 				// $arrData[$i]['COM_FECHA_FIN']=formatearFechaYHora($arrData[$i]['COM_FECHA_FIN'],"d/m/Y - h:i A");
 
-				$arrData['COM_FECHA_INICIO']=formatearFechaYHora($arrData['COM_FECHA_INICIO'],"Y-m-d\TH:i");
-				$arrData['COM_FECHA_FIN']=formatearFechaYHora($arrData['COM_FECHA_FIN'],"Y-m-d\TH:i");
-
+				///d/m/Y - h:i A
+				/*$arrData['COM_FECHA_INICIO']=formatearFechaYHora($arrData['COM_FECHA_INICIO'],"Y-m-d\TH:i");
+				$arrData['COM_FECHA_FIN']=formatearFechaYHora($arrData['COM_FECHA_FIN'],"Y-m-d\TH:i");*/
+				$arrData['COM_FECHA_INICIO']=formatearFechaYHora($arrData['COM_FECHA_INICIO'],"d/m/Y h:i A");
+				$arrData['COM_FECHA_FIN']=formatearFechaYHora($arrData['COM_FECHA_FIN'],"d/m/Y h:i A");
 				// var_dump($arrData);
 				
 				if (empty($arrData)) {
