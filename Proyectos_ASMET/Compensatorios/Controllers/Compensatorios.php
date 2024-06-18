@@ -107,7 +107,19 @@ class Compensatorios extends Controllers{
 	// 	}
 	// 	echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
 	// }
+	public function parseToDB($fecha){
 	
+		// Format the date string before passing to strtotime()
+		$formattedDateTime = DateTime::createFromFormat('d/m/Y h:i A', $fecha);
+		$formattedDateString = $formattedDateTime->format('Y/m/d H:i:s');
+		//
+		$unixTimestamp = strtotime($formattedDateString);
+		// Use the formatted Unix timestamp for further processing
+		$strFecha = date('Y/m/d H:i:s', $unixTimestamp);
+
+		return $strFecha;
+
+	}
 
 	public function setCompensatorio() {
 		if ($_POST) {
@@ -128,8 +140,11 @@ class Compensatorios extends Controllers{
 					$strActividad = mb_convert_case(strClean($_POST['txtActividad']), MB_CASE_TITLE, "UTF-8");
 					$strTrabajoRequerido = mb_convert_case(strClean($_POST['txtTrabajoRequerido']), MB_CASE_TITLE, "UTF-8");
 					$intEstado = intval(strClean($_POST['txtEstado']));
-					$strFechaInicio = date('Y-m-d H:i:s', strtotime($txtFechaInicio));
-					$strFechaFin = date('Y-m-d H:i:s', strtotime($txtFechaFin));
+	
+					//Parseo en el back para datetimepicker
+					$strFechaInicio = Compensatorios::parseToDB($txtFechaInicio);
+					$strFechaFin = Compensatorios::parseToDB($txtFechaFin);
+
 					$ListadoUsuarios = intval(strClean($_POST['ListaUsuarios']));
 	
 					$arrData = $this->model->recuperar($ListadoUsuarios); // Recuperar los datos insertados
@@ -206,9 +221,8 @@ class Compensatorios extends Controllers{
 			}
 		}
 		echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
+
 	}
-	
-	
 
 	public function getCompensatorios(){
 		if($_SESSION['permisosMod']['PER_R']){

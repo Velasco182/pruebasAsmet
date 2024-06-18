@@ -24,31 +24,55 @@
               </div>
               <div class="form-row"> 
               </div>
-              <div id="htmlTarget" class="form-row">
+              <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="txtFechaInicio">Fecha y hora de inicio</label>
-                  <div class="input-group input-append date" id="inicioDateTimePicker" data-td-target-input="nearest"
-                                data-td-target-toggle="nearest">
-                                
-                    <input id="txtFechaInicio" type="text" class="form-control was-validated" data-td-target="#inicioDateTimePicker" 
-                    placeholder="Inicio" required/>
-                        <span class="input-group-text" data-td-target="#inicioDateTimePicker" data-td-toggle="datetimepicker">
-                            <i class="fa-regular fa-calendar-days"></i>
-                        </span>
-                  </div>
+                  <div
+                      class="input-group date"
+                      id="datetimepickerInicio"
+                      data-target-input="nearest"
+                    >
+                      <input
+                        id="txtFechaInicio"
+                        name="txtFechaInicio"
+                        type="text"
+                        class="form-control datetimepicker-input"
+                        data-target="#datetimepickerInicio"
+                        data-toggle="datetimepicker" required  autocomplete="off"
+                      />
+                      <div
+                        class="input-group-append"
+                        data-target="#datetimepickerInicio"
+                        data-toggle="datetimepicker"
+                      >
+                        <div class="input-group-text"><i class="fa fa-calendar fa-lg"></i></div>
+                      </div>
+                    </div>
                 </div>
 
                 <div class="form-group col-md-6">
                   <label for="txtFechaFin">Fecha y hora final</label>
-                  <div class="input-group input-append date" id="finalDateTimePicker" data-td-target-input="nearest"
-                                data-td-target-toggle="nearest">
-                                
-                    <input id="txtFechaFin" type="text" class="form-control was-validated" data-td-target="#finalDateTimePicker" 
-                    placeholder="Final" required/>
-                        <span class="input-group-text" data-td-target="#finalDateTimePicker" data-td-toggle="datetimepicker">
-                            <i class="fa-regular fa-calendar-days"></i>
-                        </span>
-                  </div>
+                  <div
+                      class="input-group date"
+                      id="datetimepickerFinal"
+                      data-target-input="nearest"
+                    >
+                      <input
+                        id="txtFechaFin"
+                        name="txtFechaFin"
+                        type="text"
+                        class="form-control datetimepicker-input"
+                        data-target="#datetimepickerFinal"
+                        data-toggle="datetimepicker" required autocomplete="off"
+                      />
+                      <div
+                        class="input-group-append"
+                        data-target="#datetimepickerFinal"
+                        data-toggle="datetimepicker"
+                      >
+                        <div class="input-group-text"><i class="fa fa-calendar fa-lg"></i></div>
+                      </div>
+                    </div>
                 </div>
               </div>
               <div class="form-row">

@@ -28,4 +28,5 @@
     <script src="<?= media(); ?>/js/<?= $data['page_functions_js']; ?>"></script>
 
     <!-- Tempus Dominus - DateTimePicker - JS-->
-    <script type="text/javascript" src="<?= media();?>/js/tempus-dominus.min.js"></script>
+    <script type="text/javascript" src="<?= media();?>/js//moment-with-locales.min.js"></script>
+    <script type="text/javascript" src="<?= media();?>/js/tempusdominus-bootstrap-4.min.js"></script>

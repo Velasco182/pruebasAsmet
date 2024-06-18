@@ -2,12 +2,9 @@ let tableCompensatorios;
 let rowTable = ""; 
 let divLoading = document.querySelector("#divLoading");
 
-let inicioPicker = document.querySelector('#txtFechaInicio');
-let finalPicker = document.querySelector('#txtFechaFin');
-
 document.addEventListener('DOMContentLoaded', function(){
 
-    ftnDateTimePickerConfiguration(inicioPicker, finalPicker);
+    ftnDateTimePickerConfiguration();
 
     tableCompensatorios = $('#tableCompensatorios').dataTable({
         "aProcessing":true,
@@ -66,13 +63,16 @@ document.addEventListener('DOMContentLoaded', function(){
            
             e.preventDefault();
             
-            let strFechaInicio = inicioPicker.value;
-            let strFechaFin = finalPicker.value;
+            let strFechaInicio = document.querySelector('#txtFechaInicio').value;
+            let strFechaFin = document.querySelector('#txtFechaFin').value;
             let strDescripcionActividad = document.querySelector('#txtDescripcionActividad').value;
             let strActividad = document.querySelector('#txtActividad').value;
             let ListadoUsuarios = document.querySelector('#ListaUsuarios').value;
             let strTrabajoRequerido = document.querySelector('#txtTrabajoRequerido').value;
             let intEstado = document.querySelector('#txtEstado').value;
+
+            let compensatorio = {strFechaInicio, strFechaFin, strDescripcionActividad, strActividad, ListadoUsuarios, strTrabajoRequerido, intEstado};
+            console.table(compensatorio);
     
             if(strFechaInicio == '' || strFechaFin == '' || strDescripcionActividad == '' || strActividad == '' || ListadoUsuarios == '' || strTrabajoRequerido == '' || intEstado == ''){
                 swal("Atención", "Todos los campos son obligatorios." , "error");
@@ -104,6 +104,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             tableCompensatorios.api().ajax.reload();
                         }
                         $('#modalFormCompensatorio').modal("hide");
+
                         formUsuario.reset();
                         swal("Usuario", objData.msg ,"success");
                     }else{
@@ -170,91 +171,57 @@ document.addEventListener('DOMContentLoaded', function(){
      }
  });*/
 
-function ftnDateTimePickerConfiguration(inicio, final){
-    //new tempusDominus.TempusDominus(inicio);
-    //new tempusDominus.TempusDominus(final);
-    let configuracionPicker = {
-      localization: {
-        // T
-        format: "dd/MM/yyyy hh:mm T",
-        locale: 'es-CO'
-        //format: form,
-      },
-      display: {
-        icons: {
-          type: "icons",
-          time: "fa-regular fa-clock fa-lg",
-          date: "fa-solid fa-calendar-plus",
-          up: "fa-solid fa-caret-up",
-          down: "fa-solid fa-caret-down",
-          previous: "fa-solid fa-angles-left",
-          next: "fa-solid fa-angles-right",
-          today: "fa-solid fa-calendar-check",
-          clear: "fa-solid fa-trash",
-          close: "fa-solid fa-xmark",
-        },
-        sideBySide: false,
-        calendarWeeks: false,
-        viewMode: "calendar",
-        toolbarPlacement: "bottom",
-        keepOpen: false,
-        buttons: {
-          today: true,
-          clear: true,
-          close: true,
-        },
-        components: {
-          calendar: true,
-          date: true,
-          month: true,
-          year: true,
-          decades: true,
-          clock: true,
-          hours: true,
-          minutes: true,
-          seconds: false,
-          //deprecated use localization.hourCycle = 'h24' instead
-          useTwentyfourHour: undefined,
-        },
-        inline: false,
-        theme: "light",
-      },
-    };
-  
-    //tempusDominus.extend(tempusDominus.plugins.moment_parse, 'dd/MM/yyyy hh:mm A');
-  
-    let inicioP = new tempusDominus.TempusDominus(inicio, configuracionPicker);
-  
-    let finalP = new tempusDominus.TempusDominus(
-      final,
-      configuracionPicker /*{
-     
-      useCurrent: false,
-      
-    }*/
-    );
-  
-  
-    //using event listeners
-    inicio.addEventListener(tempusDominus.Namespace.events.change, (e) => {
-      finalP.updateOptions({
-        restrictions: {
-          minDate: e.detail.date,
-        },
-      });
-    });
-  
-    //using subscribe method
-    const subscription = finalP.subscribe(
-      tempusDominus.Namespace.events.change,
-      (e) => {
-        inicioP.updateOptions({
-          restrictions: {
-            maxDate: e.date,
-          },
+
+ /////////
+
+function ftnDateTimePickerConfiguration(){
+
+    let inicio = document.querySelector('#datetimepickerInicio');
+    let final = document.querySelector('#datetimepickerFinal');
+
+    $(document).ready(function() {
+
+        let timePickerConfiguration = {
+        
+            format: "DD/MM/yyyy hh:mm A",
+            locale: moment.locale('es-mx'),
+            buttons:{
+                showToday: true,
+                showClear: true,
+                showClose: true
+            },
+            icons: {
+                time: "fa fa-clock fa-lg",
+                date: "fa fa-calendar-plus fa-lg",
+                up: "fa fa-caret-up fa-lg",
+                down: "fa fa-caret-down fa-lg",
+                previous: "fa fa-chevron-left",
+                next: "fa fa-chevron-right",
+                today: "fa fa-calendar-check",
+                clear: "fa fa-trash",
+                close: "fa fa-xmark",
+            }
+              
+        };
+
+        // Crea una copia del objeto de configuración
+        let finalTimePickerConfiguration = Object.assign({}, timePickerConfiguration);
+        // Agrega el campo dinámico a la copia
+        finalTimePickerConfiguration['useCurrent'] = false;
+
+        $(inicio).datetimepicker(timePickerConfiguration);
+        // Aplica la configuración modificada al datetimepicker
+        $(final).datetimepicker(finalTimePickerConfiguration);
+
+        $(inicio).on("change.datetimepicker", function(e){
+            $(final).datetimepicker('minDate', e.date);
         });
-      }
-    );
+        
+        $(final).on("change.datetimepicker", function(e){
+            $(inicio).datetimepicker('maxDate', e.date);
+        });
+
+    });
 };
 
 
