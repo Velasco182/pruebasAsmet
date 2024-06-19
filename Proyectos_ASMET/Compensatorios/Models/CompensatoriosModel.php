@@ -18,8 +18,8 @@ class CompensatoriosModel extends Oracle{
                 
 			$this->strFechaInicio = $COM_FECHA_INICIO;
 			$this->strFechaFin = $COM_FECHA_FIN;
-			$this->strDescripcionActividad = $COM_ACTIVIDAD_DESARROLLAR;
-			$this->strActividad = $COM_DESCRIPCION_ACTIVIDAD;
+			$this->strActividad = $COM_ACTIVIDAD_DESARROLLAR;
+			$this->strDescripcionActividad = $COM_DESCRIPCION_ACTIVIDAD;
 			// $this->ListadoUsuarios = $ID_FUNCIONARIO;
 			$this->ListadoUsuarios = $COM_USUARIOS;
 			$this->intEstado = $COM_ESTADO;
@@ -63,8 +63,8 @@ class CompensatoriosModel extends Oracle{
 				'ID_FUNCIONARIO' => $idFuncionario, // Usar el ID del funcionario
         		'COM_FECHA_INICIO' => $this->strFechaInicio,
         		'COM_FECHA_FIN' => $this->strFechaFin,
-				'COM_ACTIVIDAD_DESARROLLAR' => $this->strDescripcionActividad,
-        		'COM_DESCRIPCION_ACTIVIDAD' => $this->strActividad,
+				'COM_ACTIVIDAD_DESARROLLAR' => $this->strActividad,
+        		'COM_DESCRIPCION_ACTIVIDAD' => $this->strDescripcionActividad,
         		'COM_ESTADO' => $this->intEstado,
 				'ID_FUNCIONARIO'=>$this->ListadoUsuarios,
         		'COM_USUARIO_FINAL' => $this->strTrabajoRequerido
@@ -79,7 +79,7 @@ class CompensatoriosModel extends Oracle{
 			return $return; 
 		}
 
-		public function updateCompensatorio(int $intIdCompensatorio, string $fechainicio, string $fechafin, string  $descripcionactividad, string $actividad, string $usuario){
+		public function updateCompensatorio(int $intIdCompensatorio, string $fechainicio, string $fechafin, string $actividad, string  $descripcionactividad, string $usuario){
 
 
 			$this->intIdFuncionario = $intIdCompensatorio;
@@ -218,8 +218,8 @@ class CompensatoriosModel extends Oracle{
 				I.ID_FUNCIONARIO,
     			TO_CHAR(I.COM_FECHA_INICIO) AS COM_FECHA_INICIO,
     			TO_CHAR(I.COM_FECHA_FIN) AS COM_FECHA_FIN,
-    			I.COM_DESCRIPCION_ACTIVIDAD,
     			I.COM_ACTIVIDAD_DESARROLLAR,
+    			I.COM_DESCRIPCION_ACTIVIDAD,
     			I.COM_USUARIO_FINAL,
     			I.COM_ESTADO,
     			F.FUN_NOMBRES AS FUN_NOMBRES,
@@ -240,8 +240,8 @@ class CompensatoriosModel extends Oracle{
 			I.ID_FUNCIONARIO,
 			TO_CHAR(I.COM_FECHA_INICIO) AS COM_FECHA_INICIO,
 			TO_CHAR(I.COM_FECHA_FIN) AS COM_FECHA_FIN,
-			I.COM_DESCRIPCION_ACTIVIDAD,
 			I.COM_ACTIVIDAD_DESARROLLAR,
+			I.COM_DESCRIPCION_ACTIVIDAD,
 			I.COM_USUARIO_FINAL,
 			I.COM_ESTADO,
 			F.FUN_NOMBRES AS FUN_NOMBRES,
@@ -268,8 +268,8 @@ class CompensatoriosModel extends Oracle{
 				I.ID_FUNCIONARIO,
 				TO_CHAR(I.COM_FECHA_INICIO, 'DD/MM/YYYY - HH:MI AM') AS COM_FECHA_INICIO,
 				TO_CHAR(I.COM_FECHA_FIN, 'DD/MM/YYYY - HH:MI AM') AS COM_FECHA_FIN,
-				I.COM_DESCRIPCION_ACTIVIDAD,
 				I.COM_ACTIVIDAD_DESARROLLAR,
+				I.COM_DESCRIPCION_ACTIVIDAD,
 				I.COM_EVIDENCIAS,
 				I.COM_USUARIO_FINAL,
 				I.COM_ESTADO,

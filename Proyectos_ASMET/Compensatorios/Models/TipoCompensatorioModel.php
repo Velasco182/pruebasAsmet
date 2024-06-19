@@ -6,25 +6,25 @@ class TipoCompensatoriosModel extends Oracle{
 		parent::__construct();
 	}
 	
-	public function insertCompensatorio(
-		string $COM_FECHA_INICIO,
-		string $COM_FECHA_FIN,
-		string $COM_ACTIVIDAD_DESARROLLAR,
+	public function insertTipoCompensatorio(
+		string $TIP_COM_NOMBRE,
+		string $TIP_COM_DESCRIPCION
+		/*string $COM_ACTIVIDAD_DESARROLLAR,
 		string $COM_DESCRIPCION_ACTIVIDAD,
 		// string $ID_FUNCIONARIO,
 		string $COM_USUARIOS,
         string $COM_USUARIO_FINAL,
-		string $COM_ESTADO) {
+		string $COM_ESTADO*/) {
                 
-			$this->strFechaInicio = $COM_FECHA_INICIO;
-			$this->strFechaFin = $COM_FECHA_FIN;
-			$this->strDescripcionActividad = $COM_ACTIVIDAD_DESARROLLAR;
+			$this->strNombreTipoCompensatorio = $TIP_COM_NOMBRE;
+			$this->strDescripcionTipoCompensatorio = $TIP_COM_DESCRIPCION;
+			/*$this->strDescripcionActividad = $COM_ACTIVIDAD_DESARROLLAR;
 			$this->strActividad = $COM_DESCRIPCION_ACTIVIDAD;
 			// $this->ListadoUsuarios = $ID_FUNCIONARIO;
 			$this->ListadoUsuarios = $COM_USUARIOS;
 			$this->intEstado = $COM_ESTADO;
 				
-			$this->strTrabajoRequerido = $COM_USUARIO_FINAL;
+			$this->strTrabajoRequerido = $COM_USUARIO_FINAL;*/
 
 			$return = 0;
 
@@ -33,36 +33,20 @@ class TipoCompensatoriosModel extends Oracle{
 
 			// Tu consulta de inserción
 			$query_insert  = "
-			INSERT INTO BIG_COMPENSATORIOS
+			INSERT INTO BIG_TIPO_COMPENSATORIO
 			(
-				ID_FUNCIONARIO,
-				COM_FECHA_INICIO,
-				COM_FECHA_FIN,
-				COM_ACTIVIDAD_DESARROLLAR,
-        		COM_DESCRIPCION_ACTIVIDAD,
-        		COM_ESTADO,
-        		COM_USUARIO_FINAL
+				TIP_COM_NOMBRE,
+				TIP_COM_DESCRIPCION
 			) 
 			VALUES
 			(
-				:ID_FUNCIONARIO,
-        		TO_TIMESTAMP(:COM_FECHA_INICIO, 'YYYY/MM/DD HH24:MI:SS'),
-        		TO_TIMESTAMP(:COM_FECHA_FIN, 'YYYY/MM/DD HH24:MI:SS'),
-				:COM_ACTIVIDAD_DESARROLLAR,
-        		:COM_DESCRIPCION_ACTIVIDAD,
-        		:COM_ESTADO,
-        		:COM_USUARIO_FINAL
+				:TIP_COM_NOMBRE,
+				:TIP_COM_DESCRIPCION
 			)";
 
 			$arrData = array(
-				'ID_FUNCIONARIO' => $idFuncionario, // Usar el ID del funcionario
-        		'COM_FECHA_INICIO' => $this->strFechaInicio,
-        		'COM_FECHA_FIN' => $this->strFechaFin,
-				'COM_ACTIVIDAD_DESARROLLAR' => $this->strDescripcionActividad,
-        		'COM_DESCRIPCION_ACTIVIDAD' => $this->strActividad,
-        		'COM_ESTADO' => $this->intEstado,
-				'ID_FUNCIONARIO'=>$this->ListadoUsuarios,
-        		'COM_USUARIO_FINAL' => $this->strTrabajoRequerido
+				'TIP_COM_NOMBRE' => $strNombreTipoCompensatorio, // Usar el ID del funcionario
+        		'TIP_COM_DESCRIPCION' => $this->strDescripcionTipoCompensatorio
 			);
 
 			$request_insert = $this->insert($query_insert, $arrData);
@@ -72,9 +56,9 @@ class TipoCompensatoriosModel extends Oracle{
 			$return = $request_insert;
 
 			return $return; 
-		}
+	}
 
-		public function updateCompensatorio(int $intIdCompensatorio, string $fechainicio, string $fechafin, string  $descripcionactividad, string $actividad, string $usuario){
+	public function updateCompensatorio(int $intIdCompensatorio, string $fechainicio, string $fechafin, string  $descripcionactividad, string $actividad, string $usuario){
 
 
 			$this->intIdFuncionario = $intIdCompensatorio;
@@ -116,7 +100,7 @@ class TipoCompensatoriosModel extends Oracle{
 			}
 			return $request;
 
-		}
+	}
 
 		// public function updateCompensatorio(int $ID_FUNCIONARIO, string $COM_FECHA_INICIO, string $COM_FECHA_FIN,
 		// 	string $COM_DESCRIPCION_ACTIVIDAD, string $COM_ACTIVIDAD_DESARROLLAR, string $COM_USUARIO_FINAL){
@@ -159,9 +143,9 @@ class TipoCompensatoriosModel extends Oracle{
 		// 	return $request;
 		// }
 
-		public function selectEdit(int $ID_COMPENSATORIO){
-			$this->intIdFuncionario = $ID_COMPENSATORIO;
-			$sql = "SELECT 
+	public function selectEdit(int $ID_COMPENSATORIO){
+		$this->intIdFuncionario = $ID_COMPENSATORIO;
+		$sql = "SELECT 
 				COM.ID_COMPENSATORIO,
 				COM.ID_FUNCIONARIO,
 				COM.COM_FECHA_FIN,
@@ -170,19 +154,19 @@ class TipoCompensatoriosModel extends Oracle{
 				COM.COM_USUARIO_FINAL,
 				COM.COM_DESCRIPCION_ACTIVIDAD,  
 				COM.COM_ACTIVIDAD_DESARROLLAR
-			FROM BIG_COMPENSATORIOS COM 
+		FROM BIG_COMPENSATORIOS COM 
 		
-			WHERE COM.ID_COMPENSATORIO = $this->intIdFuncionario
-			";
-			$request = $this->select($sql);
+		WHERE COM.ID_COMPENSATORIO = $this->intIdFuncionario
+";
+		$request = $this->select($sql);
 
 			// var_dump($request);
 			
-			return $request;
-		}
+		return $request;
+	}
 
-		public function recuperar($ID_FUNCIONARIO){
-			$sql = "SELECT
+	public function recuperar($ID_FUNCIONARIO){
+		$sql = "SELECT
 				FUN.ID_FUNCIONARIO,
 				FUN.FUN_NOMBRES || ' ' ||FUN.FUN_APELLIDOS NOMBREFUNCIONARIO,
 				FUN.FUN_CORREO,
@@ -200,7 +184,7 @@ class TipoCompensatoriosModel extends Oracle{
 			return $request;
 		}
 	
-		public function selectCompensatorios(int $ID_FUNCIONARIO) {
+		public function selectTipoCompensatorios(int $ID_FUNCIONARIO) {
 			$this->intIdUsuario = $ID_FUNCIONARIO;
 
 			$ROL_CODIGO = $_SESSION['userData']['ROL_CODIGO'];
@@ -255,7 +239,7 @@ class TipoCompensatoriosModel extends Oracle{
 		return $request; 
 	}
 		
-		public function selectCompensatorioVista(int $ID_COMPENSATORIO) {
+		public function selectTipoCompensatorioVista(int $ID_COMPENSATORIO) {
 			$this->intIdFuncionario = $ID_COMPENSATORIO;
 			$sql = "
 			SELECT

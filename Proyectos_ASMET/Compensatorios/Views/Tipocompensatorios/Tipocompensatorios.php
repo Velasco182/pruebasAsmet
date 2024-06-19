@@ -7,7 +7,7 @@
         <div>
           <h1><i class="fa <?=$data['page_icono']?>"></i> <?= $data['page_title'] ?>
             <?php if($_SESSION['permisosMod']['PER_W']){ ?>
-              <button class="btn btn-primary" type="button" onclick="openModal();" ><i class="fas fa-plus-circle"></i> Nuevo</button>
+              <button class="btn btn-primary" type="button" onclick="openModal();" ><i class="fas fa-plus-circle"></i>&nbsp;&nbsp;&nbsp;&nbsp;Nuevo</button>
             <?php } ?>
           </h1>
         </div>
@@ -21,14 +21,14 @@
               <div class="tile">
                 <div class="tile-body">
                   <div class="table-responsive">
-                    <table class="table table-hover table-bordered" id="tablePrestamos">
+                    <table class="table table-hover table-bordered" id="tableTipoCompensatorios">
                       <thead>
                         <tr>
-                          <th>Titulo Libro</th>
-                          <th>Usuario</th>
-                          <th>Fecha de Prestamo</th>
-                          <th>Fecha de Devolución</th>
-                          <th></th>
+                          <th>Titulo Compensatorio</th>
+                          <th>Descripcion</th>
+                          <!-- <th>Fecha de Prestamo</th>
+                          <th>Fecha de Devolución</th> -->
+                          <th>Acciones</th>
                         </tr>
                       </thead>
                     </table>

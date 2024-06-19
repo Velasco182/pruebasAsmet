@@ -132,7 +132,7 @@ class Compensatorios extends Controllers{
 				$txtFechaInicio = $_POST['txtFechaInicio'];
 				$txtFechaFin = $_POST['txtFechaFin'];
 	
-				if ($txtFechaInicio >= $txtFechaFin) {
+				if ($txtFechaInicio == $txtFechaFin) {
 					$arrResponse = array("status" => false, "msg" => 'Las horas no pueden ser las mismas');
 				} else {
 					$intIdCompensatorio = intval($_POST['idCompensatorio']);
@@ -157,8 +157,8 @@ class Compensatorios extends Controllers{
 							$request_user = $this->model->insertCompensatorio(
 								$strFechaInicio,
 								$strFechaFin,
-								$strDescripcionActividad,
 								$strActividad,
+								$strDescripcionActividad,
 								$ListadoUsuarios,
 								$strTrabajoRequerido,
 								$intEstado
@@ -171,8 +171,8 @@ class Compensatorios extends Controllers{
 								$intIdCompensatorio,
 								$strFechaInicio,
 								$strFechaFin,
-								$strDescripcionActividad,
 								$strActividad,
+								$strDescripcionActividad,
 								$strTrabajoRequerido
 							);
 							$option = 2; // Actualización
@@ -189,9 +189,12 @@ class Compensatorios extends Controllers{
 	
 							$txtFechaInicio = $_POST['txtFechaInicio'];
 							$txtFechaFin = $_POST['txtFechaFin'];
-	
-							$fechaInicioFormateada = date('d/m/Y - h:i A', strtotime($txtFechaInicio));
-							$fechaFinFormateada = date('d/m/Y - h:i A', strtotime($txtFechaFin));
+							//Parseo de la fecha
+							$fechaInicio = Compensatorios::parseToDB($txtFechaInicio);
+							$fechaFin = Compensatorios::parseToDB($txtFechaFin);
+							//Formato de fecha
+							$fechaInicioFormateada = date('d/m/Y - h:i A', strtotime($fechaInicio));
+							$fechaFinFormateada = date('d/m/Y - h:i A', strtotime($fechaFin));
 	
 							$datos = [
 								'FechaInicio' => $fechaInicioFormateada,
@@ -275,6 +278,7 @@ class Compensatorios extends Controllers{
 					$btnReset = ''; // Botón vacío si no se cumple la condición
 				}
 
+				//Revisar
 				if($_SESSION['permisosMod']['PER_R']){ // Icono de ver funcionario
 					if($arrData[$i]['COM_USUARIO_FINAL']!="1"){
 						$btnVer = '<button class="btn btn-info btn-sm btnViewFuncionario" onClick="fntViewFuncionario('.$arrData[$i]['ID_COMPENSATORIO'].')" title="Ver Funcionario"><i class="far fa-eye"></i></button>';
@@ -402,9 +406,10 @@ class Compensatorios extends Controllers{
 				if ($fechaInicioObj !== false && $fechaFinObj !== false) {
 					$intervalo = $fechaInicioObj->diff($fechaFinObj);
 					$diferenciaHoras = $intervalo->days * 24 + $intervalo->h;
+					$diferenciaMinutos = $intervalo->i;
 		
 					// Agregar la diferencia de horas al arreglo $arrData
-					$arrData['horasrealizadas'] = $diferenciaHoras . ' Horas';
+					$arrData['horasrealizadas'] = $diferenciaHoras . ' Horas y ' . $diferenciaMinutos . ' Minutos';
 		
 					// Preparar la respuesta
 					$arrResponse = array('status' => true, 'data' => $arrData);

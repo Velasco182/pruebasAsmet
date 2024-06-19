@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade" id="modalFormCompensatorio" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="modalTipocompensatorios" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-lg" >
     <div class="modal-content">
       <div class="modal-header headerRegister">
@@ -9,16 +9,16 @@
         </button>
       </div>
       <div class="modal-body">
-            <form id="formCompensatorio" name="formCompensatorio" class="form-horizontal">
-              <input type="hidden" id="idCompensatorio" name="idCompensatorio" value="">
+            <form id="formTipoCompensatorio" name="formTipoCompensatorio" class="form-horizontal">
+              <input type="hidden" id="idTipoCompensatorio" name="idTipoCompensatorio" value="">
               <!-- <input type="" id="idFuncionario" name="idFuncionario" value=""> -->
               <p class="text-primary">Todos los campos son obligatorios.</p>
 
               <div class="form-row" style="display:none;">
               
                 <div class="form-group col-md-6">
-                  <label for="txtCompensatorio">Compensatorio</label>
-                  <input type="text" class="form-control" id="txtCompensatorio" name="txtCompensatorio" required value="0" autocomplete="off">
+                  <label for="txtTipoCompensatorio">Compensatorio</label>
+                  <input type="text" class="form-control" id="txtTipoCompensatorio" name="txtTipoCompensatorio" required value="0" autocomplete="off">
                 </div>
                 
               </div>
@@ -26,17 +26,17 @@
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6">
-                  <label for="txtFechaInicio">Fecha y hora de inicio</label>
-                  <input type="datetime-local" class="form-control" id="txtFechaInicio" name="txtFechaInicio" required
+                  <label for="txtNombreTipoCompensatorio">Nombre del tipo de Compensatorio</label>
+                  <input type="text" class="form-control" id="txtNombreTipoCompensatorio" name="txtNombreTipoCompensatorio" required
                     autocomplete="off">
                 </div>
                 <div class="form-group col-md-6">
-                  <label for="txtFechaFin">Fecha y hora final</label>
-                  <input type="datetime-local" class="form-control" id="txtFechaFin" name="txtFechaFin" required
+                  <label for="txtDescripcionTipoCompensatorio">Descripción del tipo de Compensatorio</label>
+                  <input type="text" class="form-control" id="txtDescripcionTipoCompensatorio" name="txtDescripcionTipoCompensatorio" required
                     autocomplete="off">
                 </div>
               </div>
-              <div class="form-row">
+              <!-- <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="txtActividad">Actividad</label>
                   <input class="form-control" id="txtActividad" name="txtActividad" rows="4" cols="50" required autocomplete="off"></input>
@@ -63,23 +63,9 @@
                 <label for="txtEstado">Estado</label>
                 <input id="txtEstado" name="txtEstado" value="1">              
               </div>
-                <!-- <div class="form-group col-md-6">
-                  <label for="txtFechaEntrega">Fecha Final de Entrega</label>
-                  <input type="date" class="form-control" id="txtFechaEntrega" name="txtFechaEntrega" required
-                    autocomplete="off">
-                </div> -->
-                <!-- <div class="form-group col-md-6">
-                  <label for="">Label sin definicion</label>
-                  <input type="text" class="form-control" id="" name="" 
-                    autocomplete="off">
-                </div> -->
-                <!-- <div class="form-group col-md-6">
-                  <label for="txtJustificacion">Justificacion</label>
-                    <textarea class="form-control" id="txtJustificacion" name="txtJustificacion" rows="4" cols="50"></textarea>
-                </div> -->
-             </div>
+             </div> -->
               <div class="tile-footer">
-                <button id="btnActionForm" class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i><span id="btnText">Enviar solicitud</span></button>&nbsp;&nbsp;&nbsp;
+                <button id="btnActionForm" class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i><span id="btnText">Guardar</span></button>&nbsp;&nbsp;&nbsp;
                 <button class="btn btn-danger" type="button" data-dismiss="modal"><i class="fa fa-fw fa-lg fa-times-circle"></i>Cerrar</button>
               </div>
             </form>

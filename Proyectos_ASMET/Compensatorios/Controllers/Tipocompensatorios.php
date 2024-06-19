@@ -33,62 +33,57 @@ class Tipocompensatorios extends Controllers{
 	}
 
 	
-	public function setCompensatorio() {
+	public function setTipoCompensatorio() {
 		if ($_POST) {
 	
-			if ($_POST['txtFechaInicio'] == '' || $_POST['txtFechaFin'] == ''
-				|| $_POST['txtActividad'] == '' || $_POST['txtTrabajoRequerido'] == ''
-				|| $_POST['txtEstado'] == '' || $_POST['ListaUsuarios'] == '') {
+			if ($_POST['txtNombreTipoCompensatorio'] == '' || $_POST['txtDescripcionTipoCompensatorio'] == '') {
 				$arrResponse = array("status" => false, "msg" => 'Ingrese todos los datos.');
 			} else {
-				$txtFechaInicio = $_POST['txtFechaInicio'];
+				/*$txtFechaInicio = $_POST['txtFechaInicio'];
 				$txtFechaFin = $_POST['txtFechaFin'];
 	
 				if ($txtFechaInicio >= $txtFechaFin) {
 					$arrResponse = array("status" => false, "msg" => 'Las horas no pueden ser las mismas');
-				} else {
-					$intIdCompensatorio = intval($_POST['idCompensatorio']);
-					$strDescripcionActividad = mb_convert_case(strClean($_POST['txtDescripcionActividad']), MB_CASE_TITLE, "UTF-8");
-					$strActividad = mb_convert_case(strClean($_POST['txtActividad']), MB_CASE_TITLE, "UTF-8");
+				} else {*/
+					$intIdTipoCompensatorio = intval($_POST['idTipoCompensatorio']);
+					$strNombreTipoCompensatorio = mb_convert_case(strClean($_POST['txtNombreTipoCompensatorio']), MB_CASE_TITLE, "UTF-8");
+					$strDescripcionTipoCompensatorio = mb_convert_case(strClean($_POST['txtDescripcionTipoCompensatorio']), MB_CASE_TITLE, "UTF-8");
+					/*$strActividad = mb_convert_case(strClean($_POST['txtActividad']), MB_CASE_TITLE, "UTF-8");
 					$strTrabajoRequerido = mb_convert_case(strClean($_POST['txtTrabajoRequerido']), MB_CASE_TITLE, "UTF-8");
 					$intEstado = intval(strClean($_POST['txtEstado']));
 					$strFechaInicio = date('Y-m-d H:i:s', strtotime($txtFechaInicio));
-					$strFechaFin = date('Y-m-d H:i:s', strtotime($txtFechaFin));
+					$strFechaFin = date('Y-m-d H:i:s', strtotime($txtFechaFin));*/
 					$ListadoUsuarios = intval(strClean($_POST['ListaUsuarios']));
-	
-					$arrData = $this->model->recuperar($ListadoUsuarios); // Recuperar los datos insertados
+					// Recuperar los datos insertados
+					$arrData = $this->model->recuperar($ListadoUsuarios); 
 	
 					$request_user = 0;
 					$option = 0; // Agregado para definir la operación (0: no definida, 1: inserción, 2: actualización)
 	
-					if ($intIdCompensatorio == 0) {
+					if ($intIdTipoCompensatorio == 0) {
 						if ($_SESSION['permisosMod']['PER_W']) {
-							$request_user = $this->model->insertCompensatorio(
-								$strFechaInicio,
-								$strFechaFin,
-								$strDescripcionActividad,
-								$strActividad,
+							$request_user = $this->model->insertTipoCompensatorio(
+								$strNombreTipoCompensatorio,
+								$strDescripcionTipoCompensatorio,
 								$ListadoUsuarios,
-								$strTrabajoRequerido,
-								$intEstado
 							);
 							$option = 1; // Inserción
 						}
 					} else {
 						if ($_SESSION['permisosMod']['PER_U']) {
-							$request_user = $this->model->updateCompensatorio(
-								$intIdCompensatorio,
-								$strFechaInicio,
-								$strFechaFin,
-								$strDescripcionActividad,
+							$request_user = $this->model->updateTipoCompensatorio(
+								$intIdTipoCompensatorio,
+								$strNombreTipoCompensatorio,
+								$strDescripcionTipoCompensatorio,
+								/*$strDescripcionActividad,
 								$strActividad,
-								$strTrabajoRequerido
+								$strTrabajoRequerido*/
 							);
 							$option = 2; // Actualización
 						}
 					}
 	
-					if ($request_user > 0) {
+					/*if ($request_user > 0) {
 						if ($option == 1) {
 							// Bloque de envío de correo para inserción
 							$remitente = 'estivenmendez550@gmail.com';
@@ -126,7 +121,7 @@ class Tipocompensatorios extends Controllers{
 					} else {
 						$arrResponse = array("status" => false, "msg" => 'No es posible almacenar los datos.');
 					}
-				}
+				}*/
 			}
 		}
 		echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
@@ -134,12 +129,12 @@ class Tipocompensatorios extends Controllers{
 	
 	
 
-	public function getCompensatorios(){
+	public function getTipoCompensatorios(){
 		if($_SESSION['permisosMod']['PER_R']){
 
 			$ID_FUNCIONARIO = $_SESSION['userData']['ID_FUNCIONARIO']; // ID del funcionario que deseas mostrar
 			
-			$arrData = $this ->model->selectCompensatorios($ID_FUNCIONARIO);
+			$arrData = $this ->model->selectTipoCompensatorios($ID_FUNCIONARIO);
 			// Procesa $resultado para mostrar los compensatorios del funcionario
 
 			for ($i=0; $i < count($arrData); $i++) {
@@ -209,12 +204,6 @@ class Tipocompensatorios extends Controllers{
 					}
 				}
 				
-				
-				
-
-				
-				
-				
 				// if ($_SESSION['permisosMod']['PER_U']) { // Botón de aprobaciones
 				// 	if ($comEstado == 1) {
 				// 		$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="ftnAprobarCompensatorio(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Aprobar Compensatorio"><i class="fas fa-check-double"></i></button>';
@@ -222,7 +211,6 @@ class Tipocompensatorios extends Controllers{
 				// 		$btnAprobar = '';
 				// 	}
 				// }
-
 
 				if ($_SESSION['permisosMod']['PER_U'] && $_SESSION['permisosMod']['ID_ROL'] === '1') {
 					if ($comEstado == 1) {
@@ -234,7 +222,6 @@ class Tipocompensatorios extends Controllers{
 					$btnAprobar = '';
 				}
 				
-				
 				if ($_SESSION['permisosMod']['PER_D']) {
 					if ($comEstado == 1) {
 						$btnRechazar = '<button class="btn btn-danger btn-sm btnDelFuncionario" onClick="ftnRechazarCompensatorio(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Rechazar Compenstorio"><i class="fas fa-times-circle"></i></button>';
@@ -243,15 +230,13 @@ class Tipocompensatorios extends Controllers{
 					}
 				}
 				
-				
-				
 				$arrData[$i]['ACCIONES'] = '<div class="text-center">'.$btnVer.' '.$btnEdit.' '.$btnAprobar.' '.$btnRechazar.' '.$btnReset.' '.$btnCancelar.'</div>';
 			}
 			echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
 		}
 	}
 
-	public function editCompensatorio($ID_COMPENSATORIO) {
+	public function editTipoCompensatorio($ID_COMPENSATORIO) {
 		if ($_SESSION['permisosMod']['PER_R']) {
 			$ID_COMPENSATORIO = intval($ID_COMPENSATORIO);
 			if ($ID_COMPENSATORIO > 0) {

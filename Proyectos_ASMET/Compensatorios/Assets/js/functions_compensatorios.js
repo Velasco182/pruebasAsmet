@@ -21,8 +21,8 @@ document.addEventListener('DOMContentLoaded', function(){
             {"data":"FUN_APELLIDOS"},
             {"data":"COM_FECHA_INICIO"},
             {"data":"COM_FECHA_FIN"},
-            {"data":"COM_DESCRIPCION_ACTIVIDAD"},
             {"data":"COM_ACTIVIDAD_DESARROLLAR"},
+            {"data":"COM_DESCRIPCION_ACTIVIDAD"},
             {"data":"COM_USUARIO_FINAL"},
             {"data":"COM_ESTADO"},
             {"data":"ACCIONES"}
@@ -54,7 +54,13 @@ document.addEventListener('DOMContentLoaded', function(){
         "resonsieve":"true",
         "bDestroy": true,
         "iDisplayLength": 10,
-        "order":[[0,"asc"]]  
+        "order":[[2,"desc"]],
+        "columnDefs": [
+        {
+            "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8],
+            "orderable": false,
+            "className": "text-center",
+        }],  
     });
 
     if(document.querySelector("#formCompensatorio")){
@@ -223,8 +229,6 @@ function ftnDateTimePickerConfiguration(){
 
     });
 };
-
-
 
 function ftnAprobarCompensatorio(ID_COMPENSATORIO) { //Funcion para el boton de aprobacion
     swal({

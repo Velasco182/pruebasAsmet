@@ -30,7 +30,7 @@
                           <th>Apellidos</th>
                           <th>Fecha Inicio</th>
                           <th>Fecha Fin</th>
-                          <th>Actividad</th>
+                          <th>Tipo</th>
                           <th>Descripcion</th>
                           <th>¿Quien requiere?</th>
                           <!-- <th>¿Quien requiere el trabajo?</th> -->

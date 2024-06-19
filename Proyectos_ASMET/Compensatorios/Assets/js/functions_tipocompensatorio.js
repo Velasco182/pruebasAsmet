@@ -1,27 +1,22 @@
-let tableCompensatorios;
+let tableTipoCompensatorios;
 let rowTable = ""; 
 let divLoading = document.querySelector("#divLoading");
+
 document.addEventListener('DOMContentLoaded', function(){
 
-    tableCompensatorios = $('#tableCompensatorios').dataTable({
+    tableTipoCompensatorios = $('#tableTipoCompensatorios').dataTable({
         "aProcessing":true,
         "aServerSide":true,
         "language": {
             "url": "././Assets/js/spanish.json"
         },
         "ajax":{
-            "url": " "+base_url+"/Compensatorios/getCompensatorios",
+            "url": " "+base_url+"/Compensatorios/getTipoCompensatorios",
             "dataSrc":""
         },
         "columns":[
-            {"data":"FUN_NOMBRES"},
-            {"data":"FUN_APELLIDOS"},
-            {"data":"COM_FECHA_INICIO"},
-            {"data":"COM_FECHA_FIN"},
-            {"data":"COM_DESCRIPCION_ACTIVIDAD"},
-            {"data":"COM_ACTIVIDAD_DESARROLLAR"},
-            {"data":"COM_USUARIO_FINAL"},
-            {"data":"COM_ESTADO"},
+            {"data":"TIP_COM_NOMBRE"},
+            {"data":"TIP_COM_DESCRIPCION"},
             {"data":"ACCIONES"}
         ],
         'dom': 'lBfrtip',
@@ -54,21 +49,21 @@ document.addEventListener('DOMContentLoaded', function(){
         "order":[[0,"asc"]]  
     });
 
-    if(document.querySelector("#formCompensatorio")){
-        let formUsuario = document.querySelector("#formCompensatorio");
+    if(document.querySelector("#formTipoCompensatorio")){
+        let formUsuario = document.querySelector("#formTipoCompensatorio");
         formUsuario.onsubmit = function(e) {
            
             e.preventDefault();
             
-            let strFechaInicio = document.querySelector('#txtFechaInicio').value;
-            let strFechaFin = document.querySelector('#txtFechaFin').value;
-            let strDescripcionActividad = document.querySelector('#txtDescripcionActividad').value;
+            let strNombreTipoCompensatorio = document.querySelector('#txtNombreTipoCompensatorio').value;
+            let strDescripcionTipoCompensatorio = document.querySelector('#txtDescripcionTipoCompensatorio').value;
+            /*let strDescripcionActividad = document.querySelector('#txtNombreTipoCompensatorio').value;
             let strActividad = document.querySelector('#txtActividad').value;
             let ListadoUsuarios = document.querySelector('#ListaUsuarios').value;
             let strTrabajoRequerido = document.querySelector('#txtTrabajoRequerido').value;
-            let intEstado = document.querySelector('#txtEstado').value;
+            let intEstado = document.querySelector('#txtEstado').value;*/
     
-            if(strFechaInicio == '' || strFechaFin == '' || strDescripcionActividad == '' || strActividad == '' || ListadoUsuarios == '' || strTrabajoRequerido == '' || intEstado == ''){
+            if(strNombreTipoCompensatorio == '' || strDescripcionTipoCompensatorio == ''){
                 swal("Atención", "Todos los campos son obligatorios." , "error");
                 return false;
             }
@@ -82,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function(){
             } 
             divLoading.style.display = "flex";
             let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-            let ajaxUrl = base_url+'/Compensatorios/setCompensatorio'; 
+            let ajaxUrl = base_url+'/Compensatorios/setTipoCompensatorio'; 
             let formData = new FormData(formUsuario);
             
             request.open("POST",ajaxUrl,true);
@@ -97,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         }else{
                             tableCompensatorios.api().ajax.reload();
                         }
-                        $('#modalFormCompensatorio').modal("hide");
+                        $('#modalTipocompensatorios').modal("hide");
                         formUsuario.reset();
                         swal("Usuario", objData.msg ,"success");
                     }else{
@@ -393,22 +388,21 @@ function fntDelFuncionario(idfuncionario,estado){
 function openModal(){
     rowTable = "";
     // document.querySelector("#listRolid").innerHTML=""; // Lista de rol
-    document.querySelector('#idCompensatorio').value ="";
+    document.querySelector('#idTipoCompensatorio').value ="";
     document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
     document.querySelector('#btnActionForm').classList.replace("btn-info", "btn-primary");
-    document.querySelector('#btnText').innerHTML ="Enviar solicitud";
-    document.querySelector('#titleModal').innerHTML = "Nuevo Compensatorio";
-    document.querySelector("#formCompensatorio").reset();
+    document.querySelector('#btnText').innerHTML ="Enviar";
+    document.querySelector('#titleModal').innerHTML = "Nuevo Tipo Compensatorio";
+    document.querySelector("#formTipoCompensatorio").reset();
     ajustarFormulario();
     // document.querySelector('#ListaUsuarios').remove("select");
     ftnTotalUsuarios();
     // fntRolesUsuario();
-    
 
     // Reiniciar el valor seleccionado en el elemento <select>
     // document.querySelector("#ListaUsuarios").selectedIndex = -1;
 
-    $('#modalFormCompensatorio').modal('show');
+    $('#modalTipocompensatorios').modal('show');
     // var selectElement = document.querySelector('#ListaUsuarios')
     // if (selectElement && selectElement.parentNode) {
     //     selectElement.parentNode.remove(selectElement);
