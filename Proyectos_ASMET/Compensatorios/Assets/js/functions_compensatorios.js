@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function(){
             {"data":"FUN_APELLIDOS"},
             {"data":"COM_FECHA_INICIO"},
             {"data":"COM_FECHA_FIN"},
-            {"data":"COM_ACTIVIDAD_DESARROLLAR"},
+            {"data":"ID_TIPO_COMPENSATORIO"},
             {"data":"COM_DESCRIPCION_ACTIVIDAD"},
             {"data":"COM_USUARIO_FINAL"},
             {"data":"COM_ESTADO"},
@@ -320,7 +320,7 @@ function fntViewFuncionario(ID_COMPENSATORIO){
                 document.querySelector("#InfoNombres").innerHTML = objData.data.FUN_NOMBRES;
                 document.querySelector("#InfoApellidos").innerHTML = objData.data.FUN_APELLIDOS;
                 document.querySelector("#InfoCorreo").innerHTML = objData.data.FUN_CORREO;
-                document.querySelector("#InfoDescripcion").innerHTML = objData.data.COM_ACTIVIDAD_DESARROLLAR;
+                document.querySelector("#InfoDescripcion").innerHTML = objData.data.ID_TIPO_COMPENSATORIO;
                 // document.querySelector("#InfoFechaInicio").innerHTML = objData.data.COM_FECHA_INICIO;
                 // document.querySelector("#InfoFechaFinal").innerHTML = objData.data.COM_FECHA_FIN;
                 document.querySelector("#InfoEstado").innerHTML = estado;
@@ -352,6 +352,7 @@ function fntViewFuncionario(ID_COMPENSATORIO){
 function btnEditCompensatorio(element,ID_COMPENSATORIO){
 
     ftnTotalUsuarios();
+    ftnTotalTipoCompensatorio();
     
     rowTable = element.parentNode.parentNode.parentNode; 
     // document.querySelector("#listRolid").innerHTML="";
@@ -373,7 +374,7 @@ function btnEditCompensatorio(element,ID_COMPENSATORIO){
                 document.querySelector("#idCompensatorio").value = objData.data.ID_COMPENSATORIO;
                 document.querySelector("#txtFechaInicio").value = objData.data.COM_FECHA_INICIO;
                 document.querySelector("#txtFechaFin").value = objData.data.COM_FECHA_FIN;
-                document.querySelector("#txtActividad").value = objData.data.COM_ACTIVIDAD_DESARROLLAR;
+                document.querySelector("#txtActividad").value = objData.data.ID_TIPO_COMPENSATORIO;
                 document.querySelector("#txtTrabajoRequerido").value = objData.data.COM_USUARIO_FINAL;
                 document.querySelector("#txtDescripcionActividad").value = objData.data.COM_DESCRIPCION_ACTIVIDAD;
 
@@ -465,6 +466,7 @@ function openModal(){
     ajustarFormulario();
     // document.querySelector('#ListaUsuarios').remove("select");
     ftnTotalUsuarios();
+    ftnTotalTipoCompensatorio();
     // fntRolesUsuario();
     
 
@@ -545,6 +547,24 @@ function ftnTotalUsuarios(){
                 
                 $('#ListaUsuarios').selectpicker('refresh');
                 $('#ListaUsuarios').selectpicker('render');
+            }
+        }
+    }
+}
+
+function ftnTotalTipoCompensatorio(){
+   
+    if(document.querySelector('#txtActividad')){
+        let ajaxUrl = base_url+'/Compensatorios/getSelectTipoCompensatorio';
+        let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+        request.open("GET",ajaxUrl,true);
+        request.send();
+        request.onreadystatechange = function(){
+            if(request.readyState == 4 && request.status == 200){
+                document.querySelector('#txtActividad').innerHTML = request.responseText;
+                
+                $('#txtActividad').selectpicker('refresh');
+                $('#txtActividad').selectpicker('render');
             }
         }
     }

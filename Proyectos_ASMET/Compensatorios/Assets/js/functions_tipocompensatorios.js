@@ -11,12 +11,13 @@ document.addEventListener('DOMContentLoaded', function(){
             "url": "././Assets/js/spanish.json"
         },
         "ajax":{
-            "url": " "+base_url+"/Compensatorios/getTipoCompensatorios",
+            "url": " "+base_url+"/Tipocompensatorios/getTipoCompensatorios",
             "dataSrc":""
         },
         "columns":[
             {"data":"TIP_COM_NOMBRE"},
             {"data":"TIP_COM_DESCRIPCION"},
+            {"data":"TIP_COM_ESTADO"},
             {"data":"ACCIONES"}
         ],
         'dom': 'lBfrtip',
@@ -46,7 +47,12 @@ document.addEventListener('DOMContentLoaded', function(){
         "resonsieve":"true",
         "bDestroy": true,
         "iDisplayLength": 10,
-        "order":[[0,"asc"]]  
+        "columnDefs": [
+            {
+                "targets": [0, 1, 2, 3],
+                "orderable": false,
+                "className": "text-center",
+            }], 
     });
 
     if(document.querySelector("#formTipoCompensatorio")){
@@ -57,11 +63,6 @@ document.addEventListener('DOMContentLoaded', function(){
             
             let strNombreTipoCompensatorio = document.querySelector('#txtNombreTipoCompensatorio').value;
             let strDescripcionTipoCompensatorio = document.querySelector('#txtDescripcionTipoCompensatorio').value;
-            /*let strDescripcionActividad = document.querySelector('#txtNombreTipoCompensatorio').value;
-            let strActividad = document.querySelector('#txtActividad').value;
-            let ListadoUsuarios = document.querySelector('#ListaUsuarios').value;
-            let strTrabajoRequerido = document.querySelector('#txtTrabajoRequerido').value;
-            let intEstado = document.querySelector('#txtEstado').value;*/
     
             if(strNombreTipoCompensatorio == '' || strDescripcionTipoCompensatorio == ''){
                 swal("Atención", "Todos los campos son obligatorios." , "error");
@@ -77,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function(){
             } 
             divLoading.style.display = "flex";
             let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-            let ajaxUrl = base_url+'/Compensatorios/setTipoCompensatorio'; 
+            let ajaxUrl = base_url+'/Tipocompensatorios/setTipoCompensatorio'; 
             let formData = new FormData(formUsuario);
             
             request.open("POST",ajaxUrl,true);
@@ -92,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         }else{
                             tableCompensatorios.api().ajax.reload();
                         }
-                        $('#modalTipocompensatorios').modal("hide");
+                        $('#modalFormTipocompensatorios').modal("hide");
                         formUsuario.reset();
                         swal("Usuario", objData.msg ,"success");
                     }else{
@@ -106,63 +107,7 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 },false);
 
-// Función para validar las fechas de inicio y fin
-// function validateDates() {
-//     var fechaInicio = new Date(document.getElementById('txtFechaInicio').value);
-//     var fechaFin = new Date(document.getElementById('txtFechaFin').value);
-
-//     if (fechaInicio > fechaFin) {
-//         alert("La fecha de inicio debe ser igual o menor a la fecha de fin.");
-//         return false;
-//     }
-
-//     return true;
-// }
-
-// Validacion fecha y horas
-// document.addEventListener("DOMContentLoaded", function () {
-//     const txtFechaInicio = document.getElementById("txtFechaInicio");
-//     const txtFechaFin = document.getElementById("txtFechaFin");
-//     const formulario = document.getElementById("tuFormulario"); // Reemplaza "tuFormulario" con el ID de tu formulario
-
-//     txtFechaInicio.addEventListener("input", validateDateTime);
-//     txtFechaFin.addEventListener("input", validateDateTime);
-
-//     function validateDateTime() {
-//         const fechaInicio = new Date(txtFechaInicio.value);
-//         const fechaFin = new Date(txtFechaFin.value);
-
-//         if (fechaInicio.getTime() === fechaFin.getTime()) {
-//             txtFechaInicio.setCustomValidity("Las horas no pueden ser las mismas");
-//         } else if (fechaInicio >= fechaFin) {
-//             txtFechaInicio.setCustomValidity("La fecha de inicio debe ser mayor a la fecha fin");
-//         } else if (fechaInicio.getHours() === fechaFin.getHours() && fechaInicio.getMinutes() === fechaFin.getMinutes()) {
-//             txtFechaInicio.setCustomValidity("La fecha fin no puede ser mayor a la fecha de inicio");
-//         } else {
-//             txtFechaInicio.setCustomValidity("");
-//             validateHours();
-//         }
-//     }
-
-//     // Validacion horas
-//     function validateHours() {
-//         const horaInicio = new Date(txtFechaInicio.value);
-//         const horaFin = new Date(txtFechaFin.value);
-
-//         if (horaInicio.getHours() >= horaFin.getHours() || (horaInicio.getHours() === horaFin.getHours() && horaInicio.getMinutes() >= horaFin.getMinutes())) {
-//             txtFechaInicio.setCustomValidity("La hora de inicio debe ser anterior a la hora de fin.");
-//         } else {
-//             txtFechaInicio.setCustomValidity("");
-//             if (fechaInicio >= fechaFin) {
-//                 formulario.submit(); // Envía el formulario si fechaInicio es mayor o igual a fechaFin
-//             }
-//         }
-//     }
-// });
-
-
-
-function ftnAprobarCompensatorio(ID_COMPENSATORIO) { //Funcion para el boton de aprobacion
+function ftnAprobarTipoCompensatorio(ID_COMPENSATORIO) { //Funcion para el boton de aprobacion
     swal({
         title: "Aprobar Compensatorio",
         text: "¿Realmente quieres aprobar este compensatorio?",
@@ -200,7 +145,7 @@ function ftnAprobarCompensatorio(ID_COMPENSATORIO) { //Funcion para el boton de 
     });
 }
 
-function ftnRechazarCompensatorio(ID_COMPENSATORIO) { // Funcion para boton boton de rechazo
+function ftnRechazarTipoCompensatorio(ID_COMPENSATORIO) { // Funcion para boton boton de rechazo
     swal({
         title: "Rechazar Compensatorio",
         text: "¿Realmente quieres rechazar este compensatorio?",
@@ -248,7 +193,6 @@ function fntViewFuncionario(ID_COMPENSATORIO){
                 (objData.data.COM_ESTADO == 2 ? '<span class="badge badge-success">Aprobado</span>' :
                 '<span class="badge badge-danger">Rechazado</span>');
 
-                
                 document.querySelector("#InfoNombres").innerHTML = objData.data.FUN_NOMBRES;
                 document.querySelector("#InfoApellidos").innerHTML = objData.data.FUN_APELLIDOS;
                 document.querySelector("#InfoCorreo").innerHTML = objData.data.FUN_CORREO;
@@ -281,20 +225,20 @@ function fntViewFuncionario(ID_COMPENSATORIO){
     }
 }
 
-function btnEditCompensatorio(element,ID_COMPENSATORIO){
+function btnEditTipoCompensatorio(element,ID_COMPENSATORIO){
 
-    ftnTotalUsuarios();
+    ftnTotalUsuarios();    
     
     rowTable = element.parentNode.parentNode.parentNode; 
     // document.querySelector("#listRolid").innerHTML="";
-    document.querySelector('#titleModal').innerHTML ="Actualizar compensatorio";
+    document.querySelector('#titleModal').innerHTML ="Actualizar Tipo de Compensatorio";
     document.querySelector('.modal-header').classList.replace("headerRegister", "headerUpdate");
     document.querySelector('#btnActionForm').classList.replace("btn-primary", "btn-info");
     document.querySelector('#btnText').innerHTML ="Actualizar";
 
     var ID_COMPENSATORIO = ID_COMPENSATORIO;
     var request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-    var ajaxUrl = base_url+'/Compensatorios/editCompensatorio/'+ID_COMPENSATORIO;
+    var ajaxUrl = base_url+'/Tipocompensatorios/editTipoCompensatorio/'+ID_COMPENSATORIO;
     request.open("GET",ajaxUrl,true);
     request.send();
     request.onreadystatechange = function(){
@@ -302,53 +246,18 @@ function btnEditCompensatorio(element,ID_COMPENSATORIO){
         if(request.readyState == 4 && request.status == 200){
             var objData = JSON.parse(request.responseText);
             if(objData.status){
-                document.querySelector("#idCompensatorio").value = objData.data.ID_COMPENSATORIO;
-                document.querySelector("#txtFechaInicio").value = objData.data.COM_FECHA_INICIO;
-                document.querySelector("#txtFechaFin").value = objData.data.COM_FECHA_FIN;
-                document.querySelector("#txtActividad").value = objData.data.COM_ACTIVIDAD_DESARROLLAR;
-                document.querySelector("#txtTrabajoRequerido").value = objData.data.COM_USUARIO_FINAL;
-                document.querySelector("#txtDescripcionActividad").value = objData.data.COM_DESCRIPCION_ACTIVIDAD;
+                document.querySelector("#idTipoCompensatorio").value = objData.data.ID_TIPO_COMPENSATORIO;
+                document.querySelector("#txtNombreTipoCompensatorio").value = objData.data.TIP_COM_NOMBRE;
+                document.querySelector("#txtDescripcionTipoCompensatorio").value = objData.data.TIP_COM_DESCRIPCION;
+                document.querySelector("#txtEstadoTipoCompensatorio").value = objData.data.TIP_COM_ESTADO;
 
-                $('#modalFormCompensatorio').modal('show');
+                $('#modalFormTipoCompensatorios').modal('show');
             }else{
                 swal("Error", objData.msg, "error");
             }
         }
        
     }
-}
-
-function fntReserPass(idfuncionario){
-    swal({
-        title: "Reestablecer Contraseña",
-        text: "¿Realmente quiere realizar el restablecimiento?",
-        type: "info",
-        showCancelButton: true,
-        confirmButtonText: "Si, reestablecer!",
-        cancelButtonText: "No, cancelar!",
-        closeOnConfirm: false,
-        closeOnCancel: true
-    }, function(isConfirm){
-        if (isConfirm){
-            let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-            let ajaxUrl = base_url+'/Funcionarios/resetPassFuncionario';
-            let strData = "idFuncionario="+idfuncionario;
-            request.open("POST",ajaxUrl,true);
-            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            request.send(strData);
-            request.onreadystatechange = function(){
-                if(request.readyState == 4 && request.status == 200){
-                    let objData = JSON.parse(request.responseText);
-                    if(objData.status){
-                        swal("Reestablecer Contraseña!", objData.msg , "success");
-                        tableUsuarios.api().ajax.reload();
-                    }else{
-                        swal("Atención!", objData.msg , "error");
-                    }
-                }
-            }
-        }
-    });
 }
 
 function fntDelFuncionario(idfuncionario,estado){
@@ -391,25 +300,15 @@ function openModal(){
     document.querySelector('#idTipoCompensatorio').value ="";
     document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
     document.querySelector('#btnActionForm').classList.replace("btn-info", "btn-primary");
-    document.querySelector('#btnText').innerHTML ="Enviar";
-    document.querySelector('#titleModal').innerHTML = "Nuevo Tipo Compensatorio";
+    document.querySelector('#btnText').innerHTML ="Guardar";
+    document.querySelector('#titleModal').innerHTML = "Nuevo Tipo de Compensatorio";
     document.querySelector("#formTipoCompensatorio").reset();
     ajustarFormulario();
-    // document.querySelector('#ListaUsuarios').remove("select");
-    ftnTotalUsuarios();
-    // fntRolesUsuario();
-
     // Reiniciar el valor seleccionado en el elemento <select>
     // document.querySelector("#ListaUsuarios").selectedIndex = -1;
 
-    $('#modalTipocompensatorios').modal('show');
-    // var selectElement = document.querySelector('#ListaUsuarios')
-    // if (selectElement && selectElement.parentNode) {
-    //     selectElement.parentNode.remove(selectElement);
-    // }
+    $('#modalFormTipocompensatorios').modal('show');
 }
-
-// ftnEvidencias
 
 function ftnEvidencias(ID_COMPENSATORIO) {
     // Abre el modal de subir evidencias
@@ -463,6 +362,7 @@ document.getElementById("btnSubirEvidencia").addEventListener("click", function(
 
 }
 
+///Revisar para hacer el get al option list
 function ftnTotalUsuarios(){
    
     if(document.querySelector('#ListaUsuarios')){
@@ -503,119 +403,3 @@ function ajustarFormulario() {
 window.onload = function() {
     ajustarFormulario();
 };
-
-
-// function ajustarFormulario() { 
-//     let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-//     let ajaxUrl = base_url + '/Compensatorios/verificarRol';
-//     request.open("GET", ajaxUrl, true);
-
-//     request.onreadystatechange = function() {
-//         if (request.readyState == 4 && request.status == 200) {
-//             let esAdministrador = JSON.parse(request.responseText).esAdministrador;
-//             // let estadoDiv = document.querySelector("#ListaUsuarios");
-//             // console.log(esAdministrador);
-//             // console.log(estadoDiv);
-//             // console.log(request.responseText)
-//             if (esAdministrador == 2) {
-//                 // estadoDiv.style.display = "none";
-//                 $("#ListaUsuarios").closest(".form-group").css("display","none");
-//             }
-//         }
-//     }
-//     request.send();
-// }
-
-// window.onload = function() {
-//     ajustarFormulario();
-// };
-
-
-// function ajustarFormulario() { 
-//     let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-//     let ajaxUrl = base_url + '/Compensatorios/verificarRol';
-//     request.open("GET", ajaxUrl, true);
-
-//     request.onreadystatechange = function() {
-//         if (request.readyState == 4 && request.status == 200) {
-//             let esAdministrador = JSON.parse(request.responseText).esAdministrador;
-//             let inputUsuario = document.getElementById("ListaUsuarios");
-//             let labelUsuario = document.getElementById("ListaUsuarios");
-
-//             if (!esAdministrador) {
-                
-//                 inputUsuario.style.display = "none";
-//                 labelUsuario.style.display = "none";
-
-//                 // inputUsuario.remove(); // Remover el elemento
-//                 // labelUsuario.remove(); // Remover el elemento
-//             }
-//         }
-//     }
-//     request.send();
-// }
-
-// window.onload = function() {
-//     ajustarFormulario();
-// };
-
-
-// function ajustarFormulario() { 
-//     let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-//     let ajaxUrl = base_url + '/Compensatorios/verificarRol';
-//     request.open("GET", ajaxUrl, true);
-
-//     request.onreadystatechange = function() {
-//         if (request.readyState == 4 && request.status == 200) {
-//             let esAdministrador = JSON.parse(request.responseText).esAdministrador;
-//             let inputUsuario = document.getElementById("ListaUsuarios"); // Cambia "ListaUsuarios" a tu ID correcto
-//             let labelUsuario = document.getElementById("ListaUsuarios"); // Cambia "ListaUsuarios" a tu ID correcto
-
-//             if (!esAdministrador) {
-//                 inputUsuario.style.display = "none";
-//                 labelUsuario.style.display = "none";
-//             }
-//         }
-//     }
-//     request.send(); // Aquí realizamos la solicitud AJAX
-// }
-
-// window.onload = function() {
-//     ajustarFormulario();
-// };
-
-
-
-// function ajustarFormulario() {
-//     var request;
-    
-//     if (window.XMLHttpRequest) {
-//         request = new XMLHttpRequest();
-//     } else {
-//         request = new ActiveXObject('Microsoft.XMLHTTP');
-//     }
-    
-//     var ajaxUrl = base_url+'/Compensatorios/verificarRol';
-    
-//     request.open("GET", ajaxUrl, true);
-    
-//     request.onreadystatechange = function() {
-//         if (request.readyState === 4 && request.status === 200) {
-//             var esAdministrador = JSON.parse(request.responseText).esAdministrador;
-//             var inputUsuario = document.getElementById("ListaUsuarios");
-//             var labelUsuario = document.getElementById("ListaUsuarios");
-            
-//             if (!esAdministrador) {
-//                 inputUsuario.style.display = "none";
-//                 labelUsuario.style.display = "none";
-//             }
-//         }
-//     };
-    
-//     request.send();
-// }
-
-// window.onload = function() {
-//     ajustarFormulario();
-// };
-

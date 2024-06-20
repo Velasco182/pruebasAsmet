@@ -1,7 +1,7 @@
 <?php 
 
 class Tipocompensatorios extends Controllers{
-	public function __construct(){	
+	public function __construct(){
 		parent::__construct();
 		session_start();
 		session_regenerate_id();
@@ -33,7 +33,7 @@ class Tipocompensatorios extends Controllers{
 	}
 
 	
-	public function setTipoCompensatorio() {
+	public function setTipoCompensatorio(){
 		if ($_POST) {
 	
 			if ($_POST['txtNombreTipoCompensatorio'] == '' || $_POST['txtDescripcionTipoCompensatorio'] == '') {
@@ -48,6 +48,7 @@ class Tipocompensatorios extends Controllers{
 					$intIdTipoCompensatorio = intval($_POST['idTipoCompensatorio']);
 					$strNombreTipoCompensatorio = mb_convert_case(strClean($_POST['txtNombreTipoCompensatorio']), MB_CASE_TITLE, "UTF-8");
 					$strDescripcionTipoCompensatorio = mb_convert_case(strClean($_POST['txtDescripcionTipoCompensatorio']), MB_CASE_TITLE, "UTF-8");
+					$intTipoCompensatorioEstado = intval($_POST['idTipoCompensatorio']);
 					/*$strActividad = mb_convert_case(strClean($_POST['txtActividad']), MB_CASE_TITLE, "UTF-8");
 					$strTrabajoRequerido = mb_convert_case(strClean($_POST['txtTrabajoRequerido']), MB_CASE_TITLE, "UTF-8");
 					$intEstado = intval(strClean($_POST['txtEstado']));
@@ -131,61 +132,50 @@ class Tipocompensatorios extends Controllers{
 
 	public function getTipoCompensatorios(){
 		if($_SESSION['permisosMod']['PER_R']){
-
-			$ID_FUNCIONARIO = $_SESSION['userData']['ID_FUNCIONARIO']; // ID del funcionario que deseas mostrar
-			
-			$arrData = $this ->model->selectTipoCompensatorios($ID_FUNCIONARIO);
+			$arrData = $this ->model->selectTipoCompensatorios();
 			// Procesa $resultado para mostrar los compensatorios del funcionario
 
-			for ($i=0; $i < count($arrData); $i++) {
+			
 
-				$arrData[$i]['COM_FECHA_INICIO']=formatearFechaYHora($arrData[$i]['COM_FECHA_INICIO'],"d/m/Y - h:i A");
-				$arrData[$i]['COM_FECHA_FIN']=formatearFechaYHora($arrData[$i]['COM_FECHA_FIN'],"d/m/Y - h:i A");
+			for ($i=0; $i < sizeof($arrData); $i++) {
+				
+
+				/*$arrData[$i]['COM_FECHA_INICIO']=formatearFechaYHora($arrData[$i]['COM_FECHA_INICIO'],"d/m/Y - h:i A");
+				$arrData[$i]['COM_FECHA_FIN']=formatearFechaYHora($arrData[$i]['COM_FECHA_FIN'],"d/m/Y - h:i A");*/
 
 				// var_dump($arrData);
 
-				$btnVer = '';
-				$btnCancelar = '';
-				$btnPendiente = '';
-				$btnAprobar = '';
-				$btnRechazar = '';
 				$btnEdit = '';
-				$btnReset = '';
-				$btnDelete = '';
-				$btnPendiente = '';
-				$newStatus="";
+				$btnVer = '';
 
-				$comEstado = $arrData[$i]['COM_ESTADO'];
-				if ($comEstado == 1) {
-					$statusClass = 'badge-warning';
-					$newStatus = 'Pendiente';
-				} elseif ($comEstado == 2) {
-					$statusClass = 'badge-success';
-					$newStatus = 'Aprobado';
-				} elseif ($comEstado == 3) {
-					$statusClass = 'badge-danger';
-					$newStatus = 'Rechazado';
-				} else {
-					$statusClass = 'badge-secondary';
-					$newStatus = 'Estado Desconocido';
+				if($arrData[$i]['TIP_COM_ESTADO'] == 1){
+					$arrData[$i]['TIP_COM_ESTADO'] = '<span class="badge badge-success">Activo</span>';
+				}else{
+					$arrData[$i]['TIP_COM_ESTADO'] = '<span class="badge badge-danger">Inactivo</span>';
 				}
 
-				$arrData[$i]['COM_ESTADO'] = '<span class="badge ' . $statusClass . '">' . $newStatus . '</span>'; // Error con los span
+
+				// $arrData[$i]['COM_ESTADO'] = '<span class="badge ' . $statusClass . '">' . $newStatus . '</span>'; // Error con los span
 
 				// var_dump($comEstado);
 
-				if ($_SESSION['permisosMod']['PER_F'] && $comEstado == 2) {
+				/*if ($_SESSION['permisosMod']['PER_F'] && $comEstado == 2) {
 					$btnReset = '<button class="btn btn-success btn-sm btnResetPass" onClick="ftnEvidencias(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Cargar Evidencias"><i class="fas fa-cloud-upload-alt"></i></button>';
 				} else {
 					$btnReset = ''; // Botón vacío si no se cumple la condición
-				}
+				}*/
+
+				//PER_R -> LEEER
+				//PER_W -> ESCRIBIR
+				//PER_U -> ACTUALIZAR
+				//PER_D -> ELIMINAR
 
 				if($_SESSION['permisosMod']['PER_R']){ // Icono de ver funcionario
-					if($arrData[$i]['COM_USUARIO_FINAL']!="1"){
-						$btnVer = '<button class="btn btn-info btn-sm btnViewFuncionario" onClick="fntViewFuncionario('.$arrData[$i]['ID_COMPENSATORIO'].')" title="Ver Funcionario"><i class="far fa-eye"></i></button>';
-					}else{
-						$btnVer = '<button class="btn btn-secondary btn-sm" disabled ><i class="far fa-eye"></i></button>';
-					}
+					$btnVer = '<button class="btn btn-info btn-sm btnViewFuncionario" onClick="fntViewFuncionario('.$arrData[$i]['ID_TIPO_COMPENSATORIO'].')" title="Ver Tipo Compensatorio"><i class="far fa-eye"></i></button>';
+				}
+
+				if($_SESSION['permisosMod']['PER_U']){ // Icono de Editar Tipo Compensatorio
+					$btnVer = '<button class="btn btn-primary btn-sm btnViewFuncionario" onClick="fntViewFuncionario('.$arrData[$i]['ID_TIPO_COMPENSATORIO'].')" title="Editar Tipo Compensatorio"><i class="fas fa-pencil-alt"></i></button>';
 				}
 
 				// if($_SESSION['permisosMod']['ID_ROL'] == '2' && $comEstado == 1){
@@ -196,13 +186,13 @@ class Tipocompensatorios extends Controllers{
 				// 	}
 				// }
 
-				if($_SESSION['permisosMod']['PER_U'] && $_SESSION['permisosMod']['ID_ROL'] !== '1') {
+				/*if($_SESSION['permisosMod']['PER_U'] && $_SESSION['permisosMod']['ID_ROL'] !== '1') {
 					if($arrData[$i]['COM_USUARIO_FINAL'] != "1" && ($comEstado == 1)) {
 						$btnEdit = '<button class="btn btn-primary btn-sm btnEditFuncionario" onClick="btnEditCompensatorio(this,'.$arrData[$i]['ID_COMPENSATORIO'].')" title="Editar Funcionario"><i class="fas fa-pencil-alt"></i></button>';
 					} else {
 						$btnEdit = '';
 					}
-				}
+				}*/
 				
 				// if ($_SESSION['permisosMod']['PER_U']) { // Botón de aprobaciones
 				// 	if ($comEstado == 1) {
@@ -212,7 +202,7 @@ class Tipocompensatorios extends Controllers{
 				// 	}
 				// }
 
-				if ($_SESSION['permisosMod']['PER_U'] && $_SESSION['permisosMod']['ID_ROL'] === '1') {
+				/*if ($_SESSION['permisosMod']['PER_U'] && $_SESSION['permisosMod']['ID_ROL'] === '1') {
 					if ($comEstado == 1) {
 						$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="ftnAprobarCompensatorio(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Aprobar Compensatorio"><i class="fas fa-check-double"></i></button>';
 					} else {
@@ -220,27 +210,27 @@ class Tipocompensatorios extends Controllers{
 					}
 				} else {
 					$btnAprobar = '';
-				}
+				}*/
 				
-				if ($_SESSION['permisosMod']['PER_D']) {
+				/*if ($_SESSION['permisosMod']['PER_D']) {
 					if ($comEstado == 1) {
 						$btnRechazar = '<button class="btn btn-danger btn-sm btnDelFuncionario" onClick="ftnRechazarCompensatorio(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Rechazar Compenstorio"><i class="fas fa-times-circle"></i></button>';
 					} else {
 						$btnRechazar = '';
 					}
-				}
+				}*/
 				
-				$arrData[$i]['ACCIONES'] = '<div class="text-center">'.$btnVer.' '.$btnEdit.' '.$btnAprobar.' '.$btnRechazar.' '.$btnReset.' '.$btnCancelar.'</div>';
+				$arrData[$i]['ACCIONES'] = '<div class="text-center">'.$btnVer.''.$btnEdit.'</div>';
 			}
 			echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
 		}
 	}
 
-	public function editTipoCompensatorio($ID_COMPENSATORIO) {
+	public function editTipoCompensatorio($ID_TIPO_COMPENSATORIO) {
 		if ($_SESSION['permisosMod']['PER_R']) {
-			$ID_COMPENSATORIO = intval($ID_COMPENSATORIO);
-			if ($ID_COMPENSATORIO > 0) {
-				$arrData = $this->model->selectEdit($ID_COMPENSATORIO);
+			$ID_TIPO_COMPENSATORIO = intval($ID_TIPO_COMPENSATORIO);
+			if ($ID_TIPO_COMPENSATORIO > 0) {
+				$arrData = $this->model->selectEdit($ID_TIPO_COMPENSATORIO);
 
 				// $arrData[$i]['COM_FECHA_INICIO']=formatearFechaYHora($arrData[$i]['COM_FECHA_INICIO'],"d/m/Y - h:i A");
 				// $arrData[$i]['COM_FECHA_FIN']=formatearFechaYHora($arrData[$i]['COM_FECHA_FIN'],"d/m/Y - h:i A");

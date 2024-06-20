@@ -80,12 +80,7 @@
                   <label for="txtActividad">Tipo de Compensatorio</label>
                   <!-- <input class="form-control" id="txtActividad" name="txtActividad" rows="4" cols="50" required autocomplete="off"></input> -->
                   <div class="form-group">
-                    <select class="form-control" id="txtActividad" name="txtActividad" required autocomplete="off">
-                      <option value="Reporte">Reporte</option>
-                      <option value="Nurc">Nurc</option>
-                      <option value="Area">Area</option>
-                      <option value="Requerimiento">Requerimiento</option>
-                      <!-- <option value="5">5</option> -->
+                    <select class="form-control" data-live-search="true" id="txtActividad" name="txtActividad" required>
                     </select>
                   </div>
                 </div>
@@ -161,7 +156,7 @@
               <td id="InfoCorreo"></td>
             </tr>
             <tr>
-              <td>Descripcion</td>
+              <td>Tipo de Compensatorio</td>
               <td id="InfoDescripcion"></td>
             </tr>
             <tr>

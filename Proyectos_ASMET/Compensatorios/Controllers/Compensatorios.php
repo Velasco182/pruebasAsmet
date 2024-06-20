@@ -531,6 +531,17 @@ class Compensatorios extends Controllers{
 		}
 		echo $htmlOptions;
 	}
+	public function getSelectTipoCompensatorio(){
+		$htmlOptions = "";
+		$arrData = $this->model->selectTipoCompensatorio();
+		if(count($arrData) > 0 ){			
+			// Agregar las opciones de los demás registros de tipo de compensatorios
+			for ($i=0; $i < count($arrData); $i++) { 
+				$htmlOptions .= '<option value="'.$arrData[$i]['ID_TIPO_COMPENSATORIO'].'">'.$arrData[$i]['TIP_COM_NOMBRE'].'</option>';
+			}
+		}
+		echo $htmlOptions;
+	}
 		
 
 	public function verificarRol() {

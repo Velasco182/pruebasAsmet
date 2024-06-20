@@ -9,7 +9,7 @@ class CompensatoriosModel extends Oracle{
 	public function insertCompensatorio(
 		string $COM_FECHA_INICIO,
 		string $COM_FECHA_FIN,
-		string $COM_ACTIVIDAD_DESARROLLAR,
+		string $ID_TIPO_COMPENSATORIO,
 		string $COM_DESCRIPCION_ACTIVIDAD,
 		// string $ID_FUNCIONARIO,
 		string $COM_USUARIOS,
@@ -18,7 +18,7 @@ class CompensatoriosModel extends Oracle{
                 
 			$this->strFechaInicio = $COM_FECHA_INICIO;
 			$this->strFechaFin = $COM_FECHA_FIN;
-			$this->strActividad = $COM_ACTIVIDAD_DESARROLLAR;
+			$this->strActividad = $ID_TIPO_COMPENSATORIO;
 			$this->strDescripcionActividad = $COM_DESCRIPCION_ACTIVIDAD;
 			// $this->ListadoUsuarios = $ID_FUNCIONARIO;
 			$this->ListadoUsuarios = $COM_USUARIOS;
@@ -38,7 +38,7 @@ class CompensatoriosModel extends Oracle{
 				ID_FUNCIONARIO,
 				COM_FECHA_INICIO,
 				COM_FECHA_FIN,
-				COM_ACTIVIDAD_DESARROLLAR,
+				ID_TIPO_COMPENSATORIO,
         		COM_DESCRIPCION_ACTIVIDAD,
         		COM_ESTADO,
         		COM_USUARIO_FINAL
@@ -48,7 +48,7 @@ class CompensatoriosModel extends Oracle{
 				:ID_FUNCIONARIO,
 				TO_TIMESTAMP(:COM_FECHA_INICIO, 'YYYY/MM/DD HH24:MI:SS'),
 				TO_TIMESTAMP(:COM_FECHA_FIN, 'YYYY/MM/DD HH24:MI:SS'),
-				:COM_ACTIVIDAD_DESARROLLAR,
+				:ID_TIPO_COMPENSATORIO,
         		:COM_DESCRIPCION_ACTIVIDAD,
         		:COM_ESTADO,
         		:COM_USUARIO_FINAL
@@ -63,7 +63,7 @@ class CompensatoriosModel extends Oracle{
 				'ID_FUNCIONARIO' => $idFuncionario, // Usar el ID del funcionario
         		'COM_FECHA_INICIO' => $this->strFechaInicio,
         		'COM_FECHA_FIN' => $this->strFechaFin,
-				'COM_ACTIVIDAD_DESARROLLAR' => $this->strActividad,
+				'ID_TIPO_COMPENSATORIO' => $this->strActividad,
         		'COM_DESCRIPCION_ACTIVIDAD' => $this->strDescripcionActividad,
         		'COM_ESTADO' => $this->intEstado,
 				'ID_FUNCIONARIO'=>$this->ListadoUsuarios,
@@ -89,7 +89,7 @@ class CompensatoriosModel extends Oracle{
 			$this->strActividad = $actividad;
 			$this->strTrabajoRequerido = $usuario;
 
-			// $sql = "SELECT * FROM BIG_COMPENSATORIOS WHERE (COM_DESCRIPCION_ACTIVIDAD = '{$this->strDescripcionActividad}' OR COM_ACTIVIDAD_DESARROLLAR = '{$this->strActividad}')
+			// $sql = "SELECT * FROM BIG_COMPENSATORIOS WHERE (COM_DESCRIPCION_ACTIVIDAD = '{$this->strDescripcionActividad}' OR ID_TIPO_COMPENSATORIO = '{$this->strActividad}')
     		// AND ID_COMPENSATORIO != '{$this->intIdFuncionario}'
 			// ";
 
@@ -102,7 +102,7 @@ class CompensatoriosModel extends Oracle{
     			SET COM_FECHA_INICIO = TO_TIMESTAMP(:COM_FECHA_INICIO, 'YYYY/MM/DD HH24:MI:SS'),
         		COM_FECHA_FIN = TO_TIMESTAMP(:COM_FECHA_FIN, 'YYYY/MM/DD HH24:MI:SS'),
         		COM_DESCRIPCION_ACTIVIDAD = :COM_DESCRIPCION_ACTIVIDAD,
-        		COM_ACTIVIDAD_DESARROLLAR = :COM_ACTIVIDAD_DESARROLLAR,
+        		ID_TIPO_COMPENSATORIO = :ID_TIPO_COMPENSATORIO,
         		COM_USUARIO_FINAL = :COM_USUARIO_FINAL
     			WHERE ID_COMPENSATORIO = $this->intIdFuncionario
 				";
@@ -112,7 +112,7 @@ class CompensatoriosModel extends Oracle{
 					'COM_FECHA_INICIO'=>$this->strFechaInicio,
 					'COM_FECHA_FIN'=>$this->strFechaFin,
 					'COM_DESCRIPCION_ACTIVIDAD'=>$this->strDescripcionActividad,
-					'COM_ACTIVIDAD_DESARROLLAR'=>$this->strActividad,
+					'ID_TIPO_COMPENSATORIO'=>$this->strActividad,
 					'COM_USUARIO_FINAL'=>$this->strTrabajoRequerido
 				);
 				$request = $this->update($sql, $arrData);
@@ -124,13 +124,13 @@ class CompensatoriosModel extends Oracle{
 		}
 
 		// public function updateCompensatorio(int $ID_FUNCIONARIO, string $COM_FECHA_INICIO, string $COM_FECHA_FIN,
-		// 	string $COM_DESCRIPCION_ACTIVIDAD, string $COM_ACTIVIDAD_DESARROLLAR, string $COM_USUARIO_FINAL){
+		// 	string $COM_DESCRIPCION_ACTIVIDAD, string $ID_TIPO_COMPENSATORIO, string $COM_USUARIO_FINAL){
 				
 		// 	$this->intIdFuncionario = $ID_FUNCIONARIO;
 		// 	$this->strFechaInicio = $COM_FECHA_INICIO;
 		// 	$this->strFechaFin = $COM_FECHA_FIN;
 		// 	$this->strDescripcionActividad = $COM_DESCRIPCION_ACTIVIDAD;
-		// 	$this->strActividad = $COM_ACTIVIDAD_DESARROLLAR;
+		// 	$this->strActividad = $ID_TIPO_COMPENSATORIO;
 		// 	$this->strTrabajoRequerido = $COM_USUARIO_FINAL;
 
 		// 	$sql = "SELECT * FROM BIG_COMPENSATORIOS
@@ -143,7 +143,7 @@ class CompensatoriosModel extends Oracle{
 		// 	if(empty($request)){
 		// 		$sql = "UPDATE BIG_COMPENSATORIOS SET COM_FECHA_INICIO = :COM_FECHA_INICIO,
 		// 		COM_FECHA_FIN = :COM_FECHA_FIN, COM_DESCRIPCION_ACTIVIDAD = :COM_DESCRIPCION_ACTIVIDAD,
-		// 		COM_ACTIVIDAD_DESARROLLAR = :COM_ACTIVIDAD_DESARROLLAR, COM_USUARIO_FINAL = :COM_USUARIO_FINAL
+		// 		ID_TIPO_COMPENSATORIO = :ID_TIPO_COMPENSATORIO, COM_USUARIO_FINAL = :COM_USUARIO_FINAL
 
 		// 		WHERE ID_FUNCIONARIO = $this->intIdFuncionario
 		// 		";
@@ -153,7 +153,7 @@ class CompensatoriosModel extends Oracle{
 		// 			'COM_FECHA_INICIO'=>$this->strFechaInicio,
 		// 			'COM_FECHA_FIN'=>$this->strFechaFin,
 		// 			'COM_DESCRIPCION_ACTIVIDAD'=>$this->strDescripcionActividad,
-		// 			'COM_ACTIVIDAD_DESARROLLAR'=>$this->strActividad,
+		// 			'ID_TIPO_COMPENSATORIO'=>$this->strActividad,
 		// 			'COM_USUARIO_FINAL'=>$this->strTrabajoRequerido
 		// 		);
 
@@ -171,10 +171,10 @@ class CompensatoriosModel extends Oracle{
 				COM.ID_FUNCIONARIO,
 				COM.COM_FECHA_FIN,
 				COM.COM_FECHA_INICIO,
-				COM.COM_ACTIVIDAD_DESARROLLAR,
+				COM.ID_TIPO_COMPENSATORIO,
 				COM.COM_USUARIO_FINAL,
 				COM.COM_DESCRIPCION_ACTIVIDAD,  
-				COM.COM_ACTIVIDAD_DESARROLLAR
+				COM.ID_TIPO_COMPENSATORIO
 			FROM BIG_COMPENSATORIOS COM 
 		
 			WHERE COM.ID_COMPENSATORIO = $this->intIdFuncionario
@@ -212,13 +212,31 @@ class CompensatoriosModel extends Oracle{
 
 			if ($ROL_CODIGO == '1A') {
 				//Consulta si es usuario administrador no habra limite de filtro y se mostrara todos los registros
+			/*$sql = " 
+			SELECT
+				I.ID_COMPENSATORIO,
+				I.ID_FUNCIONARIO,
+    			TO_CHAR(I.COM_FECHA_INICIO) AS COM_FECHA_INICIO,
+    			TO_CHAR(I.COM_FECHA_FIN) AS COM_FECHA_FIN,
+                T.TIP_COM_NOMBRE,
+    			I.COM_DESCRIPCION_ACTIVIDAD,
+    			I.COM_USUARIO_FINAL,
+    			I.COM_ESTADO,
+    			F.FUN_NOMBRES AS FUN_NOMBRES,
+    			F.FUN_APELLIDOS AS FUN_APELLIDOS,
+				F.FUN_CORREO AS FUN_CORREO,
+				F.ID_ROL AS ID_ROL
+			FROM BIG_COMPENSATORIOS I
+			INNER JOIN BIG_FUNCIONARIOS F ON I.ID_FUNCIONARIO = F.ID_FUNCIONARIO
+            INNER JOIN BIG_TIPO_COMPENSATORIO T ON T.ID_TIPO_COMPENSATORIO = TO_NUMBER(I.ID_TIPO_COMPENSATORIO);
+			";*/
 			$sql = " 
 			SELECT
 				I.ID_COMPENSATORIO,
 				I.ID_FUNCIONARIO,
     			TO_CHAR(I.COM_FECHA_INICIO) AS COM_FECHA_INICIO,
     			TO_CHAR(I.COM_FECHA_FIN) AS COM_FECHA_FIN,
-    			I.COM_ACTIVIDAD_DESARROLLAR,
+    			I.ID_TIPO_COMPENSATORIO,
     			I.COM_DESCRIPCION_ACTIVIDAD,
     			I.COM_USUARIO_FINAL,
     			I.COM_ESTADO,
@@ -240,7 +258,7 @@ class CompensatoriosModel extends Oracle{
 			I.ID_FUNCIONARIO,
 			TO_CHAR(I.COM_FECHA_INICIO) AS COM_FECHA_INICIO,
 			TO_CHAR(I.COM_FECHA_FIN) AS COM_FECHA_FIN,
-			I.COM_ACTIVIDAD_DESARROLLAR,
+			I.ID_TIPO_COMPENSATORIO,
 			I.COM_DESCRIPCION_ACTIVIDAD,
 			I.COM_USUARIO_FINAL,
 			I.COM_ESTADO,
@@ -268,7 +286,7 @@ class CompensatoriosModel extends Oracle{
 				I.ID_FUNCIONARIO,
 				TO_CHAR(I.COM_FECHA_INICIO, 'DD/MM/YYYY - HH:MI AM') AS COM_FECHA_INICIO,
 				TO_CHAR(I.COM_FECHA_FIN, 'DD/MM/YYYY - HH:MI AM') AS COM_FECHA_FIN,
-				I.COM_ACTIVIDAD_DESARROLLAR,
+				I.ID_TIPO_COMPENSATORIO,
 				I.COM_DESCRIPCION_ACTIVIDAD,
 				I.COM_EVIDENCIAS,
 				I.COM_USUARIO_FINAL,
@@ -312,7 +330,7 @@ class CompensatoriosModel extends Oracle{
 				FUN.FUN_USUARIO,
 				COM.COM_FECHA_INICIO,  -- Reemplaza 'OtroCampo1' con el nombre del campo que deseas seleccionar
 				COM.COM_FECHA_FIN,  -- Reemplaza 'OtroCampo2' con el nombre del campo que deseas seleccionar
-				COM.COM_ACTIVIDAD_DESARROLLAR,
+				COM.ID_TIPO_COMPENSATORIO,
 				COM.COM_DESCRIPCION_ACTIVIDAD,
 				COM.COM_USUARIO_FINAL
 			FROM BIG_COMPENSATORIOS COM
@@ -338,7 +356,7 @@ class CompensatoriosModel extends Oracle{
 			FUN.FUN_USUARIO, 
 			COM.COM_FECHA_INICIO,
 			COM.COM_FECHA_FIN,
-			COM.COM_ACTIVIDAD_DESARROLLAR,
+			COM.ID_TIPO_COMPENSATORIO,
 			COM.COM_DESCRIPCION_ACTIVIDAD,
 			COM.COM_USUARIO_FINAL
 			FROM BIG_COMPENSATORIOS COM
@@ -452,6 +470,14 @@ class CompensatoriosModel extends Oracle{
 			$request = $this->select_all($sql);
 			return $request;
 		}
+		public function selectTipoCompensatorio(){
+			// Hago un select a la db para recuperar todos los tipos de compensatorios.
+			$sql = "SELECT ID_TIPO_COMPENSATORIO, TIP_COM_NOMBRE FROM BIG_TIPO_COMPENSATORIO";
+			$request = $this->select_all($sql);
+			return $request;
+		}
+
+		//Estado para el tipo de comp
 		
 		public function esAdministrador($ID_ROL) {
 	
