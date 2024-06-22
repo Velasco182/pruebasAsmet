@@ -28,3 +28,6 @@
 					-- txtTrabajoRequerido 
 					-- txtEstado 
 					-- ListaUsuarios. 
+
+
+					
