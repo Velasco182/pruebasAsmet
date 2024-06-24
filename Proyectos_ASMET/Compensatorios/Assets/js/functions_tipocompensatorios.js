@@ -56,15 +56,18 @@ document.addEventListener('DOMContentLoaded', function(){
     });
 
     if(document.querySelector("#formTipoCompensatorio")){
-        let formUsuario = document.querySelector("#formTipoCompensatorio");
-        formUsuario.onsubmit = function(e) {
+        let formTipoCompensatorio = document.querySelector("#formTipoCompensatorio");
+        formTipoCompensatorio.onsubmit = function(e) {
            
             e.preventDefault();
             
             let strNombreTipoCompensatorio = document.querySelector('#txtNombreTipoCompensatorio').value;
             let strDescripcionTipoCompensatorio = document.querySelector('#txtDescripcionTipoCompensatorio').value;
+            let strEstadoTipoCompensatorio = document.querySelector('#txtEstadoTipoCompensatorio').value;
+
+            //console.log(strNombreTipoCompensatorio);    
     
-            if(strNombreTipoCompensatorio == '' || strDescripcionTipoCompensatorio == ''){
+            if(strNombreTipoCompensatorio == '' || strDescripcionTipoCompensatorio == '' || strEstadoTipoCompensatorio == ''){
                 swal("Atención", "Todos los campos son obligatorios." , "error");
                 return false;
             }
@@ -79,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function(){
             divLoading.style.display = "flex";
             let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
             let ajaxUrl = base_url+'/Tipocompensatorios/setTipoCompensatorio'; 
-            let formData = new FormData(formUsuario);
+            let formData = new FormData(formTipoCompensatorio);
             
             request.open("POST",ajaxUrl,true);
             request.send(formData);
@@ -89,13 +92,13 @@ document.addEventListener('DOMContentLoaded', function(){
                     let objData = JSON.parse(request.responseText);
                     if(objData.status){
                         if(rowTable == ""){
-                            tableCompensatorios.api().ajax.reload();
+                            tableTipoCompensatorios.api().ajax.reload();
                         }else{
-                            tableCompensatorios.api().ajax.reload();
+                            tableTipoCompensatorios.api().ajax.reload();
                         }
                         $('#modalFormTipocompensatorios').modal("hide");
-                        formUsuario.reset();
-                        swal("Usuario", objData.msg ,"success");
+                        formTipoCompensatorio.reset();
+                        swal("Tipo de Compensatorio", objData.msg ,"success");
                     }else{
                         swal("Error", objData.msg , "error");
                     }
@@ -107,6 +110,87 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 },false);
 
+function fntViewTipoCompensatorio(idTipoCompensatorio){
+    let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+    let ajaxUrl = base_url+'/Tipocompensatorios/getTipoCompensatorio/'+idTipoCompensatorio;
+    request.open("GET",ajaxUrl,true);
+    request.send();
+    request.onreadystatechange = function(){
+        if(request.readyState == 4 && request.status == 200){
+            let objData = JSON.parse(request.responseText);
+
+            if(objData.status){
+                let estado = objData.data.TIP_COM_ESTADO == 1 ? 
+                '<span class="badge badge-success">Activo</span>' :
+                '<span class="badge badge-danger">Inactivo</span>';
+
+                document.querySelector("#InfoNombre").innerHTML = objData.data.TIP_COM_NOMBRE;
+                document.querySelector("#InfoDescripcion").innerHTML = objData.data.TIP_COM_DESCRIPCION;
+                document.querySelector("#InfoEstado").innerHTML = estado;
+                
+                $('#modalViewTipoCompensatorio').modal('show');
+            }else{
+                swal("Error", objData.msg , "error");
+            }
+        }
+    }
+}
+
+function ftnEditTipoCompensatorio(element, idTipoCompensatorio){
+
+    //ftnTotalUsuarios();    
+    
+    rowTable = element.parentNode.parentNode.parentNode; 
+    // document.querySelector("#listRolid").innerHTML="";
+    document.querySelector('#titleModal').innerHTML ="Actualizar Tipo de Compensatorio";
+    document.querySelector('.modal-header').classList.replace("headerRegister", "headerUpdate");
+    document.querySelector('#btnActionForm').classList.replace("btn-primary", "btn-info");
+    document.querySelector('#btnText').innerHTML ="Actualizar";
+
+    //let ID_TIPO_COMPENSATORIO = idTipoCompensatorio;
+
+    let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+    let ajaxUrl = base_url+'/Tipocompensatorios/editTipoCompensatorio/'+idTipoCompensatorio;
+    request.open("GET",ajaxUrl,true);
+    request.send();
+    request.onreadystatechange = function(){
+
+        if(request.readyState == 4 && request.status == 200){
+            let objData = JSON.parse(request.responseText);
+
+            if(objData.status){
+
+                document.querySelector("#idTipoCompensatorio").value = objData.data.ID_TIPO_COMPENSATORIO;
+                document.querySelector("#txtNombreTipoCompensatorio").value = objData.data.TIP_COM_NOMBRE;
+                document.querySelector("#txtDescripcionTipoCompensatorio").value = objData.data.TIP_COM_DESCRIPCION;
+                document.querySelector("#txtEstadoTipoCompensatorio").value = objData.data.TIP_COM_ESTADO;
+
+                $('#modalFormTipocompensatorios').modal('show');
+            }else{
+                swal("Error", objData.msg, "error");
+            }
+        }
+       
+    }
+}
+
+function openModal(){
+    rowTable = "";
+    // document.querySelector("#listRolid").innerHTML=""; // Lista de rol
+    document.querySelector('#idTipoCompensatorio').value ="";
+    document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
+    document.querySelector('#btnActionForm').classList.replace("btn-info", "btn-primary");
+    document.querySelector('#btnText').innerHTML ="Guardar";
+    document.querySelector('#titleModal').innerHTML = "Nuevo Tipo de Compensatorio";
+    document.querySelector("#formTipoCompensatorio").reset();
+    ajustarFormulario();
+    // Reiniciar el valor seleccionado en el elemento <select>
+    // document.querySelector("#ListaUsuarios").selectedIndex = -1;
+
+    $('#modalFormTipocompensatorios').modal('show');
+}
+
+/*
 function ftnAprobarTipoCompensatorio(ID_COMPENSATORIO) { //Funcion para el boton de aprobacion
     swal({
         title: "Aprobar Compensatorio",
@@ -178,88 +262,6 @@ function ftnRechazarTipoCompensatorio(ID_COMPENSATORIO) { // Funcion para boton 
     });
 }
 
-function fntViewFuncionario(ID_COMPENSATORIO){
-    let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-    let ajaxUrl = base_url+'/Compensatorios/getCompensatorio/'+ID_COMPENSATORIO;
-    request.open("GET",ajaxUrl,true);
-    request.send();
-    request.onreadystatechange = function(){
-        if(request.readyState == 4 && request.status == 200){
-            let objData = JSON.parse(request.responseText);
-
-            if(objData.status){
-                let estado = objData.data.COM_ESTADO == 1 ? 
-                '<span class="badge badge-warning">Pendiente</span>' : 
-                (objData.data.COM_ESTADO == 2 ? '<span class="badge badge-success">Aprobado</span>' :
-                '<span class="badge badge-danger">Rechazado</span>');
-
-                document.querySelector("#InfoNombres").innerHTML = objData.data.FUN_NOMBRES;
-                document.querySelector("#InfoApellidos").innerHTML = objData.data.FUN_APELLIDOS;
-                document.querySelector("#InfoCorreo").innerHTML = objData.data.FUN_CORREO;
-                document.querySelector("#InfoDescripcion").innerHTML = objData.data.COM_ACTIVIDAD_DESARROLLAR;
-                // document.querySelector("#InfoFechaInicio").innerHTML = objData.data.COM_FECHA_INICIO;
-                // document.querySelector("#InfoFechaFinal").innerHTML = objData.data.COM_FECHA_FIN;
-                document.querySelector("#InfoEstado").innerHTML = estado;
-                document.querySelector("#InfoHorasRealizadas").innerHTML = objData.data.horasrealizadas;
-                
-                if (objData.data.url_portada) {
-                    document.querySelector("#DescargarSoporte").innerHTML = '<a href="' + objData.data.url_portada + '" target="_blank"><i class="fas fa-download"> Evidencia disponible</i></a>';
-                } else {
-                    // Si objData.data.url_portada está vacío, muestra un mensaje de "No hay evidencia disponible"
-                    document.querySelector("#DescargarSoporte").innerHTML = 'No hay evidencia disponible';
-                }
-                
-                
-            
-                // document.querySelector('#com_estado').innerHTML = objData.data.FUN_ACCESO;
-
-                // document.querySelector("#com_horas_realizadas").innerHTML = objData.data.com_horas_realizadas;
-                // document.querySelector("#com_horas_compensadas").innerHTML = objData.data.com_horas_compensadas;
-                // document.querySelector("#Horas_Trabajadas").innerHTML = objData.data.Horas_Trabajadas;
-
-                $('#modalViewFuncionario').modal('show');
-            }else{
-                swal("Error", objData.msg , "error");
-            }
-        }
-    }
-}
-
-function btnEditTipoCompensatorio(element,ID_COMPENSATORIO){
-
-    ftnTotalUsuarios();    
-    
-    rowTable = element.parentNode.parentNode.parentNode; 
-    // document.querySelector("#listRolid").innerHTML="";
-    document.querySelector('#titleModal').innerHTML ="Actualizar Tipo de Compensatorio";
-    document.querySelector('.modal-header').classList.replace("headerRegister", "headerUpdate");
-    document.querySelector('#btnActionForm').classList.replace("btn-primary", "btn-info");
-    document.querySelector('#btnText').innerHTML ="Actualizar";
-
-    var ID_COMPENSATORIO = ID_COMPENSATORIO;
-    var request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-    var ajaxUrl = base_url+'/Tipocompensatorios/editTipoCompensatorio/'+ID_COMPENSATORIO;
-    request.open("GET",ajaxUrl,true);
-    request.send();
-    request.onreadystatechange = function(){
-
-        if(request.readyState == 4 && request.status == 200){
-            var objData = JSON.parse(request.responseText);
-            if(objData.status){
-                document.querySelector("#idTipoCompensatorio").value = objData.data.ID_TIPO_COMPENSATORIO;
-                document.querySelector("#txtNombreTipoCompensatorio").value = objData.data.TIP_COM_NOMBRE;
-                document.querySelector("#txtDescripcionTipoCompensatorio").value = objData.data.TIP_COM_DESCRIPCION;
-                document.querySelector("#txtEstadoTipoCompensatorio").value = objData.data.TIP_COM_ESTADO;
-
-                $('#modalFormTipoCompensatorios').modal('show');
-            }else{
-                swal("Error", objData.msg, "error");
-            }
-        }
-       
-    }
-}
-
 function fntDelFuncionario(idfuncionario,estado){
     swal({
         title: "Cambio de Estado",
@@ -294,70 +296,54 @@ function fntDelFuncionario(idfuncionario,estado){
     });
 }
 
-function openModal(){
-    rowTable = "";
-    // document.querySelector("#listRolid").innerHTML=""; // Lista de rol
-    document.querySelector('#idTipoCompensatorio').value ="";
-    document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
-    document.querySelector('#btnActionForm').classList.replace("btn-info", "btn-primary");
-    document.querySelector('#btnText').innerHTML ="Guardar";
-    document.querySelector('#titleModal').innerHTML = "Nuevo Tipo de Compensatorio";
-    document.querySelector("#formTipoCompensatorio").reset();
-    ajustarFormulario();
-    // Reiniciar el valor seleccionado en el elemento <select>
-    // document.querySelector("#ListaUsuarios").selectedIndex = -1;
-
-    $('#modalFormTipocompensatorios').modal('show');
-}
-
 function ftnEvidencias(ID_COMPENSATORIO) {
     // Abre el modal de subir evidencias
     $('#modalFormEvidencias').modal('show');
     document.querySelector("#formCargarEvidencias").reset();
 
 
-// Al hacer clic en el botón de subir evidencia dentro del modal
-document.getElementById("btnSubirEvidencia").addEventListener("click", function() {
-    if (document.getElementById("archivoEvidencia").files[0]) {
-        let fd = new FormData();
-        let archivo = document.getElementById("archivoEvidencia").files[0];
-        let nombreArchivo = archivo.name;
-        let extension = nombreArchivo.split('.').pop().toLowerCase();
-        let extensionesValidas = ["jpg","png","xlsx","docx","pdf"];
+    // Al hacer clic en el botón de subir evidencia dentro del modal
+    document.getElementById("btnSubirEvidencia").addEventListener("click", function() {
+        if (document.getElementById("archivoEvidencia").files[0]) {
+            let fd = new FormData();
+            let archivo = document.getElementById("archivoEvidencia").files[0];
+            let nombreArchivo = archivo.name;
+            let extension = nombreArchivo.split('.').pop().toLowerCase();
+            let extensionesValidas = ["jpg","png","xlsx","docx","pdf"];
 
-        if (extensionesValidas.includes(extension)) {
-            fd.append("archivoEvidencia", archivo);
-            fd.append("ID_COMPENSATORIO", ID_COMPENSATORIO);
+            if (extensionesValidas.includes(extension)) {
+                fd.append("archivoEvidencia", archivo);
+                fd.append("ID_COMPENSATORIO", ID_COMPENSATORIO);
 
-            let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-            let ajaxUrl = base_url + '/Compensatorios/subirEvidencia'; // Reemplazar con la URL correcta
-            request.open("POST", ajaxUrl, true);
-            request.send(fd);
-            request.onreadystatechange = function() {
-                if (request.readyState == 4) { // Verifica que la solicitud esté en el estado 4 (completo)
-                    if (request.status === 200) {
-                        let data = JSON.parse(request.responseText);
-                        // console.log("Volvio");
-                        if (data.status){
-                            swal("Evidencia: ", data.msg, "success");
-                            $('#modalFormEvidencias').modal('hide');
-                            document.getElementById("archivoEvidencia").value = "";
-                        }else{
-                            alert("Error al subir el archivo", data.msg, "error");
+                let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+                let ajaxUrl = base_url + '/Compensatorios/subirEvidencia'; // Reemplazar con la URL correcta
+                request.open("POST", ajaxUrl, true);
+                request.send(fd);
+                request.onreadystatechange = function() {
+                    if (request.readyState == 4) { // Verifica que la solicitud esté en el estado 4 (completo)
+                        if (request.status === 200) {
+                            let data = JSON.parse(request.responseText);
+                            // console.log("Volvio");
+                            if (data.status){
+                                swal("Evidencia: ", data.msg, "success");
+                                $('#modalFormEvidencias').modal('hide');
+                                document.getElementById("archivoEvidencia").value = "";
+                            }else{
+                                alert("Error al subir el archivo", data.msg, "error");
+                            }
+                        } else {
+                            alert("Error en la solicitud: " + request.statusText);
                         }
-                    } else {
-                        alert("Error en la solicitud: " + request.statusText);
                     }
-                }
-            };
-            
+                };
+                
+            } else {
+                swal("Extensión no válida", "El archivo contiene una extensión no permitida", "warning");
+                document.getElementById("archivoEvidencia").value = "";
+            }
         } else {
-            swal("Extensión no válida", "El archivo contiene una extensión no permitida", "warning");
-            document.getElementById("archivoEvidencia").value = "";
+            swal("Seleccione un archivo para subir", "Ningun archivo seleccionado", "info");
         }
-    } else {
-        swal("Seleccione un archivo para subir", "Ningun archivo seleccionado", "info");
-    }
 });
 
 }
@@ -379,7 +365,7 @@ function ftnTotalUsuarios(){
             }
         }
     }
-}
+}*/
 
 function ajustarFormulario() { 
     let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');

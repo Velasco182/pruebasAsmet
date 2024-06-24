@@ -5,61 +5,101 @@ class TipoCompensatoriosModel extends Oracle{
 	public function __construct(){
 		parent::__construct();
 	}
-	
+	//Método para insertar datos
 	public function insertTipoCompensatorio(
-			string $TIP_COM_NOMBRE,
-			string $TIP_COM_DESCRIPCION,
-			string $TIP_COM_ESTADO) {
-                
-			$this->strNombreTipoCompensatorio = $TIP_COM_NOMBRE;
-			$this->strDescripcionTipoCompensatorio = $TIP_COM_DESCRIPCION;
-			$this->intEstadoTipoCompensatorio = $TIP_COM_ESTADO;
-			/*$this->strDescripcionActividad = $COM_ACTIVIDAD_DESARROLLAR;
-			$this->strActividad = $COM_DESCRIPCION_ACTIVIDAD;
-			// $this->ListadoUsuarios = $ID_FUNCIONARIO;
-			$this->ListadoUsuarios = $COM_USUARIOS;
-			$this->strTrabajoRequerido = $COM_USUARIO_FINAL;*/
+		string $strNombreTipoCompensatorio,
+		string $strDescripcionTipoCompensatorio,
+		int $intEstadoTipoCompensatorio) {
 
-			$return = 0;
+		//Dep($strNombreTipoCompensatorio. "model antes");
 
-			// Obtener el ID del funcionario de la sesión
-			//$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
+		$this->strNombreTipoCompensatorio = $strNombreTipoCompensatorio;
+		$this->strDescripcionTipoCompensatorio = $strDescripcionTipoCompensatorio;
+		$this->intEstadoTipoCompensatorio = $intEstadoTipoCompensatorio;
 
-			// Tu consulta de inserción
-			$query_insert  = "
-			INSERT INTO BIG_TIPO_COMPENSATORIO
-			(
-				TIP_COM_NOMBRE,
-				TIP_COM_DESCRIPCION
-				TIP_COM_ESTADO
-			) 
-			VALUES
-			(
-				:TIP_COM_NOMBRE,
-				:TIP_COM_DESCRIPCION,
-				:TIP_COM_ESTADO
-			)";
+		$return = 0;
 
-			$arrData = array(
-				'TIP_COM_NOMBRE' => $this->$strNombreTipoCompensatorio, // Usar el ID del funcionario
-        		'TIP_COM_DESCRIPCION' => $this->strDescripcionTipoCompensatorio,
-        		'TIP_COM_ESTADO' => $this->intEstadoTipoCompensatorio
-			);
+		// Obtener el ID del funcionario de la sesión
+		//$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
 
-			$request_insert = $this->insert($query_insert, $arrData);
+		// Tu consulta de inserción
+		$query_insert  = "
+		INSERT INTO BIG_TIPO_COMPENSATORIO
+		(
+			TIP_COM_NOMBRE,
+			TIP_COM_DESCRIPCION,
+			TIP_COM_ESTADO
+		) 
+		VALUES
+		(
+			:TIP_COM_NOMBRE,
+			:TIP_COM_DESCRIPCION,
+			:TIP_COM_ESTADO
+		)";
 
-			// var_dump($arrData);
+		$arrData = array(
+			'TIP_COM_NOMBRE' => $strNombreTipoCompensatorio, 
+			'TIP_COM_DESCRIPCION' => $this->strDescripcionTipoCompensatorio,
+			'TIP_COM_ESTADO' => $this->intEstadoTipoCompensatorio,
+		);
 
-			$return = $request_insert;
+		$request_insert = $this->insert($query_insert, $arrData);
 
-			return $return; 
+		// var_dump($arrData);
+
+		$return = $request_insert;
+
+		return $return; 
 	}
+	//Método para seleccionar tipo de compensatorio para editar
+	public function selectTipoCompensatorioEdit(int $idTipoCompensatorio){
 
+		$this->intIdTipoCompensatorio = $idTipoCompensatorio;
+
+		$sql = "SELECT 
+				TC.ID_TIPO_COMPENSATORIO,
+				TC.TIP_COM_NOMBRE,
+				TC.TIP_COM_DESCRIPCION,
+				TC.TIP_COM_ESTADO
+				FROM BIG_TIPO_COMPENSATORIO TC
+		WHERE TC.ID_TIPO_COMPENSATORIO = $this->intIdTipoCompensatorio
+		";
+		
+		$request = $this->select($sql);
+
+			// var_dump($request);			
+		return $request;
+	}
+	//Método para leer los datos del tipo de compensatorio en el datatable
+	public function selectTipoCompensatorios() {
+		
+		//where TIP_COM_ESTADO='1'
+		$sql = " SELECT * FROM BIG_TIPO_COMPENSATORIO T";
+		return $this->select_all($sql);
+
+	}
+	//Método para leer los datos del compensatorio en modal
+	public function selectTipoCompensatorioVista(int $idTipoCompensatorio) {
+		$this->IdTipoCompensatorio = $idTipoCompensatorio;
+		$sql = "
+		SELECT
+			TC.ID_TIPO_COMPENSATORIO,
+			TC.TIP_COM_NOMBRE,
+			TC.TIP_COM_DESCRIPCION,
+			TC.TIP_COM_ESTADO
+		FROM BIG_TIPO_COMPENSATORIO TC
+		WHERE TC.ID_TIPO_COMPENSATORIO = $this->IdTipoCompensatorio";
+
+		$request = $this->select($sql);
+	
+		return $request;
+	}
+	//Método para actualizar el tipo de compensatorio
 	public function updateTipoCompensatorio(
-			int $intIdTipoCompensatorio,
-			string $strNombreTipoCompensatorio, 
-			string $strDescripcionTipoCompensatorio,
-			int $intEstadoTipoCompensatorio){
+		int $intIdTipoCompensatorio,
+		string $strNombreTipoCompensatorio, 
+		string $strDescripcionTipoCompensatorio,
+		int $intEstadoTipoCompensatorio){
 
 
 		$this->intIdTipoCompensatorio = $intIdTipoCompensatorio;
@@ -67,19 +107,12 @@ class TipoCompensatoriosModel extends Oracle{
 		$this->strDescripcionTipoCompensatorio = $strDescripcionTipoCompensatorio;
 		$this->intEstadoTipoCompensatorio = $intEstadoTipoCompensatorio;
 
-			// $sql = "SELECT * FROM BIG_COMPENSATORIOS WHERE (COM_DESCRIPCION_ACTIVIDAD = '{$this->strDescripcionActividad}' OR COM_ACTIVIDAD_DESARROLLAR = '{$this->strActividad}')
-    		// AND ID_COMPENSATORIO != '{$this->intIdFuncionario}'
-			// ";
-
-
-			// $request = $this->select_all($sql);
-
 		if(empty($request)){
 			$sql = "
-			UPDATE BIG_TIPO_COMPENSATORIOS
+			UPDATE BIG_TIPO_COMPENSATORIO
 			SET TIP_COM_NOMBRE = :TIP_COM_NOMBRE,
 			TIP_COM_DESCRIPCION = :TIP_COM_DESCRIPCION,
-			TIP_COM_ESTADO = :TIP_COM_ESTADO,
+			TIP_COM_ESTADO = :TIP_COM_ESTADO
 			WHERE ID_TIPO_COMPENSATORIO = $this->intIdTipoCompensatorio
 			";
 
@@ -96,27 +129,15 @@ class TipoCompensatoriosModel extends Oracle{
 		return $request;
 
 	}
-
-	public function selectEdit(int $ID_TIPO_COMPENSATORIO){
-
-		$this->intIdTipoCompensatorio = $ID_TIPO_COMPENSATORIO;
-
-		$sql = "SELECT 
-				TC.ID_TIPO_COMPENSATORIO,
-				TC.TIP_COM_NOMBRE,
-				TC.TIP_COM_DESCRIPCION,
-				TC.TIP_COM_ESTADO,
-				TC.COM_ACTIVIDAD_DESARROLLAR
-		FROM BIG_TIPO_COMPENSATORIOS TC
-		WHERE TC.ID_TIPO_COMPENSATORIO = $this->intIdTipoCompensatorio";
-		
-		$request = $this->select($sql);
-
-			// var_dump($request);
-			
+	//Método para eliminar datos
+	public function deleteTipoCompensatorio(int $idTipoCompensatorio){
+		$this->intIdTipoCompensatorio = $idTipoCompensatorio;
+		$sql = "DELETE BIG_TIPO_COMPENSATORIO WHERE ID_TIPO_COMPENSATORIO = $this->intIdTipoCompensatorio";
+		$arrData = array(0);
+		$request = $this->update($sql,$arrData);
 		return $request;
 	}
-
+########################################################################################################
 	public function recuperar($ID_FUNCIONARIO){
 		$sql = "SELECT
 				FUN.ID_FUNCIONARIO,
@@ -136,40 +157,7 @@ class TipoCompensatoriosModel extends Oracle{
 			return $request;
 	}
 	
-	public function selectTipoCompensatorios() {
-		
-		$sql = " SELECT * FROM BIG_TIPO_COMPENSATORIO T where TIP_COM_ESTADO='1'";
-		return $this->select_all($sql);
-
-	}
-		
-	public function selectTipoCompensatorioVista(int $ID_COMPENSATORIO) {
-		$this->intIdFuncionario = $ID_COMPENSATORIO;
-		$sql = "
-		SELECT
-			I.ID_COMPENSATORIO,
-			I.ID_FUNCIONARIO,
-			TO_CHAR(I.COM_FECHA_INICIO, 'DD/MM/YYYY - HH:MI AM') AS COM_FECHA_INICIO,
-			TO_CHAR(I.COM_FECHA_FIN, 'DD/MM/YYYY - HH:MI AM') AS COM_FECHA_FIN,
-			I.COM_DESCRIPCION_ACTIVIDAD,
-			I.COM_ACTIVIDAD_DESARROLLAR,
-			I.COM_EVIDENCIAS,
-			I.COM_USUARIO_FINAL,
-			I.COM_ESTADO,
-			F.FUN_NOMBRES AS FUN_NOMBRES,
-			F.FUN_APELLIDOS AS FUN_APELLIDOS,
-			F.FUN_CORREO AS FUN_CORREO
-		FROM BIG_COMPENSATORIOS I
-		INNER JOIN BIG_FUNCIONARIOS F ON I.ID_FUNCIONARIO = F.ID_FUNCIONARIO
-		WHERE I.ID_COMPENSATORIO = $this->intIdFuncionario";
-
-		$request = $this->select($sql);
-	
-		return $request;
-	}
-	
 	// Método para cambiar el estado del compensatorio 
-	
 	public function estadoAprobado($ID_COMPENSATORIO){
 		$this->intIdFuncionario = $ID_COMPENSATORIO;
 		$estadoAprobado = 2;
@@ -239,7 +227,6 @@ class TipoCompensatoriosModel extends Oracle{
 	}
 
 	// Metodo para cambiar el estado del compensatorio
-
 	public function estadoRechazado($ID_COMPENSATORIO){
 		$this->intIdFuncionario = $ID_COMPENSATORIO;
 		$estadoRechazado = 3;
@@ -257,7 +244,6 @@ class TipoCompensatoriosModel extends Oracle{
 	}
 
     // ... otros métodos y funciones del modelo ...
-
 	public function updateFuncionario(int $idFuncionario, string $identificacion, string $nombre, string $apellido, 
 	string $usuario, string $email,int $tipoid, int $status){
 			
@@ -301,67 +287,67 @@ class TipoCompensatoriosModel extends Oracle{
 		return $request;
 	}
 
-		public function deleteFuncionario(int $idFuncionario){
-			$this->intIdFuncionario = $idFuncionario;
-			$sql = "UPDATE BIG_FUNCIONARIOS SET FUN_ESTADO = ? WHERE ID_FUNCIONARIO = $this->intIdFuncionario ";
-			$arrData = array(0);
-			$request = $this->update($sql,$arrData);
-			return $request;
-		}
+	public function deleteFuncionario(int $idFuncionario){
+		$this->intIdFuncionario = $idFuncionario;
+		$sql = "UPDATE BIG_FUNCIONARIOS SET FUN_ESTADO = ? WHERE ID_FUNCIONARIO = $this->intIdFuncionario ";
+		$arrData = array(0);
+		$request = $this->update($sql,$arrData);
+		return $request;
+	}
 
-		public function estadoFuncionario(int $idFuncionario, string $estado){
-			$this->intIdFuncionario = $idFuncionario;
-			$sql = "UPDATE BIG_FUNCIONARIOS SET FUN_ESTADO = ? WHERE ID_FUNCIONARIO = $this->intIdFuncionario ";
-			$arrData = array($estado);
-			$request = $this->update($sql,$arrData);
-			return $request;
-		}
+	public function estadoFuncionario(int $idFuncionario, string $estado){
+		$this->intIdFuncionario = $idFuncionario;
+		$sql = "UPDATE BIG_FUNCIONARIOS SET FUN_ESTADO = ? WHERE ID_FUNCIONARIO = $this->intIdFuncionario ";
+		$arrData = array($estado);
+		$request = $this->update($sql,$arrData);
+		return $request;
+	}
 
-		public function resetPassFuncionario(int $idFuncionario,string $fun_password){
-			$this->intIdFuncionario = $idFuncionario;
-			$sql = "UPDATE BIG_FUNCIONARIOS SET FUN_PASSWORD = ? WHERE ID_FUNCIONARIO = $this->intIdFuncionario ";
-			$arrData = array($fun_password);
-			$request = $this->update($sql,$arrData);
-			return $request;
-		}
+	public function resetPassFuncionario(int $idFuncionario,string $fun_password){
+		$this->intIdFuncionario = $idFuncionario;
+		$sql = "UPDATE BIG_FUNCIONARIOS SET FUN_PASSWORD = ? WHERE ID_FUNCIONARIO = $this->intIdFuncionario ";
+		$arrData = array($fun_password);
+		$request = $this->update($sql,$arrData);
+		return $request;
+	}
 
-		public function selectUsuarios(){
-			$whereAdmin = "";
-			if ($_SESSION['idUser'] != 1 )
-			{$whereAdmin = " and ID_FUNCIONARIO != 1 ";
-			}
-			// EXTRAE ROLES excluyendo el usuario con ID_FUNCIONARIO = 1
-			$sql = "SELECT * FROM BIG_FUNCIONARIOS WHERE FUN_ESTADO != 0" . $whereAdmin;
-			$request = $this->select_all($sql);
-			return $request;
+	public function selectUsuarios(){
+		$whereAdmin = "";
+		if ($_SESSION['idUser'] != 1 )
+		{$whereAdmin = " and ID_FUNCIONARIO != 1 ";
 		}
+		// EXTRAE ROLES excluyendo el usuario con ID_FUNCIONARIO = 1
+		$sql = "SELECT * FROM BIG_FUNCIONARIOS WHERE FUN_ESTADO != 0" . $whereAdmin;
+		$request = $this->select_all($sql);
+		return $request;
+	}
+	
+	public function esAdministrador($ID_ROL) {
+
+		$sql = "SELECT distinct ID_ROL FROM BIG_FUNCIONARIOS WHERE ID_ROL = ID_ROL";
+
+		$arrData = array(
+			':ID_ROL' => $ID_ROL
+		);
+
+		$request = $this->select($sql, $arrData);
 		
-		public function esAdministrador($ID_ROL) {
-	
-			$sql = "SELECT distinct ID_ROL FROM BIG_FUNCIONARIOS WHERE ID_ROL = ID_ROL";
-	
-			$arrData = array(
-				':ID_ROL' => $ID_ROL
-			);
+		return $request['ID_ROL'] == 1;		
+	}
 
-			$request = $this->select($sql, $arrData);
-			
-			return $request['ID_ROL'] == 1;		
-		}
+	public function guardarEvidencia($COM_EVIDENCIAS, $ID_COMPENSATORIO){ // Esta definitivamente funciona
+		$this->strEvidencia = $COM_EVIDENCIAS;
 
-		public function guardarEvidencia($COM_EVIDENCIAS, $ID_COMPENSATORIO){ // Esta definitivamente funciona
-			$this->strEvidencia = $COM_EVIDENCIAS;
+		$sql = "UPDATE BIG_COMPENSATORIOS SET COM_EVIDENCIAS = :COM_EVIDENCIAS WHERE ID_COMPENSATORIO = :ID_COMPENSATORIO";
 
-			$sql = "UPDATE BIG_COMPENSATORIOS SET COM_EVIDENCIAS = :COM_EVIDENCIAS WHERE ID_COMPENSATORIO = :ID_COMPENSATORIO";
+		$arrData = array(
+			'COM_EVIDENCIAS'=>$this->strEvidencia,
+			'ID_COMPENSATORIO' => $ID_COMPENSATORIO
+		);
+		
+		$request = $this->update($sql, $arrData);
 
-			$arrData = array(
-				'COM_EVIDENCIAS'=>$this->strEvidencia,
-				'ID_COMPENSATORIO' => $ID_COMPENSATORIO
-			);
-			
-			$request = $this->update($sql, $arrData);
-
-			return $request;		
-		}
+		return $request;		
+	}
 	}
  ?>

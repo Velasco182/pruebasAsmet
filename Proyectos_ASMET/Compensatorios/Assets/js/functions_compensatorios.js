@@ -301,7 +301,7 @@ function ftnRechazarCompensatorio(ID_COMPENSATORIO) { // Funcion para boton boto
     });
 }
 
-function fntViewFuncionario(ID_COMPENSATORIO){
+function fntViewCompensatorio(ID_COMPENSATORIO){
     let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
     let ajaxUrl = base_url+'/Compensatorios/getCompensatorio/'+ID_COMPENSATORIO;
     request.open("GET",ajaxUrl,true);

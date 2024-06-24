@@ -281,7 +281,7 @@ class Compensatorios extends Controllers{
 				//Revisar
 				if($_SESSION['permisosMod']['PER_R']){ // Icono de ver funcionario
 					if($arrData[$i]['COM_USUARIO_FINAL']!="1"){
-						$btnVer = '<button class="btn btn-info btn-sm btnViewFuncionario" onClick="fntViewFuncionario('.$arrData[$i]['ID_COMPENSATORIO'].')" title="Ver Funcionario"><i class="far fa-eye"></i></button>';
+						$btnVer = '<button class="btn btn-info btn-sm btnViewFuncionario" onClick="fntViewCompensatorio('.$arrData[$i]['ID_COMPENSATORIO'].')" title="Ver Compensatorio"><i class="far fa-eye"></i></button>';
 					}else{
 						$btnVer = '<button class="btn btn-secondary btn-sm" disabled ><i class="far fa-eye"></i></button>';
 					}
