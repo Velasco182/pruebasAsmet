@@ -10,6 +10,7 @@ class TipoCompensatoriosModel extends Oracle{
 	public function __construct(){
 		parent::__construct();
 	}
+
 	//Método para insertar datos
 	public function insertTipoCompensatorio(
 		string $nombreTipoCompensatorio,
@@ -26,8 +27,6 @@ class TipoCompensatoriosModel extends Oracle{
 
 		// Obtener el ID del funcionario de la sesión
 		//$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
-
-		// Tu consulta de inserción
 		$query_insert  = "
 		INSERT INTO BIG_TIPO_COMPENSATORIO
 		(
@@ -137,9 +136,6 @@ class TipoCompensatoriosModel extends Oracle{
 	//Método para eliminar datos
 	public function deleteTipoCompensatorio(int $idTipoCompensatorio){
 		$this->intIdTipoCompensatorio = $idTipoCompensatorio;
-
-		/*$sql = "SELECT * FROM BIG_TIPO_COMPENSATORIO WHERE ID_TIPO_COMPENSATORIO = $this->intIdTipoCompensatorio";
-		$request = $this-> select_all($sql);*/
 
 		if(empty($request)){
 
@@ -368,5 +364,6 @@ class TipoCompensatoriosModel extends Oracle{
 
 		return $request;		
 	}
+########################################################################################################	
 	}
  ?>

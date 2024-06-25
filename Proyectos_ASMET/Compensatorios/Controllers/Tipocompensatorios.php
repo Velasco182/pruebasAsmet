@@ -21,7 +21,7 @@ class Tipocompensatorios extends Controllers{
 			}
 		}
 	}
-
+	
 	public function Tipocompensatorios(){
 		$data['page_tag'] = $_SESSION['permisosMod']['MOD_TITULO'];
 		$data['page_title'] = $_SESSION['permisosMod']['MOD_TITULO'];
@@ -32,7 +32,7 @@ class Tipocompensatorios extends Controllers{
 		$this->views->getView($this,$_SESSION['permisosMod']['MOD_ACCESO'],$data);
 	}
 
-	
+	//Módulo para crear tipo de compensatorio llamando al modelo insertTipoCompensatorio
 	public function setTipoCompensatorio(){
 		if ($_POST) {
 	
@@ -121,22 +121,13 @@ class Tipocompensatorios extends Controllers{
 		}
 		echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
 	}
-	
+	//Módulo para obtener tipos de compensatorios llamando al modelo selectTipoCompensatorios
 	public function getTipoCompensatorios(){
 		if($_SESSION['permisosMod']['PER_R']){
 			$arrData = $this ->model->selectTipoCompensatorios();
-			// Procesa $resultado para mostrar los compensatorios del funcionario
-
 			
-
 			for ($i=0; $i < sizeof($arrData); $i++) {
 				
-
-				/*$arrData[$i]['COM_FECHA_INICIO']=formatearFechaYHora($arrData[$i]['COM_FECHA_INICIO'],"d/m/Y - h:i A");
-				$arrData[$i]['COM_FECHA_FIN']=formatearFechaYHora($arrData[$i]['COM_FECHA_FIN'],"d/m/Y - h:i A");*/
-
-				// var_dump($arrData);
-
 				$btnEdit = '';
 				$btnVer = '';
 				$btnEliminar = '';
@@ -146,17 +137,6 @@ class Tipocompensatorios extends Controllers{
 				}else{
 					$arrData[$i]['TIP_COM_ESTADO'] = '<span class="badge badge-danger">Inactivo</span>';
 				}
-
-
-				// $arrData[$i]['COM_ESTADO'] = '<span class="badge ' . $statusClass . '">' . $newStatus . '</span>'; // Error con los span
-
-				// var_dump($comEstado);
-
-				/*if ($_SESSION['permisosMod']['PER_F'] && $comEstado == 2) {
-					$btnReset = '<button class="btn btn-success btn-sm btnResetPass" onClick="ftnEvidencias(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Cargar Evidencias"><i class="fas fa-cloud-upload-alt"></i></button>';
-				} else {
-					$btnReset = ''; // Botón vacío si no se cumple la condición
-				}*/
 
 				//PER_R -> LEEER
 				//PER_W -> ESCRIBIR
@@ -174,55 +154,13 @@ class Tipocompensatorios extends Controllers{
 				if ($_SESSION['permisosMod']['PER_D']) {
 					$btnEliminar = '<button class="btn btn-danger btn-sm btnDelFuncionario" onClick="ftnDeleteTipoCompensatorio('.$arrData[$i]['ID_TIPO_COMPENSATORIO'].')" title="Eliminar Tipo Compenstorio"><i class="fa fa-sm fa-trash"></i></button>';
 				}
-
-				/*if($_SESSION['permisosMod']['ID_ROL'] == '2' && $comEstado == 1){
-				 	if($arrData[$i]['COM_USUARIO_FINAL']!="1"){
-				 		$btnEdit = '<button class="btn btn-primary  btn-sm btnEditFuncionario" onClick="btnEditCompensatorio(this,'.$arrData[$i]['ID_COMPENSATORIO'].')" title="Editar Funcionario"><i class="fas fa-pencil-alt"></i></button>';
-				 	}else{
-				 		$btnEdit = '';
-				 	}
-				}
-
-				if($_SESSION['permisosMod']['PER_U'] && $_SESSION['permisosMod']['ID_ROL'] !== '1') {
-					if($arrData[$i]['COM_USUARIO_FINAL'] != "1" && ($comEstado == 1)) {
-						$btnEdit = '<button class="btn btn-primary btn-sm btnEditFuncionario" onClick="btnEditCompensatorio(this,'.$arrData[$i]['ID_COMPENSATORIO'].')" title="Editar Funcionario"><i class="fas fa-pencil-alt"></i></button>';
-					} else {
-						$btnEdit = '';
-					}
-				}
-				
-				if ($_SESSION['permisosMod']['PER_U']) { // Botón de aprobaciones
-					if ($comEstado == 1) {
-				 		$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="ftnAprobarCompensatorio(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Aprobar Compensatorio"><i class="fas fa-check-double"></i></button>';
-				 	} else {
-				 		$btnAprobar = '';
-				 	}
-				}
-
-				if ($_SESSION['permisosMod']['PER_U'] && $_SESSION['permisosMod']['ID_ROL'] === '1') {
-					if ($comEstado == 1) {
-						$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="ftnAprobarCompensatorio(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Aprobar Compensatorio"><i class="fas fa-check-double"></i></button>';
-					} else {
-						$btnAprobar = '';
-					}
-				} else {
-					$btnAprobar = '';
-				}*/
-				
-				if ($_SESSION['permisosMod']['PER_D']) {
-					if ($comEstado == 1) {
-						$btnRechazar = '<button class="btn btn-danger btn-sm btnDelFuncionario" onClick="ftnRechazarCompensatorio(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Rechazar Compenstorio"><i class="fas fa-times-circle"></i></button>';
-					} else {
-						$btnRechazar = '';
-					}
-				}*/
 				
 				$arrData[$i]['ACCIONES'] = '<div class="text-center">'.$btnVer.' '.$btnEdit.' '.$btnEliminar.'</div>';
 			}
 			echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
 		}
 	}
-
+	//Módulo para editar el tipo de compensatorio llamando al modelo selectTipoCompensatorioEdit
 	public function editTipoCompensatorio($idTipoCompensatorio) {
 
 		//Duda, los permisos deberían ser de Update?, entiendo que está haciendo una lectura de igual forma
@@ -241,7 +179,7 @@ class Tipocompensatorios extends Controllers{
 			}
 		}
 	}
-
+	//Módulo para obtener tipo de compensatorios por ID llamando al modelo selectTipoCompensatorioVista
 	public function getTipoCompensatorio($idTipoCompensatorio) {
 		if ($_SESSION['permisosMod']['PER_R'] && intval($idTipoCompensatorio) > 0) {
 			$arrData = $this->model->selectTipoCompensatorioVista($idTipoCompensatorio);
@@ -257,7 +195,7 @@ class Tipocompensatorios extends Controllers{
 			echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE); // Devuelve la respuesta JSON
 		}
 	}
-
+	//Módulo para eliminar el tipo de compensatorio llamando al modelo deleteTipoCompensatorio
 	public function delTipoCompensatorio(){
 		if($_POST){
 			if($_SESSION['permisosMod']['PER_D']){
@@ -276,168 +214,7 @@ class Tipocompensatorios extends Controllers{
 			}
 		}
 	}
-		
-	//ControladorAprobacion.php
-	/*public function aprobarCompensatorio() {
-		if ($_POST) {
-			if ($_SESSION['permisosMod']['PER_R']) {
-				$ID_COMPENSATORIO = isset($_POST['ID_COMPENSATORIO']) ? intval($_POST['ID_COMPENSATORIO']) : 0;
-				
-				// Obtener los datos del propietario del compensatorio
-				$datos = $this->model->correoAprobacion($ID_COMPENSATORIO);
-
-				$datos['COM_FECHA_INICIO']=formatearFechaYHora($datos['COM_FECHA_INICIO'],"d/m/Y - h:i A");
-				$datos['COM_FECHA_FIN']=formatearFechaYHora($datos['COM_FECHA_FIN'],"d/m/Y - h:i A");
-	
-				if ($ID_COMPENSATORIO > 0 && $datos) {
-					$success = $this->model->estadoAprobado($ID_COMPENSATORIO);
-	
-					if ($success) {
-						$correo = $datos['FUN_NOMBRES'];
-						$correo = $datos['FUN_CORREO'];
-						$remitente = 'estivenmendez550@gmail.com';
-						$destinatario = 'aprendiz.bi@asmetsalud.com';
-						$asunto = 'Aprobación de compensatorio';
-	
-						$tipoMensaje = 'aprobacion';
-
-						// Generar HTML con los datos del propietario del compensatorio
-						$html = generarHTML($tipoMensaje, $datos);
-	
-						// Enviar el correo electrónico
-						$enviarcorreo = enviarMail($remitente, $correo, $asunto, 'aprobacion', $datos);
-	
-						if ($enviarcorreo) {
-							$response = array('status' => true, 'msg' => 'Compensatorio aprobado exitosamente y se envió un correo de confirmación al solicitante.');
-						} else {
-							$response = array('status' => false, 'msg' => 'Compensatorio aprobado exitosamente, pero no se pudo enviar el correo de confirmación.');
-						}
-					} else {
-						$response = array('status' => false, 'msg' => 'Error al aprobar el compensatorio');
-					}
-					echo json_encode($response, JSON_UNESCAPED_UNICODE);
-					exit;
-				}
-			}
-		}
-	}
-	
-		
-	// ControladorRechazo.php
-	public function rechazarCompensatorio(){
-		if ($_POST) {
-			if ($_SESSION['permisosMod']['PER_R']);
-			$ID_COMPENSATORIO = isset($_POST['ID_COMPENSATORIO']) ? intval($_POST['ID_COMPENSATORIO']) : 0;
-			
-			$datos = $this->model->CorreoRechazo($ID_COMPENSATORIO);
-
-			$datos['COM_FECHA_INICIO']=formatearFechaYHora($datos['COM_FECHA_INICIO'],"d/m/Y - h:i A");
-			$datos['COM_FECHA_FIN']=formatearFechaYHora($datos['COM_FECHA_FIN'],"d/m/Y - h:i A");
-
-			if ($ID_COMPENSATORIO > 0) {
-				$success = $this->model->estadoRechazado($ID_COMPENSATORIO);
-		
-				if ($success) {
-					$nombre = $datos['FUN_NOMBRES'];
-					$nombre = $datos['FUN_CORREO'];
-
-					$remitente = 'estivenmendez550@gmail.com';
-					$destinatario = 'aprendiz.bi@asmetsalud.com';
-					$asunto = 'Rechazo de compensatorio';
-
-					$tipoMensaje = 'rechazo';
-
-					$html = generarHTML($tipoMensaje, $datos);
-
-					$enviarcorreo = enviarMail($remitente, $nombre, $asunto, 'rechazo', $datos);
-
-					if ($enviarcorreo){
-						$response = array('status' => true, 'msg' => 'El compensatorio fue rechazado y se envio un correo de confirmacion al solicitante');
-					} else {
-						$response = array('status' => false, 'msg' => 'El compensatorio fue rechazado, pero no se pudo enviar el correo de confirmacion');
-					}
-				} else {
-					$response = array('status' => false, 'msg' => 'El al rechazar el compensatorio');
-				}
-				echo json_encode($response, JSON_UNESCAPED_UNICODE);
-				exit;
-			}
-		}
-	}
-
-	public function getSelectUsuarios(){
-		$htmlOptions = "";
-		$arrData = $this->model->selectUsuarios();
-		if(count($arrData) > 0 ){
-			// Obtener el nombre del usuario que inició sesión
-			$loggedUserName = $_SESSION['userData']['FUN_NOMBRES'];
-				
-			// Agregar la opción del usuario que inició sesión
-			$htmlOptions .= '<option value="'.$_SESSION['userData']['ID_FUNCIONARIO'].'">'.$loggedUserName.'</option>';
-				
-			// Agregar las opciones de los demás registros
-			for ($i=0; $i < count($arrData); $i++) { 
-				if($arrData[$i]['FUN_ESTADO'] == 1 && $arrData[$i]['ID_FUNCIONARIO'] != $_SESSION['userData']['ID_FUNCIONARIO']){
-					$htmlOptions .= '<option value="'.$arrData[$i]['ID_FUNCIONARIO'].'">'.$arrData[$i]['FUN_NOMBRES'].' '.$arrData[$i]['FUN_APELLIDOS'].'</option>';
-				}
-			}
-		}
-		echo $htmlOptions;
-	}
-		
-
-	public function verificarRol() {
-		
-		// Verificar si el usuario tiene el rol de administrador
-		$ID_ROL = $_SESSION['userData']['ID_ROL'];
-		$esAdministrador = $this->model->esAdministrador($ID_ROL);
-		
-		$response = array(
-			'esAdministrador' => $ID_ROL
-		);
-		
-		header('Content-Type: application/json');
-		echo json_encode($response);
-	}
-
-
-	public function subirEvidencia($ID_COMPENSATORIO) {
-		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-			$ID_COMPENSATORIO = isset($_POST['ID_COMPENSATORIO']) ? intval($_POST['ID_COMPENSATORIO']) : 0;
-
-			// Verificar que se haya subido un archivo
-			if (isset($_FILES['archivoEvidencia']) && $_FILES['archivoEvidencia']['error'] === UPLOAD_ERR_OK) {
-				$archivo = $_FILES['archivoEvidencia']['tmp_name'];
-				$name = $_FILES['archivoEvidencia']['name'];
-		
-				$directorio = "archivos/";
-				$name = strtolower($name) . '_' . uniqid();
-				$destino = $directorio . $name;
-		
-				// Intenta mover el archivo al directorio de destino
-				if (move_uploaded_file($archivo, $destino)) {
-					// Éxito: el archivo se cargó con éxito
-		
-					// Llama al método en tu modelo para guardar la evidencia en la base de datos
-					$return = $this->model->guardarEvidencia($name, $ID_COMPENSATORIO);
-		
-					if ($return) {
-						$response = array('status' => true, 'msg' => 'Subida con éxito');
-					} else {
-						$response = array('status' => false, 'msg' => 'Error al subir el archivo');
-					}
-				} else {
-					// Error: no se pudo mover el archivo al directorio de destino
-					$response = array('status' => false, 'msg' => 'No se pudo mover el archivo al directorio de destino');
-				}
-			} else {
-				// Error: no se seleccionó ningún archivo o hubo un error al cargarlo
-				$response = array('status' => false, 'msg' => 'No se seleccionó ningún archivo');
-			}
-		}
-		echo json_encode($response, JSON_UNESCAPED_UNICODE);
-	}*/
-}//fin de la clase
+}
  ?>
 
 
