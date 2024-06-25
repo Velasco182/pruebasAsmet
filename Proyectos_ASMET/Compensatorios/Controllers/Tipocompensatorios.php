@@ -66,57 +66,22 @@ class Tipocompensatorios extends Controllers{
 							$strNombreTipoCompensatorio,
 							$strDescripcionTipoCompensatorio,
 							$intTipoCompensatorioEstado,
-							/*$strDescripcionActividad,
-							$strActividad,
-							$strTrabajoRequerido*/
 						);
 						$option = 2; // Actualización
 					}
 				}
 
-				//if ($request_user > 0) {
+				$arrResponse = array('status' => false, 'msg' => 'El nombre del tipo de compensatorio ya existe!');
+
 				if ($option == 1) {
-					// Bloque de envío de correo para inserción
 
-					/*$remitente = 'estivenmendez550@gmail.com';
-					$destinatario = 'aprendiz.bi@asmetsalud.com';
-					$asunto = 'Solicitud de compensatorio';
-					$tipoMensaje = 'solicitud';
-
-					$txtFechaInicio = $_POST['txtFechaInicio'];
-					$txtFechaFin = $_POST['txtFechaFin'];
-
-					$fechaInicioFormateada = date('d/m/Y - h:i A', strtotime($txtFechaInicio));
-					$fechaFinFormateada = date('d/m/Y - h:i A', strtotime($txtFechaFin));
-
-					$datos = [
-						'FechaInicio' => $fechaInicioFormateada,
-						'Funcionario' => $arrData["NOMBREFUNCIONARIO"],
-						'FechaFin' => $fechaFinFormateada,
-						'Actividad' => $_POST['txtActividad'],
-						'UsuarioTrabajo' => $_POST['txtTrabajoRequerido'],
-						'DescripcionAc' => $_POST['txtDescripcionActividad']
-					];
-
-					$html = generarHTML($tipoMensaje, $datos);*/
-
-					//try {
-						
-						$arrResponse = array('status' => true, 'msg' => 'Insertado con éxito!');
-						
-						//$enviarcorreo = enviarMail($remitente, $destinatario, $asunto, 'solicitud', $datos);
-						//$arrResponse = array('status' => true, 'msg' => 'Su solicitud fue procesada con éxito, espera que el admin apruebe tu compensatorio');
-					/*} catch (Exception $e) {
-						$arrResponse = array('status' => false, 'msg' => 'Error al enviar el correo: ' . $e->getMessage());
-					}*/
+					$request_user === "exist" ? $arrResponse : $arrResponse = array('status' => true, 'msg' => 'Insertado con éxito!');
+					
 				} else {
-					// Bloque de actualización (puedes agregar un mensaje si deseas)
-					$arrResponse = array('status' => true, 'msg' => 'Actualizado con éxito!');
+
+					$request_user === "exist" ? $arrResponse : $arrResponse = array('status' => true, 'msg' => 'Actualizado con éxito!');
+
 				}
-				/*} else {
-					$arrResponse = array("status" => false, "msg" => 'No es posible almacenar los datos.');
-				}
-			}*/
 			}
 		}
 		echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
@@ -160,6 +125,23 @@ class Tipocompensatorios extends Controllers{
 			echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
 		}
 	}
+	//Módulo para obtener tipo de compensatorios por ID llamando al modelo selectTipoCompensatorioVista
+	public function getTipoCompensatorio($idTipoCompensatorio) {
+		if ($_SESSION['permisosMod']['PER_R'] && intval($idTipoCompensatorio) > 0) {
+			
+			$arrData = $this->model->selectTipoCompensatorioVista($idTipoCompensatorio);
+		
+			if (!empty($arrData)) {
+				// Preparar la respuesta
+				$arrResponse = array('status' => true, 'data' => $arrData);
+
+			} else {
+				$arrResponse = array('status' => false, 'msg' => 'Datos no encontrados');
+			}
+		
+			echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE); // Devuelve la respuesta JSON
+		}
+	}
 	//Módulo para editar el tipo de compensatorio llamando al modelo selectTipoCompensatorioEdit
 	public function editTipoCompensatorio($idTipoCompensatorio) {
 
@@ -179,22 +161,6 @@ class Tipocompensatorios extends Controllers{
 			}
 		}
 	}
-	//Módulo para obtener tipo de compensatorios por ID llamando al modelo selectTipoCompensatorioVista
-	public function getTipoCompensatorio($idTipoCompensatorio) {
-		if ($_SESSION['permisosMod']['PER_R'] && intval($idTipoCompensatorio) > 0) {
-			$arrData = $this->model->selectTipoCompensatorioVista($idTipoCompensatorio);
-		
-			if (!empty($arrData)) {
-				// Preparar la respuesta
-				$arrResponse = array('status' => true, 'data' => $arrData);
-
-			} else {
-				$arrResponse = array('status' => false, 'msg' => 'Datos no encontrados');
-			}
-		
-			echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE); // Devuelve la respuesta JSON
-		}
-	}
 	//Módulo para eliminar el tipo de compensatorio llamando al modelo deleteTipoCompensatorio
 	public function delTipoCompensatorio(){
 		if($_POST){
@@ -203,9 +169,9 @@ class Tipocompensatorios extends Controllers{
 				$requestDelete = $this->model->deleteTipoCompensatorio($intIdTipoCompensatorio);
 				
 				if($requestDelete == 'ok'){
-					$arrResponse = array('status' => true, 'msg' => 'Se ha eliminado Exitosamente!.');
+					$arrResponse = array('status' => true, 'msg' => 'Se ha eliminado exitosamente!.');
 				}else if($requestDelete == 'exist'){
-					$arrResponse = array('status' => false, 'msg' => 'No es posible.');
+					$arrResponse = array('status' => false, 'msg' => 'El tipo de compensatorio está relacionado con un compensatorio, no es posible eliminarlo!');
 				}else{
 					$arrResponse = array('status' => false, 'msg' => 'Error al eliminar.');
 				}

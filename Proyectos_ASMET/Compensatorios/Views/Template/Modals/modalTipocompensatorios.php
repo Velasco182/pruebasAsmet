@@ -38,7 +38,7 @@
               <label for="txtEstadoTipoCompensatorio">Estado</label>
               <select class="form-control selectpicker" id="txtEstadoTipoCompensatorio" name="txtEstadoTipoCompensatorio" required>
                 <option value="1">Activo</option>
-                <option value="2">Inactivo</option>
+                <option value="0">Inactivo</option>
               </select>
             </div>
           </div>
