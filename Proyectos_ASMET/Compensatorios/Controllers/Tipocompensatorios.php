@@ -172,34 +172,34 @@ class Tipocompensatorios extends Controllers{
 				}
 
 				if ($_SESSION['permisosMod']['PER_D']) {
-					$btnEliminar = '<button class="btn btn-danger btn-sm btnDelFuncionario" onClick="ftnEditTipoCompensatorio('.$arrData[$i]['ID_COMPENSATORIO'].')" title="Eliminar Tipo Compenstorio"><i class="fa fa-sm fa-trash"></i></button>';
+					$btnEliminar = '<button class="btn btn-danger btn-sm btnDelFuncionario" onClick="ftnDeleteTipoCompensatorio('.$arrData[$i]['ID_TIPO_COMPENSATORIO'].')" title="Eliminar Tipo Compenstorio"><i class="fa fa-sm fa-trash"></i></button>';
 				}
 
-				// if($_SESSION['permisosMod']['ID_ROL'] == '2' && $comEstado == 1){
-				// 	if($arrData[$i]['COM_USUARIO_FINAL']!="1"){
-				// 		$btnEdit = '<button class="btn btn-primary  btn-sm btnEditFuncionario" onClick="btnEditCompensatorio(this,'.$arrData[$i]['ID_COMPENSATORIO'].')" title="Editar Funcionario"><i class="fas fa-pencil-alt"></i></button>';
-				// 	}else{
-				// 		$btnEdit = '';
-				// 	}
-				// }
+				/*if($_SESSION['permisosMod']['ID_ROL'] == '2' && $comEstado == 1){
+				 	if($arrData[$i]['COM_USUARIO_FINAL']!="1"){
+				 		$btnEdit = '<button class="btn btn-primary  btn-sm btnEditFuncionario" onClick="btnEditCompensatorio(this,'.$arrData[$i]['ID_COMPENSATORIO'].')" title="Editar Funcionario"><i class="fas fa-pencil-alt"></i></button>';
+				 	}else{
+				 		$btnEdit = '';
+				 	}
+				}
 
-				/*if($_SESSION['permisosMod']['PER_U'] && $_SESSION['permisosMod']['ID_ROL'] !== '1') {
+				if($_SESSION['permisosMod']['PER_U'] && $_SESSION['permisosMod']['ID_ROL'] !== '1') {
 					if($arrData[$i]['COM_USUARIO_FINAL'] != "1" && ($comEstado == 1)) {
 						$btnEdit = '<button class="btn btn-primary btn-sm btnEditFuncionario" onClick="btnEditCompensatorio(this,'.$arrData[$i]['ID_COMPENSATORIO'].')" title="Editar Funcionario"><i class="fas fa-pencil-alt"></i></button>';
 					} else {
 						$btnEdit = '';
 					}
-				}*/
+				}
 				
-				// if ($_SESSION['permisosMod']['PER_U']) { // Botón de aprobaciones
-				// 	if ($comEstado == 1) {
-				// 		$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="ftnAprobarCompensatorio(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Aprobar Compensatorio"><i class="fas fa-check-double"></i></button>';
-				// 	} else {
-				// 		$btnAprobar = '';
-				// 	}
-				// }
+				if ($_SESSION['permisosMod']['PER_U']) { // Botón de aprobaciones
+					if ($comEstado == 1) {
+				 		$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="ftnAprobarCompensatorio(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Aprobar Compensatorio"><i class="fas fa-check-double"></i></button>';
+				 	} else {
+				 		$btnAprobar = '';
+				 	}
+				}
 
-				/*if ($_SESSION['permisosMod']['PER_U'] && $_SESSION['permisosMod']['ID_ROL'] === '1') {
+				if ($_SESSION['permisosMod']['PER_U'] && $_SESSION['permisosMod']['ID_ROL'] === '1') {
 					if ($comEstado == 1) {
 						$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="ftnAprobarCompensatorio(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Aprobar Compensatorio"><i class="fas fa-check-double"></i></button>';
 					} else {
@@ -209,7 +209,7 @@ class Tipocompensatorios extends Controllers{
 					$btnAprobar = '';
 				}*/
 				
-				/*if ($_SESSION['permisosMod']['PER_D']) {
+				if ($_SESSION['permisosMod']['PER_D']) {
 					if ($comEstado == 1) {
 						$btnRechazar = '<button class="btn btn-danger btn-sm btnDelFuncionario" onClick="ftnRechazarCompensatorio(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Rechazar Compenstorio"><i class="fas fa-times-circle"></i></button>';
 					} else {
@@ -217,7 +217,7 @@ class Tipocompensatorios extends Controllers{
 					}
 				}*/
 				
-				$arrData[$i]['ACCIONES'] = '<div class="text-center">'.$btnVer.' '.$btnEdit.'</div>';
+				$arrData[$i]['ACCIONES'] = '<div class="text-center">'.$btnVer.' '.$btnEdit.' '.$btnEliminar.'</div>';
 			}
 			echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
 		}
@@ -255,6 +255,25 @@ class Tipocompensatorios extends Controllers{
 			}
 		
 			echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE); // Devuelve la respuesta JSON
+		}
+	}
+
+	public function delTipoCompensatorio(){
+		if($_POST){
+			if($_SESSION['permisosMod']['PER_D']){
+				$intIdTipoCompensatorio = intval($_POST['ID_TIPO_COMPENSATORIO']);
+				$requestDelete = $this->model->deleteTipoCompensatorio($intIdTipoCompensatorio);
+				
+				if($requestDelete == 'ok'){
+					$arrResponse = array('status' => true, 'msg' => 'Se ha eliminado Exitosamente!.');
+				}else if($requestDelete == 'exist'){
+					$arrResponse = array('status' => false, 'msg' => 'No es posible.');
+				}else{
+					$arrResponse = array('status' => false, 'msg' => 'Error al eliminar.');
+				}
+				echo json_encode($arrResponse,JSON_UNESCAPED_UNICODE);
+
+			}
 		}
 	}
 		

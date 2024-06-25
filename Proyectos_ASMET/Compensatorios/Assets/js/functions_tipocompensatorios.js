@@ -174,6 +174,44 @@ function ftnEditTipoCompensatorio(element, idTipoCompensatorio){
     }
 }
 
+function ftnDeleteTipoCompensatorio(idTipoCompensatorio){
+    //console.log(`Eliminar js: ${idTipoCompensatorio}`);
+    //Porque hacer una variable con el mismo nombre si se puede pasar directamente??
+    //let idTipoCompensatorio
+    swal({
+        title: "Eliminando el Tipo de Compensatorio",
+        text: "¿Desea continuar?",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Si, eliminar!",
+        cancelButtonText: "No, cancelar!",
+        closeOnConfirm: false,
+        closeOnCancel: true
+    }, function(isConfirm){
+
+        if(isConfirm){
+            let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+            let ajaxUrl = base_url+'/Tipocompensatorios/delTipoCompensatorio/';
+            let strData = 'ID_TIPO_COMPENSATORIO='+idTipoCompensatorio;
+            request.open("POST", ajaxUrl, true);
+            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            request.send(strData);
+            request.onreadystatechange = function(){
+                if(request.readyState == 4 && request.status == 200){
+                    let objData = JSON.parse(request.responseText);
+                    if(objData.status){
+                        swal("Tipo de Compensatorio", objData.msg, "success");
+                        tableTipoCompensatorios.api().ajax.reload();
+                    }else{
+                        swal("Atención!", objData.msg, "error");
+                    }
+                }
+            }
+        }
+
+    });
+}
+
 function openModal(){
     rowTable = "";
     // document.querySelector("#listRolid").innerHTML=""; // Lista de rol

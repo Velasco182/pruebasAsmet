@@ -2,20 +2,25 @@
 
 class TipoCompensatoriosModel extends Oracle{
 
+	public $intIdTipoCompensatorio;
+	public $strNombreTipoCompensatorio;
+	public $strDescripcionTipoCompensatorio;
+	public $intEstadoTipoCompensatorio;
+
 	public function __construct(){
 		parent::__construct();
 	}
 	//Método para insertar datos
 	public function insertTipoCompensatorio(
-		string $strNombreTipoCompensatorio,
-		string $strDescripcionTipoCompensatorio,
-		int $intEstadoTipoCompensatorio) {
+		string $nombreTipoCompensatorio,
+		string $descripcionTipoCompensatorio,
+		int $estadoTipoCompensatorio) {
 
 		//Dep($strNombreTipoCompensatorio. "model antes");
 
-		$this->strNombreTipoCompensatorio = $strNombreTipoCompensatorio;
-		$this->strDescripcionTipoCompensatorio = $strDescripcionTipoCompensatorio;
-		$this->intEstadoTipoCompensatorio = $intEstadoTipoCompensatorio;
+		$this->strNombreTipoCompensatorio = $nombreTipoCompensatorio;
+		$this->strDescripcionTipoCompensatorio = $descripcionTipoCompensatorio;
+		$this->intEstadoTipoCompensatorio = $estadoTipoCompensatorio;
 
 		$return = 0;
 
@@ -38,9 +43,9 @@ class TipoCompensatoriosModel extends Oracle{
 		)";
 
 		$arrData = array(
-			'TIP_COM_NOMBRE' => $strNombreTipoCompensatorio, 
+			'TIP_COM_NOMBRE' => $nombreTipoCompensatorio, 
 			'TIP_COM_DESCRIPCION' => $this->strDescripcionTipoCompensatorio,
-			'TIP_COM_ESTADO' => $this->intEstadoTipoCompensatorio,
+			'TIP_COM_ESTADO' => $this->intEstadoTipoCompensatorio
 		);
 
 		$request_insert = $this->insert($query_insert, $arrData);
@@ -73,14 +78,14 @@ class TipoCompensatoriosModel extends Oracle{
 	//Método para leer los datos del tipo de compensatorio en el datatable
 	public function selectTipoCompensatorios() {
 		
-		//where TIP_COM_ESTADO='1'
-		$sql = " SELECT * FROM BIG_TIPO_COMPENSATORIO T";
+		//where TC.TIP_COM_ESTADO='1'
+		$sql = " SELECT * FROM BIG_TIPO_COMPENSATORIO TC";
 		return $this->select_all($sql);
 
 	}
 	//Método para leer los datos del compensatorio en modal
 	public function selectTipoCompensatorioVista(int $idTipoCompensatorio) {
-		$this->IdTipoCompensatorio = $idTipoCompensatorio;
+		$this->intIdTipoCompensatorio = $idTipoCompensatorio;
 		$sql = "
 		SELECT
 			TC.ID_TIPO_COMPENSATORIO,
@@ -88,7 +93,7 @@ class TipoCompensatoriosModel extends Oracle{
 			TC.TIP_COM_DESCRIPCION,
 			TC.TIP_COM_ESTADO
 		FROM BIG_TIPO_COMPENSATORIO TC
-		WHERE TC.ID_TIPO_COMPENSATORIO = $this->IdTipoCompensatorio";
+		WHERE TC.ID_TIPO_COMPENSATORIO = $this->intIdTipoCompensatorio";
 
 		$request = $this->select($sql);
 	
@@ -96,16 +101,16 @@ class TipoCompensatoriosModel extends Oracle{
 	}
 	//Método para actualizar el tipo de compensatorio
 	public function updateTipoCompensatorio(
-		int $intIdTipoCompensatorio,
-		string $strNombreTipoCompensatorio, 
-		string $strDescripcionTipoCompensatorio,
-		int $intEstadoTipoCompensatorio){
+		int $idTipoCompensatorio,
+		string $nombreTipoCompensatorio, 
+		string $descripcionTipoCompensatorio,
+		int $estadoTipoCompensatorio){
 
 
-		$this->intIdTipoCompensatorio = $intIdTipoCompensatorio;
-		$this->strNombreTipoCompensatorio = $strNombreTipoCompensatorio;
-		$this->strDescripcionTipoCompensatorio = $strDescripcionTipoCompensatorio;
-		$this->intEstadoTipoCompensatorio = $intEstadoTipoCompensatorio;
+		$this->intIdTipoCompensatorio = $idTipoCompensatorio;
+		$this->strNombreTipoCompensatorio = $nombreTipoCompensatorio;
+		$this->strDescripcionTipoCompensatorio = $descripcionTipoCompensatorio;
+		$this->intEstadoTipoCompensatorio = $estadoTipoCompensatorio;
 
 		if(empty($request)){
 			$sql = "
@@ -132,9 +137,23 @@ class TipoCompensatoriosModel extends Oracle{
 	//Método para eliminar datos
 	public function deleteTipoCompensatorio(int $idTipoCompensatorio){
 		$this->intIdTipoCompensatorio = $idTipoCompensatorio;
-		$sql = "DELETE BIG_TIPO_COMPENSATORIO WHERE ID_TIPO_COMPENSATORIO = $this->intIdTipoCompensatorio";
-		$arrData = array(0);
-		$request = $this->update($sql,$arrData);
+
+		/*$sql = "SELECT * FROM BIG_TIPO_COMPENSATORIO WHERE ID_TIPO_COMPENSATORIO = $this->intIdTipoCompensatorio";
+		$request = $this-> select_all($sql);*/
+
+		if(empty($request)){
+
+			$sqldel = "DELETE BIG_TIPO_COMPENSATORIO WHERE ID_TIPO_COMPENSATORIO = $this->intIdTipoCompensatorio";
+			$requestdel = $this->delete($sqldel);
+			
+			if($requestdel){
+				$request = 'ok';
+			}else{
+				$request = 'error';
+			}
+		}else{
+			$request = 'exist';
+		}
 		return $request;
 	}
 ########################################################################################################
