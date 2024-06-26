@@ -165,6 +165,7 @@
                     <li>Horas a solicitar: ' . $datos['HorasSolicitar'] . '</li>
                 </ul>';
             } elseif ($tipoMensaje == 'aprobacion' && $datos){
+                //Modificado 
                 $html .='
                 <p>Detalles del compensatorio:</p>
                 <ul>
@@ -174,13 +175,14 @@
                     <li>Correo Electrónico: ' . $datos['FUN_CORREO'] . '</li>
                     <li>Fecha de inicio: ' . $datos['COM_FECHA_INICIO'] . '</li>
                     <li>Fecha de fin: ' . $datos['COM_FECHA_FIN'] . '</li>
-                    <li>Actividad: ' . $datos['COM_ACTIVIDAD_DESARROLLAR'] . '</li>
+                    <li>Actividad: ' . $datos['TIP_COM_NOMBRE'] . '</li>
                     <li>Descripcion actividad: ' . $datos['COM_DESCRIPCION_ACTIVIDAD'] . '</li>
                 </ul>
 
                 <p>Compensatorio aprobado por: ' .$_SESSION['userData']['FUN_NOMBRES'] .' '.$_SESSION['userData']['FUN_APELLIDOS'] .'</p>';
                 
             } elseif ($tipoMensaje == 'rechazo' && $datos){
+                //Modificado 
                 $html .='
                 <p>Detalles del compensatorio:</p>
                 <ul>
@@ -190,7 +192,7 @@
                     <li>Correo Electrónico: ' . $datos['FUN_CORREO'] . '</li>
                     <li>Fecha de inicio: ' . $datos['COM_FECHA_INICIO'] . '</li>
                     <li>Fecha de fin: ' . $datos['COM_FECHA_FIN'] . '</li>
-                    <li>Actividad: ' . $datos['COM_ACTIVIDAD_DESARROLLAR'] . '</li>
+                    <li>Actividad: ' . $datos['TIP_COM_NOMBRE'] . '</li>
                     <li>Descripcion actividad: ' . $datos['COM_DESCRIPCION_ACTIVIDAD'] . '</li>
                 </ul>
 

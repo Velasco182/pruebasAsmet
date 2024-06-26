@@ -22,12 +22,11 @@ class TipoCompensatoriosModel extends Oracle{
 		$this->intEstadoTipoCompensatorio = $estadoTipoCompensatorio;
 
 		$return = 0;
-
-		// Obtener el ID del funcionario de la sesión
-		//$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
 		
 		//Validar duplicidad de datos
-		$sql = "SELECT * FROM BIG_TIPO_COMPENSATORIO WHERE TIP_COM_NOMBRE = '{$this->strNombreTipoCompensatorio}' OR TIP_COM_DESCRIPCION = '{$this->strDescripcionTipoCompensatorio}'";
+		$sql = "SELECT * FROM BIG_TIPO_COMPENSATORIO 
+			WHERE TIP_COM_NOMBRE = '{$this->strNombreTipoCompensatorio}' 
+			OR TIP_COM_DESCRIPCION = '{$this->strDescripcionTipoCompensatorio}'";
 		$request = $this->select_all($sql);
 		
 		if(empty($request)){
@@ -57,8 +56,7 @@ class TipoCompensatoriosModel extends Oracle{
 		}else{
 			$return = "exist";
 		}
-
-		// var_dump($arrData);
+		
 		return $return; 
 	}
 	//Método para seleccionar tipo de compensatorio para editar
@@ -77,7 +75,6 @@ class TipoCompensatoriosModel extends Oracle{
 		
 		$request = $this->select($sql);
 
-			// var_dump($request);			
 		return $request;
 	}
 	//Método para leer los datos del tipo de compensatorio en el datatable

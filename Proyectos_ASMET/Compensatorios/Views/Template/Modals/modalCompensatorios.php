@@ -95,9 +95,9 @@
                 </div>
 
                 <div class="form-group col-md-6">
-                  <label for="ListaUsuarios">Usuarios</label>
+                  <label for="listaUsuarios">Usuarios</label>
                   
-                  <select class="form-control" data-live-search="true" name="ListaUsuarios" id="ListaUsuarios">
+                  <select class="form-control" data-live-search="true" name="listaUsuarios" id="listaUsuarios">
                   
                   </select>
                 </div>
@@ -157,7 +157,7 @@
             </tr>
             <tr>
               <td>Tipo de Compensatorio</td>
-              <td id="InfoDescripcion"></td>
+              <td id="InfoTipoCompensatorio"></td>
             </tr>
             <tr>
               <td>Horas realizadas</td>
@@ -185,8 +185,8 @@
 <div class="modal fade" id="modalFormEvidencias" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Cargar Evidencias de Compensatorio</h5>
+                <div class="modal-header headerView">
+                    <h5 class="modal-title" id="exampleModalLabel">Cargar Evidencias del Compensatorio</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>

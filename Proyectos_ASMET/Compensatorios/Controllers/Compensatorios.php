@@ -32,81 +32,6 @@ class Compensatorios extends Controllers{
 		$this->views->getView($this,$_SESSION['permisosMod']['MOD_ACCESO'],$data);
 	}
 
-	// public function setCompensatorio() {
-	// 	if ($_POST) {
-	// 		if (
-	// 			$_POST['txtFechaInicio'] == '' ||
-	// 			$_POST['txtFechaFin'] == '' ||
-	// 			$_POST['txtActividad'] == '' ||
-	// 			$_POST['txtTrabajoRequerido'] == '' ||
-	// 			$_POST['txtEstado'] == '' ||
-	// 			$_POST['ListaUsuarios'] == ''
-	// 		) {
-	// 			$arrResponse = array("status" => false, "msg" => 'Ingrese todos los datos.');
-	// 		} else {
-	// 			$txtFechaInicio = $_POST['txtFechaInicio'];
-	// 			$txtFechaFin = $_POST['txtFechaFin'];
-	
-				
-	// 				$intIdCompensatorio = intval($_POST['idCompensatorio']);
-	// 				$strDescripcionActividad = mb_convert_case(strClean($_POST['txtDescripcionActividad']), MB_CASE_TITLE, "UTF-8");
-	// 				$strActividad = mb_convert_case(strClean($_POST['txtActividad']), MB_CASE_TITLE, "UTF-8");
-	// 				$strTrabajoRequerido = mb_convert_case(strClean($_POST['txtTrabajoRequerido']), MB_CASE_TITLE, "UTF-8");
-	// 				$intEstado = intval(strClean($_POST['txtEstado']));
-	// 				$strFechaInicio = date('Y-m-d H:i:s', strtotime($txtFechaInicio));
-	// 				$strFechaFin = date('Y-m-d H:i:s', strtotime($txtFechaFin));
-	// 				$ListadoUsuarios = intval(strClean($_POST['ListaUsuarios']));
-	
-	// 				$request_user = "";
-	
-	// 				if ($intIdCompensatorio == 0) {
-	// 					if ($_SESSION['permisosMod']['PER_W']) {
-	// 						$request_user = $this->model->insertCompensatorio(
-	// 							$strFechaInicio,
-	// 							$strFechaFin,
-	// 							$strDescripcionActividad,
-	// 							$strActividad,
-	// 							$ListadoUsuarios,
-	// 							$strTrabajoRequerido,
-	// 							$intEstado
-	// 						);
-	// 					}
-	// 					$option = 1;
-	// 				} else {
-						
-	// 					if ($_SESSION['permisosMod']['PER_U']) {
-	// 						$request_user = $this->model->updateCompensatorio(
-	// 							$intIdCompensatorio,
-	// 							$strFechaInicio,
-	// 							$strFechaFin,
-	// 							$strDescripcionActividad,
-	// 							$strActividad,
-	// 							$strTrabajoRequerido
-	// 						);
-							
-	// 					}
-	// 					$option = 2;
-	// 				}
-
-					
-
-	
-	// 				if($request_user > 0){
-	// 					if($option == 1){
-	// 						$arrResponse = array('status' => true, 'msg' => 'Datos guardados correctamente');
-	// 					}else{
-	// 						$arrResponse = array('status' => true, 'msg' => 'Datos actualizados correctamente');
-	// 					}
-	// 				}elseif($request_user == 'exist'){
-	// 					$arrResponse = array('status' => false, 'msg' => 'El usuario o correo ya existe, ingrese otro porfavor!');
-	// 				}else{
-	// 					$arrResponse = array("status" => false, "msg" => 'No es posible almacenar los datos');
-	// 				}
-				
-	// 		}
-	// 	}
-	// 	echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
-	// }
 	public function parseToDB($fecha){
 	
 		// Format the date string before passing to strtotime()
@@ -126,7 +51,7 @@ class Compensatorios extends Controllers{
 	
 			if ($_POST['txtFechaInicio'] == '' || $_POST['txtFechaFin'] == ''
 				|| $_POST['txtActividad'] == '' || $_POST['txtTrabajoRequerido'] == ''
-				|| $_POST['txtEstado'] == '' || $_POST['ListaUsuarios'] == '') {
+				|| $_POST['txtEstado'] == '' || $_POST['listaUsuarios'] == '') {
 				$arrResponse = array("status" => false, "msg" => 'Ingrese todos los datos.');
 			} else {
 				$txtFechaInicio = $_POST['txtFechaInicio'];
@@ -145,9 +70,9 @@ class Compensatorios extends Controllers{
 					$strFechaInicio = Compensatorios::parseToDB($txtFechaInicio);
 					$strFechaFin = Compensatorios::parseToDB($txtFechaFin);
 
-					$ListadoUsuarios = intval(strClean($_POST['ListaUsuarios']));
+					$listadoUsuarios = intval(strClean($_POST['listaUsuarios']));
 	
-					$arrData = $this->model->recuperar($ListadoUsuarios); // Recuperar los datos insertados
+					$arrData = $this->model->recuperar($listadoUsuarios); // Recuperar los datos insertados
 	
 					$request_user = 0;
 					$option = 0; // Agregado para definir la operación (0: no definida, 1: inserción, 2: actualización)
@@ -157,9 +82,9 @@ class Compensatorios extends Controllers{
 							$request_user = $this->model->insertCompensatorio(
 								$strFechaInicio,
 								$strFechaFin,
-								$strActividad,
+								$strActividad, //ID_TIPO_COMPENSATORIO
 								$strDescripcionActividad,
-								$ListadoUsuarios,
+								$listadoUsuarios,
 								$strTrabajoRequerido,
 								$intEstado
 							);
@@ -171,7 +96,7 @@ class Compensatorios extends Controllers{
 								$intIdCompensatorio,
 								$strFechaInicio,
 								$strFechaFin,
-								$strActividad,
+								$strActividad, //ID_TIPO_COMPENSATORIO
 								$strDescripcionActividad,
 								$strTrabajoRequerido
 							);
@@ -179,46 +104,49 @@ class Compensatorios extends Controllers{
 						}
 					}
 	
-					if ($request_user > 0) {
-						if ($option == 1) {
-							// Bloque de envío de correo para inserción
-							$remitente = 'estivenmendez550@gmail.com';
-							$destinatario = 'aprendiz.bi@asmetsalud.com';
-							$asunto = 'Solicitud de compensatorio';
-							$tipoMensaje = 'solicitud';
-	
-							$txtFechaInicio = $_POST['txtFechaInicio'];
-							$txtFechaFin = $_POST['txtFechaFin'];
-							//Parseo de la fecha
-							$fechaInicio = Compensatorios::parseToDB($txtFechaInicio);
-							$fechaFin = Compensatorios::parseToDB($txtFechaFin);
-							//Formato de fecha
-							$fechaInicioFormateada = date('d/m/Y - h:i A', strtotime($fechaInicio));
-							$fechaFinFormateada = date('d/m/Y - h:i A', strtotime($fechaFin));
-	
-							$datos = [
-								'FechaInicio' => $fechaInicioFormateada,
-								'Funcionario' => $arrData["NOMBREFUNCIONARIO"],
-								'FechaFin' => $fechaFinFormateada,
-								'Actividad' => $_POST['txtActividad'],
-								'UsuarioTrabajo' => $_POST['txtTrabajoRequerido'],
-								'DescripcionAc' => $_POST['txtDescripcionActividad']
-							];
-	
-							$html = generarHTML($tipoMensaje, $datos);
-	
-							try {
-								$enviarcorreo = enviarMail($remitente, $destinatario, $asunto, 'solicitud', $datos);
-								$arrResponse = array('status' => true, 'msg' => 'Su solicitud fue procesada con éxito, espera que el admin apruebe tu compensatorio');
-							} catch (Exception $e) {
-								$arrResponse = array('status' => false, 'msg' => 'Error al enviar el correo: ' . $e->getMessage());
-							}
-						} else {
-							// Bloque de actualización (puedes agregar un mensaje si deseas)
-							$arrResponse = array('status' => true, 'msg' => 'Su compensatorio fue actualizado correctamente');
+					$arrResponse = array('status' => false, 'msg' => 'El compensatorio ya existe!');
+
+					if ($option == 1) {
+						// Bloque de envío de correo para inserción
+						$remitente = 'estivenmendez550@gmail.com';
+						$destinatario = 'aprendiz.bi@asmetsalud.com';
+						$asunto = 'Solicitud de compensatorio';
+						$tipoMensaje = 'solicitud';
+
+						$txtFechaInicio = $_POST['txtFechaInicio'];
+						$txtFechaFin = $_POST['txtFechaFin'];
+						//Parseo de la fecha
+						$fechaInicio = Compensatorios::parseToDB($txtFechaInicio);
+						$fechaFin = Compensatorios::parseToDB($txtFechaFin);
+						//Formato de fecha
+						$fechaInicioFormateada = date('d/m/Y - h:i A', strtotime($fechaInicio));
+						$fechaFinFormateada = date('d/m/Y - h:i A', strtotime($fechaFin));
+
+						$datos = [
+							'Funcionario' => $arrData["NOMBREFUNCIONARIO"],
+							'FechaInicio' => $fechaInicioFormateada,
+							'FechaFin' => $fechaFinFormateada,
+							'Actividad' => $_POST['txtActividad'],
+							'UsuarioTrabajo' => $_POST['txtTrabajoRequerido'],
+							'DescripcionAc' => $_POST['txtDescripcionActividad']
+						];
+
+						$html = generarHTML($tipoMensaje, $datos);
+
+						try {
+
+							$enviarcorreo = enviarMail($remitente, $destinatario, $asunto, 'solicitud', $datos);
+							$request_user === "exist" ? $arrResponse : $arrResponse = array('status' => true, 'msg' => 'Su solicitud fue procesada con éxito, espera que el admin apruebe tu compensatorio!');
+						
+						} catch (Exception $e) {
+
+							$arrResponse = array('status' => false, 'msg' => 'Error al enviar el correo: ' . $e->getMessage());
+						
 						}
 					} else {
-						$arrResponse = array("status" => false, "msg" => 'No es posible almacenar los datos.');
+
+						$request_user === "exist" ? $arrResponse : $arrResponse = array('status' => true, 'msg' => 'Su compensatorio fue actualizado correctamente!');
+					
 					}
 				}
 			}
@@ -273,7 +201,7 @@ class Compensatorios extends Controllers{
 				// var_dump($comEstado);
 
 				if ($_SESSION['permisosMod']['PER_F'] && $comEstado == 2) {
-					$btnReset = '<button class="btn btn-success btn-sm btnResetPass" onClick="ftnEvidencias(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Cargar Evidencias"><i class="fas fa-cloud-upload-alt"></i></button>';
+					$btnReset = '<button class="btn btn-success btn-sm" onClick="ftnEvidencias(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Cargar Evidencias"><i class="fas fa-cloud-upload-alt"></i></button>';
 				} else {
 					$btnReset = ''; // Botón vacío si no se cumple la condición
 				}
@@ -281,42 +209,19 @@ class Compensatorios extends Controllers{
 				//Revisar
 				if($_SESSION['permisosMod']['PER_R']){ // Icono de ver funcionario
 					if($arrData[$i]['COM_USUARIO_FINAL']!="1"){
-						$btnVer = '<button class="btn btn-info btn-sm btnViewFuncionario" onClick="fntViewCompensatorio('.$arrData[$i]['ID_COMPENSATORIO'].')" title="Ver Compensatorio"><i class="far fa-eye"></i></button>';
+						$btnVer = '<button class="btn btn-info btn-sm btnViewFuncionario" onClick="ftnViewCompensatorio('.$arrData[$i]['ID_COMPENSATORIO'].')" title="Ver Compensatorio"><i class="far fa-eye"></i></button>';
 					}else{
 						$btnVer = '<button class="btn btn-secondary btn-sm" disabled ><i class="far fa-eye"></i></button>';
 					}
 				}
 
-				// if($_SESSION['permisosMod']['ID_ROL'] == '2' && $comEstado == 1){
-				// 	if($arrData[$i]['COM_USUARIO_FINAL']!="1"){
-				// 		$btnEdit = '<button class="btn btn-primary  btn-sm btnEditFuncionario" onClick="btnEditCompensatorio(this,'.$arrData[$i]['ID_COMPENSATORIO'].')" title="Editar Funcionario"><i class="fas fa-pencil-alt"></i></button>';
-				// 	}else{
-				// 		$btnEdit = '';
-				// 	}
-				// }
-
 				if($_SESSION['permisosMod']['PER_U'] && $_SESSION['permisosMod']['ID_ROL'] !== '1') {
 					if($arrData[$i]['COM_USUARIO_FINAL'] != "1" && ($comEstado == 1)) {
-						$btnEdit = '<button class="btn btn-primary btn-sm btnEditFuncionario" onClick="btnEditCompensatorio(this,'.$arrData[$i]['ID_COMPENSATORIO'].')" title="Editar Funcionario"><i class="fas fa-pencil-alt"></i></button>';
+						$btnEdit = '<button class="btn btn-primary btn-sm btnEditFuncionario" onClick="ftnEditCompensatorio(this,'.$arrData[$i]['ID_COMPENSATORIO'].')" title="Editar Funcionario"><i class="fas fa-pencil-alt"></i></button>';
 					} else {
 						$btnEdit = '';
 					}
 				}
-				
-				
-				
-
-				
-				
-				
-				// if ($_SESSION['permisosMod']['PER_U']) { // Botón de aprobaciones
-				// 	if ($comEstado == 1) {
-				// 		$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="ftnAprobarCompensatorio(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Aprobar Compensatorio"><i class="fas fa-check-double"></i></button>';
-				// 	} else {
-				// 		$btnAprobar = '';
-				// 	}
-				// }
-
 
 				if ($_SESSION['permisosMod']['PER_U'] && $_SESSION['permisosMod']['ID_ROL'] === '1') {
 					if ($comEstado == 1) {
@@ -328,16 +233,13 @@ class Compensatorios extends Controllers{
 					$btnAprobar = '';
 				}
 				
-				
-				if ($_SESSION['permisosMod']['PER_D']) {
+				if ($_SESSION['permisosMod']['PER_U'] && $_SESSION['permisosMod']['ID_ROL'] === '1') {
 					if ($comEstado == 1) {
-						$btnRechazar = '<button class="btn btn-danger btn-sm btnDelFuncionario" onClick="ftnRechazarCompensatorio(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Rechazar Compenstorio"><i class="fas fa-times-circle"></i></button>';
+						$btnRechazar = '<button class="btn btn-danger btn-sm" onClick="ftnRechazarCompensatorio(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Rechazar Compensatorio"><i class="fas fa-times-circle"></i></button>';
 					} else {
 						$btnRechazar = '';
 					}
 				}
-				
-				
 				
 				$arrData[$i]['ACCIONES'] = '<div class="text-center">'.$btnVer.' '.$btnEdit.' '.$btnAprobar.' '.$btnRechazar.' '.$btnReset.' '.$btnCancelar.'</div>';
 			}
@@ -351,12 +253,6 @@ class Compensatorios extends Controllers{
 			if ($ID_COMPENSATORIO > 0) {
 				$arrData = $this->model->selectEdit($ID_COMPENSATORIO);
 
-				// $arrData[$i]['COM_FECHA_INICIO']=formatearFechaYHora($arrData[$i]['COM_FECHA_INICIO'],"d/m/Y - h:i A");
-				// $arrData[$i]['COM_FECHA_FIN']=formatearFechaYHora($arrData[$i]['COM_FECHA_FIN'],"d/m/Y - h:i A");
-
-				///d/m/Y - h:i A
-				/*$arrData['COM_FECHA_INICIO']=formatearFechaYHora($arrData['COM_FECHA_INICIO'],"Y-m-d\TH:i");
-				$arrData['COM_FECHA_FIN']=formatearFechaYHora($arrData['COM_FECHA_FIN'],"Y-m-d\TH:i");*/
 				$arrData['COM_FECHA_INICIO']=formatearFechaYHora($arrData['COM_FECHA_INICIO'],"d/m/Y h:i A");
 				$arrData['COM_FECHA_FIN']=formatearFechaYHora($arrData['COM_FECHA_FIN'],"d/m/Y h:i A");
 				// var_dump($arrData);
@@ -370,24 +266,6 @@ class Compensatorios extends Controllers{
 			}
 		}
 	}
-	
-
-	// public function editCompensatorio($idfuncionario){
-	// 	if($_SESSION['permisosMod']['PER_R']){
-	// 		$idfuncionario = intval($idfuncionario);
-	// 		if($idfuncionario > 0){
-	// 			$arrData = $this->model->selectEdit($idfuncionario);
-	// 			$arrData["ROLES"]=$this->getSelectRoles();
-	// 			$arrData["FUN_ACCESO"]=$arrData["FUN_USUARIO"]."<br>".$arrData["FUN_USUARIO"]."".SYS_PATRON_PASS;
-	// 			if(empty($arrData)){
-	// 				$arrResponse = array('status' => false, 'msg' => 'Datos no encontrados.');
-	// 			}else{
-	// 				$arrResponse = array('status' => true, 'data' => $arrData);
-	// 			}
-	// 			echo json_encode($arrResponse,JSON_UNESCAPED_UNICODE);
-	// 		}
-	// 	}
-	// }
 
 	public function getCompensatorio($ID_COMPENSATORIO) {
 		if ($_SESSION['permisosMod']['PER_R'] && intval($ID_COMPENSATORIO) > 0) {
@@ -422,8 +300,7 @@ class Compensatorios extends Controllers{
 		
 			echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE); // Devuelve la respuesta JSON
 		}
-	}
-		
+	}	
 	//ControladorAprobacion.php
 	public function aprobarCompensatorio() {
 		if ($_POST) {
@@ -431,7 +308,7 @@ class Compensatorios extends Controllers{
 				$ID_COMPENSATORIO = isset($_POST['ID_COMPENSATORIO']) ? intval($_POST['ID_COMPENSATORIO']) : 0;
 				
 				// Obtener los datos del propietario del compensatorio
-				$datos = $this->model->correoAprobacion($ID_COMPENSATORIO);
+				$datos = $this->model->correoAprobacionORechazo($ID_COMPENSATORIO);
 
 				$datos['COM_FECHA_INICIO']=formatearFechaYHora($datos['COM_FECHA_INICIO'],"d/m/Y - h:i A");
 				$datos['COM_FECHA_FIN']=formatearFechaYHora($datos['COM_FECHA_FIN'],"d/m/Y - h:i A");
@@ -467,33 +344,30 @@ class Compensatorios extends Controllers{
 				}
 			}
 		}
-	}
-	
-		
+	}		
 	// ControladorRechazo.php
 	public function rechazarCompensatorio(){
 		if ($_POST) {
 			if ($_SESSION['permisosMod']['PER_R']);
 			$ID_COMPENSATORIO = isset($_POST['ID_COMPENSATORIO']) ? intval($_POST['ID_COMPENSATORIO']) : 0;
+			// Obtener los datos del propietario del compensatorio
+			$datos = $this->model->correoAprobacionORechazo($ID_COMPENSATORIO);
 			
-			$datos = $this->model->CorreoRechazo($ID_COMPENSATORIO);
-
 			$datos['COM_FECHA_INICIO']=formatearFechaYHora($datos['COM_FECHA_INICIO'],"d/m/Y - h:i A");
 			$datos['COM_FECHA_FIN']=formatearFechaYHora($datos['COM_FECHA_FIN'],"d/m/Y - h:i A");
+			if ($ID_COMPENSATORIO > 0 && $datos) {
 
-			if ($ID_COMPENSATORIO > 0) {
 				$success = $this->model->estadoRechazado($ID_COMPENSATORIO);
-		
+
 				if ($success) {
 					$nombre = $datos['FUN_NOMBRES'];
 					$nombre = $datos['FUN_CORREO'];
-
 					$remitente = 'estivenmendez550@gmail.com';
 					$destinatario = 'aprendiz.bi@asmetsalud.com';
 					$asunto = 'Rechazo de compensatorio';
 
 					$tipoMensaje = 'rechazo';
-
+					// Generar HTML con los datos del propietario del compensatorio
 					$html = generarHTML($tipoMensaje, $datos);
 
 					$enviarcorreo = enviarMail($remitente, $nombre, $asunto, 'rechazo', $datos);
@@ -504,7 +378,7 @@ class Compensatorios extends Controllers{
 						$response = array('status' => false, 'msg' => 'El compensatorio fue rechazado, pero no se pudo enviar el correo de confirmacion');
 					}
 				} else {
-					$response = array('status' => false, 'msg' => 'El al rechazar el compensatorio');
+					$response = array('status' => false, 'msg' => 'Error al rechazar el compensatorio');
 				}
 				echo json_encode($response, JSON_UNESCAPED_UNICODE);
 				exit;
@@ -531,6 +405,7 @@ class Compensatorios extends Controllers{
 		}
 		echo $htmlOptions;
 	}
+
 	public function getSelectTipoCompensatorio(){
 		$htmlOptions = "";
 		$arrData = $this->model->selectTipoCompensatorio();
@@ -542,7 +417,6 @@ class Compensatorios extends Controllers{
 		}
 		echo $htmlOptions;
 	}
-		
 
 	public function verificarRol() {
 		
@@ -557,7 +431,6 @@ class Compensatorios extends Controllers{
 		header('Content-Type: application/json');
 		echo json_encode($response);
 	}
-
 
 	public function subirEvidencia($ID_COMPENSATORIO) {
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -595,7 +468,7 @@ class Compensatorios extends Controllers{
 		}
 		echo json_encode($response, JSON_UNESCAPED_UNICODE);
 	}
-}//fin de la clase
+}
  ?>
 
 

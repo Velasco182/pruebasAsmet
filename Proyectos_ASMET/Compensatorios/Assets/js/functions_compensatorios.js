@@ -21,7 +21,8 @@ document.addEventListener('DOMContentLoaded', function(){
             {"data":"FUN_APELLIDOS"},
             {"data":"COM_FECHA_INICIO"},
             {"data":"COM_FECHA_FIN"},
-            {"data":"ID_TIPO_COMPENSATORIO"},
+            //{"data":"ID_TIPO_COMPENSATORIO"},
+            {"data":"TIP_COM_NOMBRE"},
             {"data":"COM_DESCRIPCION_ACTIVIDAD"},
             {"data":"COM_USUARIO_FINAL"},
             {"data":"COM_ESTADO"},
@@ -64,7 +65,9 @@ document.addEventListener('DOMContentLoaded', function(){
     });
 
     if(document.querySelector("#formCompensatorio")){
+
         let formUsuario = document.querySelector("#formCompensatorio");
+
         formUsuario.onsubmit = function(e) {
            
             e.preventDefault();
@@ -73,14 +76,14 @@ document.addEventListener('DOMContentLoaded', function(){
             let strFechaFin = document.querySelector('#txtFechaFin').value;
             let strDescripcionActividad = document.querySelector('#txtDescripcionActividad').value;
             let strActividad = document.querySelector('#txtActividad').value;
-            let ListadoUsuarios = document.querySelector('#ListaUsuarios').value;
+            let listadoUsuarios = document.querySelector('#listaUsuarios').value;
             let strTrabajoRequerido = document.querySelector('#txtTrabajoRequerido').value;
             let intEstado = document.querySelector('#txtEstado').value;
 
-            let compensatorio = {strFechaInicio, strFechaFin, strDescripcionActividad, strActividad, ListadoUsuarios, strTrabajoRequerido, intEstado};
+            let compensatorio = {strFechaInicio, strFechaFin, strDescripcionActividad, strActividad, listadoUsuarios, strTrabajoRequerido, intEstado};
             console.table(compensatorio);
     
-            if(strFechaInicio == '' || strFechaFin == '' || strDescripcionActividad == '' || strActividad == '' || ListadoUsuarios == '' || strTrabajoRequerido == '' || intEstado == ''){
+            if(strFechaInicio == '' || strFechaFin == '' || strDescripcionActividad == '' || strActividad == '' || listadoUsuarios == '' || strTrabajoRequerido == '' || intEstado == ''){
                 swal("Atención", "Todos los campos son obligatorios." , "error");
                 return false;
             }
@@ -103,18 +106,25 @@ document.addEventListener('DOMContentLoaded', function(){
             request.onreadystatechange = function(){
                 if(request.readyState == 4 && request.status == 200){
                     let objData = JSON.parse(request.responseText);
-                    if(objData.status){
+
+                    if(objData.status === false){
+
+                        swal("Error", objData.msg , "error");
+                    
+                    }else{
+                        
+                        console.log(objData.status);
                         if(rowTable == ""){
                             tableCompensatorios.api().ajax.reload();
                         }else{
                             tableCompensatorios.api().ajax.reload();
                         }
+
                         $('#modalFormCompensatorio').modal("hide");
 
                         formUsuario.reset();
                         swal("Usuario", objData.msg ,"success");
-                    }else{
-                        swal("Error", objData.msg , "error");
+                        
                     }
                 }
                 divLoading.style.display = "none";
@@ -122,63 +132,8 @@ document.addEventListener('DOMContentLoaded', function(){
             }
         }
     }
+    
 },false);
-
-/*// Función para validar las fechas de inicio y fin
- function validateDates() {
-     var fechaInicio = new Date(document.getElementById('txtFechaInicio').value);
-     var fechaFin = new Date(document.getElementById('txtFechaFin').value);
-
-     if (fechaInicio > fechaFin) {
-         alert("La fecha de inicio debe ser igual o menor a la fecha de fin.");
-         return false;
-     }
-
-     return true;
- }
-
- Validacion fecha y horas
- document.addEventListener("DOMContentLoaded", function () {
-     const txtFechaInicio = document.getElementById("txtFechaInicio");
-     const txtFechaFin = document.getElementById("txtFechaFin");
-     const formulario = document.getElementById("tuFormulario"); // Reemplaza "tuFormulario" con el ID de tu formulario
-
-     txtFechaInicio.addEventListener("input", validateDateTime);
-     txtFechaFin.addEventListener("input", validateDateTime);
-
-     function validateDateTime() {
-         const fechaInicio = new Date(txtFechaInicio.value);
-         const fechaFin = new Date(txtFechaFin.value);
-         if (fechaInicio.getTime() === fechaFin.getTime()) {
-             txtFechaInicio.setCustomValidity("Las horas no pueden ser las mismas");
-         } else if (fechaInicio >= fechaFin) {
-             txtFechaInicio.setCustomValidity("La fecha de inicio debe ser mayor a la fecha fin");
-         } else if (fechaInicio.getHours() === fechaFin.getHours() && fechaInicio.getMinutes() === fechaFin.getMinutes()) {
-             txtFechaInicio.setCustomValidity("La fecha fin no puede ser mayor a la fecha de inicio");
-         } else {
-             txtFechaInicio.setCustomValidity("");
-             validateHours();
-         }
-     }
-
-     // Validacion horas
-     function validateHours() {
-         const horaInicio = new Date(txtFechaInicio.value);
-         const horaFin = new Date(txtFechaFin.value);
-
-         if (horaInicio.getHours() >= horaFin.getHours() || (horaInicio.getHours() === horaFin.getHours() && horaInicio.getMinutes() >= horaFin.getMinutes())) {
-             txtFechaInicio.setCustomValidity("La hora de inicio debe ser anterior a la hora de fin.");
-         } else {
-             txtFechaInicio.setCustomValidity("");
-             if (fechaInicio >= fechaFin) {
-                 formulario.submit(); // Envía el formulario si fechaInicio es mayor o igual a fechaFin
-             }
-         }
-     }
- });*/
-
-
- /////////
 
 function ftnDateTimePickerConfiguration(){
 
@@ -230,7 +185,7 @@ function ftnDateTimePickerConfiguration(){
     });
 };
 
-function ftnAprobarCompensatorio(ID_COMPENSATORIO) { //Funcion para el boton de aprobacion
+function ftnAprobarCompensatorio(idCompensatorio) { //Funcion para el boton de aprobacion
     swal({
         title: "Aprobar Compensatorio",
         text: "¿Realmente quieres aprobar este compensatorio?",
@@ -246,7 +201,7 @@ function ftnAprobarCompensatorio(ID_COMPENSATORIO) { //Funcion para el boton de 
             
             let request = new XMLHttpRequest();
             let ajaxUrl = base_url + '/Compensatorios/aprobarCompensatorio';
-            let strData = "ID_COMPENSATORIO=" + ID_COMPENSATORIO;
+            let strData = "idCompensatorio=" + idCompensatorio;
             
             request.open("POST", ajaxUrl, true);
             request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -268,7 +223,7 @@ function ftnAprobarCompensatorio(ID_COMPENSATORIO) { //Funcion para el boton de 
     });
 }
 
-function ftnRechazarCompensatorio(ID_COMPENSATORIO) { // Funcion para boton boton de rechazo
+function ftnRechazarCompensatorio(idCompensatorio) { // Funcion para boton boton de rechazo
     swal({
         title: "Rechazar Compensatorio",
         text: "¿Realmente quieres rechazar este compensatorio?",
@@ -282,7 +237,7 @@ function ftnRechazarCompensatorio(ID_COMPENSATORIO) { // Funcion para boton boto
         if (isConfirm) {
             let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
             let ajaxUrl = base_url + '/Compensatorios/rechazarCompensatorio';
-            let strData = "ID_COMPENSATORIO=" + ID_COMPENSATORIO;
+            let strData = "idCompensatorio=" + idCompensatorio;
             request.open("POST", ajaxUrl, true);
             request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             request.send(strData);
@@ -291,7 +246,7 @@ function ftnRechazarCompensatorio(ID_COMPENSATORIO) { // Funcion para boton boto
                     let objData = JSON.parse(request.responseText);
                     if (objData.status) {
                         tableCompensatorios.api().ajax.reload();
-                        swal("Compensatorio Rechazado", objData.msg, "error");
+                        swal("Compensatorio Rechazado", objData.msg, "success");
                     } else {
                         swal("Error", objData.msg, "error");
                     }
@@ -301,9 +256,9 @@ function ftnRechazarCompensatorio(ID_COMPENSATORIO) { // Funcion para boton boto
     });
 }
 
-function fntViewCompensatorio(ID_COMPENSATORIO){
+function ftnViewCompensatorio(idCompensatorio){
     let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-    let ajaxUrl = base_url+'/Compensatorios/getCompensatorio/'+ID_COMPENSATORIO;
+    let ajaxUrl = base_url+'/Compensatorios/getCompensatorio/'+idCompensatorio;
     request.open("GET",ajaxUrl,true);
     request.send();
     request.onreadystatechange = function(){
@@ -315,14 +270,11 @@ function fntViewCompensatorio(ID_COMPENSATORIO){
                 '<span class="badge badge-warning">Pendiente</span>' : 
                 (objData.data.COM_ESTADO == 2 ? '<span class="badge badge-success">Aprobado</span>' :
                 '<span class="badge badge-danger">Rechazado</span>');
-
                 
                 document.querySelector("#InfoNombres").innerHTML = objData.data.FUN_NOMBRES;
                 document.querySelector("#InfoApellidos").innerHTML = objData.data.FUN_APELLIDOS;
                 document.querySelector("#InfoCorreo").innerHTML = objData.data.FUN_CORREO;
-                document.querySelector("#InfoDescripcion").innerHTML = objData.data.ID_TIPO_COMPENSATORIO;
-                // document.querySelector("#InfoFechaInicio").innerHTML = objData.data.COM_FECHA_INICIO;
-                // document.querySelector("#InfoFechaFinal").innerHTML = objData.data.COM_FECHA_FIN;
+                document.querySelector("#InfoTipoCompensatorio").innerHTML = objData.data.TIP_COM_NOMBRE;
                 document.querySelector("#InfoEstado").innerHTML = estado;
                 document.querySelector("#InfoHorasRealizadas").innerHTML = objData.data.horasrealizadas;
                 
@@ -333,15 +285,8 @@ function fntViewCompensatorio(ID_COMPENSATORIO){
                     document.querySelector("#DescargarSoporte").innerHTML = 'No hay evidencia disponible';
                 }
                 
-                
-            
-                // document.querySelector('#com_estado').innerHTML = objData.data.FUN_ACCESO;
-
-                // document.querySelector("#com_horas_realizadas").innerHTML = objData.data.com_horas_realizadas;
-                // document.querySelector("#com_horas_compensadas").innerHTML = objData.data.com_horas_compensadas;
-                // document.querySelector("#Horas_Trabajadas").innerHTML = objData.data.Horas_Trabajadas;
-
                 $('#modalViewFuncionario').modal('show');
+
             }else{
                 swal("Error", objData.msg , "error");
             }
@@ -349,7 +294,7 @@ function fntViewCompensatorio(ID_COMPENSATORIO){
     }
 }
 
-function btnEditCompensatorio(element,ID_COMPENSATORIO){
+function ftnEditCompensatorio(element,idCompensatorio){
 
     ftnTotalUsuarios();
     ftnTotalTipoCompensatorio();
@@ -361,17 +306,19 @@ function btnEditCompensatorio(element,ID_COMPENSATORIO){
     document.querySelector('#btnActionForm').classList.replace("btn-primary", "btn-info");
     document.querySelector('#btnText').innerHTML ="Actualizar";
 
-    var ID_COMPENSATORIO = ID_COMPENSATORIO;
-    var request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-    var ajaxUrl = base_url+'/Compensatorios/editCompensatorio/'+ID_COMPENSATORIO;
+    //var idCompensatorio = idCompensatorio;
+    let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+    let ajaxUrl = base_url+'/Compensatorios/editCompensatorio/'+idCompensatorio;
     request.open("GET",ajaxUrl,true);
     request.send();
     request.onreadystatechange = function(){
 
         if(request.readyState == 4 && request.status == 200){
-            var objData = JSON.parse(request.responseText);
+            let objData = JSON.parse(request.responseText);
+
             if(objData.status){
-                document.querySelector("#idCompensatorio").value = objData.data.ID_COMPENSATORIO;
+
+                document.querySelector("#idCompensatorio").value = objData.data.idCompensatorio;
                 document.querySelector("#txtFechaInicio").value = objData.data.COM_FECHA_INICIO;
                 document.querySelector("#txtFechaFin").value = objData.data.COM_FECHA_FIN;
                 document.querySelector("#txtActividad").value = objData.data.ID_TIPO_COMPENSATORIO;
@@ -379,6 +326,7 @@ function btnEditCompensatorio(element,ID_COMPENSATORIO){
                 document.querySelector("#txtDescripcionActividad").value = objData.data.COM_DESCRIPCION_ACTIVIDAD;
 
                 $('#modalFormCompensatorio').modal('show');
+
             }else{
                 swal("Error", objData.msg, "error");
             }
@@ -387,6 +335,133 @@ function btnEditCompensatorio(element,ID_COMPENSATORIO){
     }
 }
 
+function openModal(){
+    rowTable = "";
+    document.querySelector('#idCompensatorio').value ="";
+    document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
+    document.querySelector('#btnActionForm').classList.replace("btn-info", "btn-primary");
+    document.querySelector('#btnText').innerHTML ="Enviar solicitud";
+    document.querySelector('#titleModal').innerHTML = "Nuevo Compensatorio";
+    document.querySelector("#formCompensatorio").reset();
+    ajustarFormulario();
+    ftnTotalUsuarios();
+    ftnTotalTipoCompensatorio();
+
+    $('#modalFormCompensatorio').modal('show');
+}
+
+function ftnEvidencias(idCompensatorio) {
+    // Abre el modal de subir evidencias
+    $('#modalFormEvidencias').modal('show');
+    document.querySelector("#formCargarEvidencias").reset();
+
+
+    // Al hacer clic en el botón de subir evidencia dentro del modal
+    document.getElementById("btnSubirEvidencia").addEventListener("click", function() {
+        if (document.getElementById("archivoEvidencia").files[0]) {
+            let fd = new FormData();
+            let archivo = document.getElementById("archivoEvidencia").files[0];
+            let nombreArchivo = archivo.name;
+            let extension = nombreArchivo.split('.').pop().toLowerCase();
+            let extensionesValidas = ["jpg","png","xlsx","docx","pdf"];
+
+            if (extensionesValidas.includes(extension)) {
+                fd.append("archivoEvidencia", archivo);
+                fd.append("idCompensatorio", idCompensatorio);
+
+                let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+                let ajaxUrl = base_url + '/Compensatorios/subirEvidencia'; // Reemplazar con la URL correcta
+                request.open("POST", ajaxUrl, true);
+                request.send(fd);
+                request.onreadystatechange = function() {
+                    if (request.readyState == 4) { // Verifica que la solicitud esté en el estado 4 (completo)
+                        if (request.status === 200) {
+                            let data = JSON.parse(request.responseText);
+                            // console.log("Volvio");
+                            if (data.status){
+                                swal("Evidencia: ", data.msg, "success");
+                                $('#modalFormEvidencias').modal('hide');
+                                document.getElementById("archivoEvidencia").value = "";
+                            }else{
+                                alert("Error al subir el archivo", data.msg, "error");
+                            }
+                        } else {
+                            alert("Error en la solicitud: " + request.statusText);
+                        }
+                    }
+                };
+                
+            } else {
+                swal("Extensión no válida", "El archivo contiene una extensión no permitida", "warning");
+                document.getElementById("archivoEvidencia").value = "";
+            }
+        } else {
+            swal("Seleccione un archivo para subir", "Ningun archivo seleccionado", "info");
+        }
+});
+
+}
+
+function ftnTotalUsuarios(){
+   
+    if(document.querySelector('#listaUsuarios')){
+        let ajaxUrl = base_url+'/Compensatorios/getSelectUsuarios';
+        let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+        request.open("GET",ajaxUrl,true);
+        request.send();
+        request.onreadystatechange = function(){
+            if(request.readyState == 4 && request.status == 200){
+                document.querySelector('#listaUsuarios').innerHTML = request.responseText;
+                
+                $('#listaUsuarios').selectpicker('refresh');
+                $('#listaUsuarios').selectpicker('render');
+            }
+        }
+    }
+}
+
+function ftnTotalTipoCompensatorio(){
+   
+    if(document.querySelector('#txtActividad')){
+        let ajaxUrl = base_url+'/Compensatorios/getSelectTipoCompensatorio';
+        let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+        request.open("GET",ajaxUrl,true);
+        request.send();
+        request.onreadystatechange = function(){
+            if(request.readyState == 4 && request.status == 200){
+                document.querySelector('#txtActividad').innerHTML = request.responseText;
+                
+                $('#txtActividad').selectpicker('refresh');
+                $('#txtActividad').selectpicker('render');
+            }
+        }
+    }
+}
+//Ajustar formulario para la renderización o no de la lista de usuarios
+function ajustarFormulario() { 
+    let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+    let ajaxUrl = base_url + '/Compensatorios/verificarRol';
+    request.open("GET", ajaxUrl, true);
+
+    request.onreadystatechange = function() {
+        if (request.readyState == 4 && request.status == 200) {
+            let esAdministrador = JSON.parse(request.responseText).esAdministrador;
+            // let estadoDiv = document.querySelector(".form-group.col-md-6");
+            
+            if (esAdministrador == 2) {
+                // estadoDiv.style.display = "none";
+                $("#listaUsuarios").closest(".form-group").css("display","none");
+            }
+        }
+    }
+    request.send();
+}
+
+window.onload = function() {
+    ajustarFormulario();
+};
+
+/*
 function fntReserPass(idfuncionario){
     swal({
         title: "Reestablecer Contraseña",
@@ -453,258 +528,5 @@ function fntDelFuncionario(idfuncionario,estado){
         }
     });
 }
-
-function openModal(){
-    rowTable = "";
-    // document.querySelector("#listRolid").innerHTML=""; // Lista de rol
-    document.querySelector('#idCompensatorio').value ="";
-    document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
-    document.querySelector('#btnActionForm').classList.replace("btn-info", "btn-primary");
-    document.querySelector('#btnText').innerHTML ="Enviar solicitud";
-    document.querySelector('#titleModal').innerHTML = "Nuevo Compensatorio";
-    document.querySelector("#formCompensatorio").reset();
-    ajustarFormulario();
-    // document.querySelector('#ListaUsuarios').remove("select");
-    ftnTotalUsuarios();
-    ftnTotalTipoCompensatorio();
-    // fntRolesUsuario();
-    
-
-    // Reiniciar el valor seleccionado en el elemento <select>
-    // document.querySelector("#ListaUsuarios").selectedIndex = -1;
-
-    $('#modalFormCompensatorio').modal('show');
-    // var selectElement = document.querySelector('#ListaUsuarios')
-    // if (selectElement && selectElement.parentNode) {
-    //     selectElement.parentNode.remove(selectElement);
-    // }
-}
-
-// ftnEvidencias
-
-function ftnEvidencias(ID_COMPENSATORIO) {
-    // Abre el modal de subir evidencias
-    $('#modalFormEvidencias').modal('show');
-    document.querySelector("#formCargarEvidencias").reset();
-
-
-// Al hacer clic en el botón de subir evidencia dentro del modal
-document.getElementById("btnSubirEvidencia").addEventListener("click", function() {
-    if (document.getElementById("archivoEvidencia").files[0]) {
-        let fd = new FormData();
-        let archivo = document.getElementById("archivoEvidencia").files[0];
-        let nombreArchivo = archivo.name;
-        let extension = nombreArchivo.split('.').pop().toLowerCase();
-        let extensionesValidas = ["jpg","png","xlsx","docx","pdf"];
-
-        if (extensionesValidas.includes(extension)) {
-            fd.append("archivoEvidencia", archivo);
-            fd.append("ID_COMPENSATORIO", ID_COMPENSATORIO);
-
-            let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-            let ajaxUrl = base_url + '/Compensatorios/subirEvidencia'; // Reemplazar con la URL correcta
-            request.open("POST", ajaxUrl, true);
-            request.send(fd);
-            request.onreadystatechange = function() {
-                if (request.readyState == 4) { // Verifica que la solicitud esté en el estado 4 (completo)
-                    if (request.status === 200) {
-                        let data = JSON.parse(request.responseText);
-                        // console.log("Volvio");
-                        if (data.status){
-                            swal("Evidencia: ", data.msg, "success");
-                            $('#modalFormEvidencias').modal('hide');
-                            document.getElementById("archivoEvidencia").value = "";
-                        }else{
-                            alert("Error al subir el archivo", data.msg, "error");
-                        }
-                    } else {
-                        alert("Error en la solicitud: " + request.statusText);
-                    }
-                }
-            };
-            
-        } else {
-            swal("Extensión no válida", "El archivo contiene una extensión no permitida", "warning");
-            document.getElementById("archivoEvidencia").value = "";
-        }
-    } else {
-        swal("Seleccione un archivo para subir", "Ningun archivo seleccionado", "info");
-    }
-});
-
-}
-
-function ftnTotalUsuarios(){
-   
-    if(document.querySelector('#ListaUsuarios')){
-        let ajaxUrl = base_url+'/Compensatorios/getSelectUsuarios';
-        let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-        request.open("GET",ajaxUrl,true);
-        request.send();
-        request.onreadystatechange = function(){
-            if(request.readyState == 4 && request.status == 200){
-                document.querySelector('#ListaUsuarios').innerHTML = request.responseText;
-                
-                $('#ListaUsuarios').selectpicker('refresh');
-                $('#ListaUsuarios').selectpicker('render');
-            }
-        }
-    }
-}
-
-function ftnTotalTipoCompensatorio(){
-   
-    if(document.querySelector('#txtActividad')){
-        let ajaxUrl = base_url+'/Compensatorios/getSelectTipoCompensatorio';
-        let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-        request.open("GET",ajaxUrl,true);
-        request.send();
-        request.onreadystatechange = function(){
-            if(request.readyState == 4 && request.status == 200){
-                document.querySelector('#txtActividad').innerHTML = request.responseText;
-                
-                $('#txtActividad').selectpicker('refresh');
-                $('#txtActividad').selectpicker('render');
-            }
-        }
-    }
-}
-
-function ajustarFormulario() { 
-    let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-    let ajaxUrl = base_url + '/Compensatorios/verificarRol';
-    request.open("GET", ajaxUrl, true);
-
-    request.onreadystatechange = function() {
-        if (request.readyState == 4 && request.status == 200) {
-            let esAdministrador = JSON.parse(request.responseText).esAdministrador;
-            // let estadoDiv = document.querySelector(".form-group.col-md-6");
-            
-            if (esAdministrador == 2) {
-                // estadoDiv.style.display = "none";
-                $("#ListaUsuarios").closest(".form-group").css("display","none");
-            }
-        }
-    }
-    request.send();
-}
-
-window.onload = function() {
-    ajustarFormulario();
-};
-
-
-// function ajustarFormulario() { 
-//     let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-//     let ajaxUrl = base_url + '/Compensatorios/verificarRol';
-//     request.open("GET", ajaxUrl, true);
-
-//     request.onreadystatechange = function() {
-//         if (request.readyState == 4 && request.status == 200) {
-//             let esAdministrador = JSON.parse(request.responseText).esAdministrador;
-//             // let estadoDiv = document.querySelector("#ListaUsuarios");
-//             // console.log(esAdministrador);
-//             // console.log(estadoDiv);
-//             // console.log(request.responseText)
-//             if (esAdministrador == 2) {
-//                 // estadoDiv.style.display = "none";
-//                 $("#ListaUsuarios").closest(".form-group").css("display","none");
-//             }
-//         }
-//     }
-//     request.send();
-// }
-
-// window.onload = function() {
-//     ajustarFormulario();
-// };
-
-
-// function ajustarFormulario() { 
-//     let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-//     let ajaxUrl = base_url + '/Compensatorios/verificarRol';
-//     request.open("GET", ajaxUrl, true);
-
-//     request.onreadystatechange = function() {
-//         if (request.readyState == 4 && request.status == 200) {
-//             let esAdministrador = JSON.parse(request.responseText).esAdministrador;
-//             let inputUsuario = document.getElementById("ListaUsuarios");
-//             let labelUsuario = document.getElementById("ListaUsuarios");
-
-//             if (!esAdministrador) {
-                
-//                 inputUsuario.style.display = "none";
-//                 labelUsuario.style.display = "none";
-
-//                 // inputUsuario.remove(); // Remover el elemento
-//                 // labelUsuario.remove(); // Remover el elemento
-//             }
-//         }
-//     }
-//     request.send();
-// }
-
-// window.onload = function() {
-//     ajustarFormulario();
-// };
-
-
-// function ajustarFormulario() { 
-//     let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-//     let ajaxUrl = base_url + '/Compensatorios/verificarRol';
-//     request.open("GET", ajaxUrl, true);
-
-//     request.onreadystatechange = function() {
-//         if (request.readyState == 4 && request.status == 200) {
-//             let esAdministrador = JSON.parse(request.responseText).esAdministrador;
-//             let inputUsuario = document.getElementById("ListaUsuarios"); // Cambia "ListaUsuarios" a tu ID correcto
-//             let labelUsuario = document.getElementById("ListaUsuarios"); // Cambia "ListaUsuarios" a tu ID correcto
-
-//             if (!esAdministrador) {
-//                 inputUsuario.style.display = "none";
-//                 labelUsuario.style.display = "none";
-//             }
-//         }
-//     }
-//     request.send(); // Aquí realizamos la solicitud AJAX
-// }
-
-// window.onload = function() {
-//     ajustarFormulario();
-// };
-
-
-
-// function ajustarFormulario() {
-//     var request;
-    
-//     if (window.XMLHttpRequest) {
-//         request = new XMLHttpRequest();
-//     } else {
-//         request = new ActiveXObject('Microsoft.XMLHTTP');
-//     }
-    
-//     var ajaxUrl = base_url+'/Compensatorios/verificarRol';
-    
-//     request.open("GET", ajaxUrl, true);
-    
-//     request.onreadystatechange = function() {
-//         if (request.readyState === 4 && request.status === 200) {
-//             var esAdministrador = JSON.parse(request.responseText).esAdministrador;
-//             var inputUsuario = document.getElementById("ListaUsuarios");
-//             var labelUsuario = document.getElementById("ListaUsuarios");
-            
-//             if (!esAdministrador) {
-//                 inputUsuario.style.display = "none";
-//                 labelUsuario.style.display = "none";
-//             }
-//         }
-//     };
-    
-//     request.send();
-// }
-
-// window.onload = function() {
-//     ajustarFormulario();
-// };
+*/
 
