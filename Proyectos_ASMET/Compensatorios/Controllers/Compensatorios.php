@@ -1,6 +1,7 @@
 <?php 
 
 class Compensatorios extends Controllers{
+	
 	public function __construct(){	
 		parent::__construct();
 		session_start();
@@ -51,27 +52,30 @@ class Compensatorios extends Controllers{
 	//Modulo de creación y actualización de compensatorios
 	public function setCompensatorio() {
 
-		$option = 0; // Agregado para definir la operación (0: no definida, 1: inserción, 2: actualización)
-		
 		if ($_POST) {
-	
+			
 			if ($_POST['txtFechaInicio'] == '' || $_POST['txtFechaFin'] == ''
-				|| $_POST['txtActividad'] == '' || $_POST['txtTrabajoRequerido'] == ''
-				|| $_POST['txtEstado'] == '' || $_POST['listaUsuarios'] == '') {
+			|| $_POST['txtActividad'] == '' || $_POST['txtTrabajoRequerido'] == ''
+			|| $_POST['txtEstado'] == '' || $_POST['listaUsuarios'] == '') {
+				
 				$arrResponse = array("status" => false, "msg" => 'Ingrese todos los datos.');
+			
 			} else {
+				
 				$txtFechaInicio = $_POST['txtFechaInicio'];
 				$txtFechaFin = $_POST['txtFechaFin'];
 	
 				if ($txtFechaInicio == $txtFechaFin) {
+
 					$arrResponse = array("status" => false, "msg" => 'Las horas no pueden ser las mismas');
+					
 				} else {
 					$intIdCompensatorio = intval($_POST['idCompensatorio']);
 					$strDescripcionActividad = mb_convert_case(strClean($_POST['txtDescripcionActividad']), MB_CASE_TITLE, "UTF-8");
 					$strActividad = mb_convert_case(strClean($_POST['txtActividad']), MB_CASE_TITLE, "UTF-8");
 					$strTrabajoRequerido = mb_convert_case(strClean($_POST['txtTrabajoRequerido']), MB_CASE_TITLE, "UTF-8");
 					$intEstado = intval(strClean($_POST['txtEstado']));
-	
+					
 					//Parseo en el back para datetimepicker
 					$strFechaInicio = Compensatorios::parseToDB($txtFechaInicio);
 					$strFechaFin = Compensatorios::parseToDB($txtFechaFin);
@@ -81,6 +85,7 @@ class Compensatorios extends Controllers{
 					$arrData = $this->model->recuperar($listadoUsuarios); // Recuperar los datos insertados
 	
 					$request_user = 0;
+					$option = 0; // Agregado para definir la operación (0: no definida, 1: inserción, 2: actualización)
 	
 					if ($intIdCompensatorio == 0) {
 						if ($_SESSION['permisosMod']['PER_W']) {
@@ -135,23 +140,21 @@ class Compensatorios extends Controllers{
 							'UsuarioTrabajo' => $_POST['txtTrabajoRequerido'],
 							'DescripcionAc' => $_POST['txtDescripcionActividad']
 						];
-
-						$html = generarHTML($tipoMensaje, $datos);
-						$enviarcorreo = enviarMail($remitente, $destinatario, $asunto, 'solicitud', $datos);
-						//try {
-						if($enviarcorreo){
-
-							$request_user === "exist" ? $arrResponse : $arrResponse = array('status' => true, 'msg' => 'Su solicitud fue procesada con éxito, espera que el admin apruebe tu compensatorio!');
 						
-						}else{
-
+						try {
+							
+							if ($request_user === "exist"){
+									$arrResponse;
+							}else{
+								$arrResponse = array('status' => true, 'msg' => 'Su solicitud fue procesada con éxito, espera que el admin apruebe tu compensatorio!');
+								$enviarcorreo = enviarMail($remitente, $destinatario, $asunto, 'solicitud', $datos);
+							} 
+								
+						} catch (Exception $e) {
+							
 							$arrResponse = array('status' => false, 'msg' => 'Error al enviar el correo: ' . $e->getMessage());
 						
 						}
-						//} catch (Exception $e) {
-
-						
-						//}
 					} else {
 
 						$request_user === "exist" ? $arrResponse : $arrResponse = array('status' => true, 'msg' => 'Su compensatorio fue actualizado correctamente!');
@@ -432,11 +435,11 @@ class Compensatorios extends Controllers{
 	public function verificarRol() {
 		
 		// Verificar si el usuario tiene el rol de administrador
-		$ID_ROL = $_SESSION['userData']['ID_ROL'];
-		$esAdministrador = $this->model->esAdministrador($ID_ROL);
+		$idRol = $_SESSION['userData']['ID_ROL'];
+		$esAdministrador = $this->model->esAdministrador($idRol);
 		
 		$response = array(
-			'esAdministrador' => $ID_ROL
+			'esAdministrador' => $idRol
 		);
 		
 		header('Content-Type: application/json');

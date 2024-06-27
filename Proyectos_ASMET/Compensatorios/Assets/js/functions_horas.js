@@ -3,6 +3,9 @@ let rowTable = "";
 let divLoading = document.querySelector("#divLoading");
 document.addEventListener('DOMContentLoaded', function(){
 
+    //Llamado a la función de configuración del datetimepicker
+    ftnDateTimePickerConfiguration();
+
     tableHoras = $('#tableHoras').dataTable({
         "aProcessing":true,
         "aServerSide":true,
@@ -53,7 +56,13 @@ document.addEventListener('DOMContentLoaded', function(){
         "resonsieve":"true",
         "bDestroy": true,
         "iDisplayLength": 10,
-        "order":[[0,"asc"]]  
+        "order":[[4,"asc"]],
+        "columnDefs": [
+            {
+                "targets": [0, 1, 2, 3, 4, 5, 6, 7],
+                "orderable": false,
+                "className": "text-center",
+            }],  
     });
 
     if(document.querySelector("#formHora")){
@@ -106,6 +115,43 @@ document.addEventListener('DOMContentLoaded', function(){
         }
     }
 },false);
+
+function ftnDateTimePickerConfiguration(){
+
+    let picker = document.querySelector('#datetimepicker');
+
+    $(document).ready(function() {
+
+        let timePickerConfiguration = {
+        
+            format: "DD/MM/yyyy",
+            format: 'L',
+            locale: moment.locale('es-mx'),
+            buttons:{
+                showToday: true,
+                showClear: true,
+                showClose: true
+            },
+            icons: {
+                time: "fa fa-clock fa-lg",
+                date: "fa fa-calendar-plus fa-lg",
+                up: "fa fa-caret-up fa-lg",
+                down: "fa fa-caret-down fa-lg",
+                previous: "fa fa-chevron-left",
+                next: "fa fa-chevron-right",
+                today: "fa fa-calendar-check",
+                clear: "fa fa-trash",
+                close: "fa fa-xmark",
+            },
+            useCurrent: true,   
+
+        };
+
+        $(picker).datetimepicker(timePickerConfiguration);
+
+    });
+
+}
 
 function fntRolesUsuario(){
     if(document.querySelector('#listRolid')){

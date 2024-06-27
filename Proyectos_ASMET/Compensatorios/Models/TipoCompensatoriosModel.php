@@ -15,7 +15,7 @@ class TipoCompensatoriosModel extends Oracle{
 	public function insertTipoCompensatorio(
 		string $nombreTipoCompensatorio,
 		string $descripcionTipoCompensatorio,
-		int $estadoTipoCompensatorio) {
+		int $estadoTipoCompensatorio){
 
 		$this->strNombreTipoCompensatorio = $nombreTipoCompensatorio;
 		$this->strDescripcionTipoCompensatorio = $descripcionTipoCompensatorio;

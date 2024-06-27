@@ -109,14 +109,14 @@ class CompensatoriosModel extends Oracle{
 		$this->intIdCompensatorio = $idCompensatorio;
 
 		$sql = "SELECT 
-		COM.ID_COMPENSATORIO,
-		COM.ID_FUNCIONARIO,
-		COM.COM_FECHA_FIN,
-		COM.COM_FECHA_INICIO,
-		COM.ID_TIPO_COMPENSATORIO,
-		COM.COM_USUARIO_FINAL,
-		COM.COM_DESCRIPCION_ACTIVIDAD,  
-		COM.ID_TIPO_COMPENSATORIO
+			COM.ID_COMPENSATORIO,
+			COM.ID_FUNCIONARIO,
+			COM.COM_FECHA_FIN,
+			COM.COM_FECHA_INICIO,
+			COM.ID_TIPO_COMPENSATORIO,
+			COM.COM_USUARIO_FINAL,
+			COM.COM_DESCRIPCION_ACTIVIDAD,  
+			COM.ID_TIPO_COMPENSATORIO
 		FROM BIG_COMPENSATORIOS COM 
 		WHERE COM.ID_COMPENSATORIO = $this->intIdCompensatorio
 		";
@@ -313,8 +313,8 @@ class CompensatoriosModel extends Oracle{
 		$sql = "UPDATE BIG_COMPENSATORIOS SET COM_ESTADO = :COM_ESTADO WHERE ID_COMPENSATORIO = :ID_COMPENSATORIO";
 
 		$arrData = array(
-			'COM_ESTADO' => $estadoAprobado,
-			'ID_COMPENSATORIO' => $this->intIdCompensatorio
+			'COM_ESTADO' 		=> $estadoAprobado,
+			'ID_COMPENSATORIO' 	=> $this->intIdCompensatorio
 		);
 
 		$request = $this->update($sql, $arrData);
@@ -330,8 +330,8 @@ class CompensatoriosModel extends Oracle{
 		$sql = "UPDATE BIG_COMPENSATORIOS SET COM_ESTADO = :COM_ESTADO WHERE ID_COMPENSATORIO = :ID_COMPENSATORIO";
 
 		$arrData = array(
-			'COM_ESTADO' => $estadoRechazado,
-			'ID_COMPENSATORIO' => $this->intIdCompensatorio
+			'COM_ESTADO' 		=> $estadoRechazado,
+			'ID_COMPENSATORIO' 	=> $this->intIdCompensatorio
 		);
 
 		$request = $this->update($sql, $arrData);
@@ -371,36 +371,22 @@ class CompensatoriosModel extends Oracle{
 
 	//----Funciones generales------
 	//Modulo de verificación de rol
-	public function esAdministrador($ID_ROL) {
+	public function esAdministrador($idRol) {
 
-		$sql = "SELECT distinct ID_ROL FROM BIG_FUNCIONARIOS WHERE ID_ROL = ID_ROL";
+		$this->intIdRol = $idRol;
+
+		$sql = "SELECT distinct ID_ROL 
+			FROM BIG_FUNCIONARIOS 
+			WHERE ID_ROL = ID_ROL";
 
 		$arrData = array(
-			':ID_ROL' => $ID_ROL
+			':ID_ROL' 		=> $this->intIdRol
 		);
 
 		$request = $this->select($sql, $arrData);
 
 		return $request['ID_ROL'] == 1;		
 	}
-	/*//Revisar
-	public function esAdministrador(int $idRol) {
-
-		$this->intIdRol = $idRol;
-
-		$sql = "SELECT distinct ID_ROL 
-		FROM BIG_FUNCIONARIOS 
-		WHERE ID_ROL = $this->intIdFuncionario
-		";
-
-		$arrData = array(
-			'ID_ROL' 		=> $this->intIdRol
-		);
-
-		$request = $this->select($sql, $arrData);
-		
-		return $request['ID_ROL'] == 1;		
-	}*/
 	//Modulo para guardar la evidencia del compensatorio
 	public function guardarEvidencia(string $evidencia, int $idCompensatorio){ // Esta definitivamente funciona
 		$this->strEvidencia = $evidencia;

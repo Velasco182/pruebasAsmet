@@ -51,6 +51,6 @@
     footerAdmin($data); 
     // } else {
         // El usuario no tiene el permiso de administrador, redirigir o mostrar un mensaje de acceso denegado
-        echo "Acceso denegado. Esta página es solo para administradores.";
+        //echo "Acceso denegado. Esta página es solo para administradores.";
     // }
 ?>

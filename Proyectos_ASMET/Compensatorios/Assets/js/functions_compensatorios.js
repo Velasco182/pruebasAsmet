@@ -80,8 +80,8 @@ document.addEventListener('DOMContentLoaded', function(){
             let strTrabajoRequerido = document.querySelector('#txtTrabajoRequerido').value;
             let intEstado = document.querySelector('#txtEstado').value;
 
-            let compensatorio = {strFechaInicio, strFechaFin, strDescripcionActividad, strActividad, listadoUsuarios, strTrabajoRequerido, intEstado};
-            console.table(compensatorio);
+            /*let compensatorio = {strFechaInicio, strFechaFin, strDescripcionActividad, strActividad, listadoUsuarios, strTrabajoRequerido, intEstado};
+            console.table(compensatorio);*/
     
             if(strFechaInicio == '' || strFechaFin == '' || strDescripcionActividad == '' || strActividad == '' || listadoUsuarios == '' || strTrabajoRequerido == '' || intEstado == ''){
                 swal("Atención", "Todos los campos son obligatorios." , "error");
@@ -170,8 +170,8 @@ function ftnDateTimePickerConfiguration(){
         // Agrega el campo dinámico a la copia
         finalTimePickerConfiguration['useCurrent'] = false;
 
-        $(inicio).datetimepicker(timePickerConfiguration);
         // Aplica la configuración modificada al datetimepicker
+        $(inicio).datetimepicker(timePickerConfiguration);
         $(final).datetimepicker(finalTimePickerConfiguration);
 
         $(inicio).on("change.datetimepicker", function(e){

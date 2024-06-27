@@ -34,10 +34,15 @@ class Tipocompensatorios extends Controllers{
 
 	//Módulo para crear tipo de compensatorio llamando al modelo insertTipoCompensatorio
 	public function setTipoCompensatorio(){
+		
 		if ($_POST) {
 	
-			if ($_POST['txtNombreTipoCompensatorio'] == '' || $_POST['txtDescripcionTipoCompensatorio'] == '' || $_POST['txtEstadoTipoCompensatorio'] == '') {
+			if ($_POST['txtNombreTipoCompensatorio'] == '' 
+			|| $_POST['txtDescripcionTipoCompensatorio'] == '' 
+			|| $_POST['txtEstadoTipoCompensatorio'] == '') {
+
 				$arrResponse = array("status" => false, "msg" => 'Ingrese todos los datos.');
+			
 			} else {
 				
 				$intIdTipoCompensatorio = intval($_POST['idTipoCompensatorio']);
@@ -45,8 +50,6 @@ class Tipocompensatorios extends Controllers{
 				$strDescripcionTipoCompensatorio = mb_convert_case(strClean($_POST['txtDescripcionTipoCompensatorio']), MB_CASE_TITLE, "UTF-8");
 				$intTipoCompensatorioEstado = intval($_POST['txtEstadoTipoCompensatorio']);
 				
-				//Dep($strNombreTipoCompensatorio . "controller");
-
 				$request_user = 0;
 				$option = 0; // Agregado para definir la operación (0: no definida, 1: inserción, 2: actualización)
 
