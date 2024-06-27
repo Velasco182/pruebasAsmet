@@ -31,9 +31,8 @@
                           <th>Fecha Inicio</th>
                           <th>Fecha Fin</th>
                           <th>Tipo</th>
-                          <th>Descripcion</th>
                           <th>¿Quien requiere?</th>
-                          <!-- <th>¿Quien requiere el trabajo?</th> -->
+                          <th>Descripcion</th>
                           <th>Estado</th>
                           <th>Acciones</th>
                         </tr>

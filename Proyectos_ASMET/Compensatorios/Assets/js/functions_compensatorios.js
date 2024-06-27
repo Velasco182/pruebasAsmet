@@ -3,9 +3,9 @@ let rowTable = "";
 let divLoading = document.querySelector("#divLoading");
 
 document.addEventListener('DOMContentLoaded', function(){
-
+    //Llamado a la función de configuración del datetimepicker
     ftnDateTimePickerConfiguration();
-
+    //Definición y configuración del datatable.
     tableCompensatorios = $('#tableCompensatorios').dataTable({
         "aProcessing":true,
         "aServerSide":true,
@@ -23,8 +23,8 @@ document.addEventListener('DOMContentLoaded', function(){
             {"data":"COM_FECHA_FIN"},
             //{"data":"ID_TIPO_COMPENSATORIO"},
             {"data":"TIP_COM_NOMBRE"},
-            {"data":"COM_DESCRIPCION_ACTIVIDAD"},
             {"data":"COM_USUARIO_FINAL"},
+            {"data":"COM_DESCRIPCION_ACTIVIDAD"},
             {"data":"COM_ESTADO"},
             {"data":"ACCIONES"}
         ],
@@ -63,9 +63,9 @@ document.addEventListener('DOMContentLoaded', function(){
             "className": "text-center",
         }],  
     });
-
+    //Instancia del formulario
     if(document.querySelector("#formCompensatorio")){
-
+        //configuración del formulario
         let formUsuario = document.querySelector("#formCompensatorio");
 
         formUsuario.onsubmit = function(e) {
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function(){
     }
     
 },false);
-
+//función para la configuración de datetimepicker
 function ftnDateTimePickerConfiguration(){
 
     let inicio = document.querySelector('#datetimepickerInicio');
@@ -184,7 +184,7 @@ function ftnDateTimePickerConfiguration(){
 
     });
 };
-
+//Función para aprobación del compensatorio
 function ftnAprobarCompensatorio(idCompensatorio) { //Funcion para el boton de aprobacion
     swal({
         title: "Aprobar Compensatorio",
@@ -222,7 +222,7 @@ function ftnAprobarCompensatorio(idCompensatorio) { //Funcion para el boton de a
         }
     });
 }
-
+//Función para rechazo del compensatorio
 function ftnRechazarCompensatorio(idCompensatorio) { // Funcion para boton boton de rechazo
     swal({
         title: "Rechazar Compensatorio",
@@ -255,7 +255,7 @@ function ftnRechazarCompensatorio(idCompensatorio) { // Funcion para boton boton
         }
     });
 }
-
+//Función para ver compensatorio por id mostrando el modal
 function ftnViewCompensatorio(idCompensatorio){
     let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
     let ajaxUrl = base_url+'/Compensatorios/getCompensatorio/'+idCompensatorio;
@@ -293,14 +293,13 @@ function ftnViewCompensatorio(idCompensatorio){
         }
     }
 }
-
+//Función para editar el compensatorio mostrando el modal
 function ftnEditCompensatorio(element,idCompensatorio){
 
     ftnTotalUsuarios();
     ftnTotalTipoCompensatorio();
     
     rowTable = element.parentNode.parentNode.parentNode; 
-    // document.querySelector("#listRolid").innerHTML="";
     document.querySelector('#titleModal').innerHTML ="Actualizar compensatorio";
     document.querySelector('.modal-header').classList.replace("headerRegister", "headerUpdate");
     document.querySelector('#btnActionForm').classList.replace("btn-primary", "btn-info");
@@ -334,7 +333,7 @@ function ftnEditCompensatorio(element,idCompensatorio){
        
     }
 }
-
+//función para abrir el modal
 function openModal(){
     rowTable = "";
     document.querySelector('#idCompensatorio').value ="";
@@ -349,7 +348,7 @@ function openModal(){
 
     $('#modalFormCompensatorio').modal('show');
 }
-
+//Función para subir evidencias mostrando el modal
 function ftnEvidencias(idCompensatorio) {
     // Abre el modal de subir evidencias
     $('#modalFormEvidencias').modal('show');
@@ -401,7 +400,7 @@ function ftnEvidencias(idCompensatorio) {
 });
 
 }
-
+//función para llenar el select de usuarios
 function ftnTotalUsuarios(){
    
     if(document.querySelector('#listaUsuarios')){
@@ -419,7 +418,7 @@ function ftnTotalUsuarios(){
         }
     }
 }
-
+//Función para llenar el select de tipo de compensatorios
 function ftnTotalTipoCompensatorio(){
    
     if(document.querySelector('#txtActividad')){
@@ -460,73 +459,3 @@ function ajustarFormulario() {
 window.onload = function() {
     ajustarFormulario();
 };
-
-/*
-function fntReserPass(idfuncionario){
-    swal({
-        title: "Reestablecer Contraseña",
-        text: "¿Realmente quiere realizar el restablecimiento?",
-        type: "info",
-        showCancelButton: true,
-        confirmButtonText: "Si, reestablecer!",
-        cancelButtonText: "No, cancelar!",
-        closeOnConfirm: false,
-        closeOnCancel: true
-    }, function(isConfirm){
-        if (isConfirm){
-            let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-            let ajaxUrl = base_url+'/Funcionarios/resetPassFuncionario';
-            let strData = "idFuncionario="+idfuncionario;
-            request.open("POST",ajaxUrl,true);
-            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            request.send(strData);
-            request.onreadystatechange = function(){
-                if(request.readyState == 4 && request.status == 200){
-                    let objData = JSON.parse(request.responseText);
-                    if(objData.status){
-                        swal("Reestablecer Contraseña!", objData.msg , "success");
-                        tableUsuarios.api().ajax.reload();
-                    }else{
-                        swal("Atención!", objData.msg , "error");
-                    }
-                }
-            }
-        }
-    });
-}
-
-function fntDelFuncionario(idfuncionario,estado){
-    swal({
-        title: "Cambio de Estado",
-        text: "¿Realmente quiere cambiar el estado del Funcionario?",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Si, cambiar!",
-        cancelButtonText: "No, cancelar!",
-        closeOnConfirm: false,
-        closeOnCancel: true
-    }, function(isConfirm) {
-        if (isConfirm){
-            let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-            let ajaxUrl = base_url+'/Funcionarios/statusFuncionario';
-            let strData = "idFuncionario="+idfuncionario+"&status="+estado;
-
-            request.open("POST",ajaxUrl,true);
-            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            request.send(strData);
-            request.onreadystatechange = function(){
-                if(request.readyState == 4 && request.status == 200){
-                    let objData = JSON.parse(request.responseText);
-                    if(objData.status){
-                        swal("Cambio de estado!", objData.msg , "success");
-                        tableUsuarios.api().ajax.reload();
-                    }else{
-                        swal("Atención!", objData.msg , "error");
-                    }
-                }
-            }
-        }
-    });
-}
-*/
-

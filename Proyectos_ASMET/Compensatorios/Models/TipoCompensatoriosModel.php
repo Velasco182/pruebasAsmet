@@ -56,7 +56,7 @@ class TipoCompensatoriosModel extends Oracle{
 		}else{
 			$return = "exist";
 		}
-		
+
 		return $return; 
 	}
 	//Método para seleccionar tipo de compensatorio para editar
@@ -115,7 +115,7 @@ class TipoCompensatoriosModel extends Oracle{
 		//Validacion del request
 		$sql = "SELECT * FROM BIG_TIPO_COMPENSATORIO 
 		WHERE TIP_COM_NOMBRE = '{$this->strNombreTipoCompensatorio}' 
-		--OR TIP_COM_DESCRIPCION = '{$this->strDescripcionTipoCompensatorio}'
+		AND TIP_COM_DESCRIPCION = '{$this->strDescripcionTipoCompensatorio}'
 		AND ID_TIPO_COMPENSATORIO != $this->intIdTipoCompensatorio";
 
 		$request = $this->select_all($sql);

@@ -37,7 +37,6 @@ class CompensatoriosModel extends Oracle{
 		$this->strFechaFin = $fechaFin;
 		$this->intIdTipoCompensatorio = $idTipoCompensatorio;//Antes strActividad
 		$this->strDescripcionActividad = $descripcionActividad;
-		// $this->ListadoUsuarios = $ID_FUNCIONARIO;
 		$this->listadoUsuarios = $usuarios;
 		$this->strTrabajoRequerido = $usuarioFinal;
 		$this->intEstado = $estado;
@@ -51,11 +50,12 @@ class CompensatoriosModel extends Oracle{
 		//Validar duplicidad de datos
 		$sql = "SELECT * FROM BIG_COMPENSATORIOS 
 			WHERE ID_FUNCIONARIO = '{$this->intIdFuncionario}' 
-			--AND COM_FECHA_INICIO = '{TO_TIMESTAMP($this->strFechaInicio, 'YYYY/MM/DD HH24:MI:SS')}' 
-			--AND COM_FECHA_FIN = '{TO_TIMESTAMP($this->strFechaFin, 'YYYY/MM/DD HH24:MI:SS')}'
+			AND COM_FECHA_INICIO = TO_TIMESTAMP('{$this->strFechaInicio}', 'YYYY/MM/DD HH24:MI:SS') 
+			AND COM_FECHA_FIN = TO_TIMESTAMP('{$this->strFechaFin}', 'YYYY/MM/DD HH24:MI:SS') 
 			AND ID_TIPO_COMPENSATORIO = '{$this->intIdTipoCompensatorio}' 
 			AND COM_USUARIO_FINAL = '{$this->strTrabajoRequerido}'
 			AND COM_DESCRIPCION_ACTIVIDAD = '{$this->strDescripcionActividad}'";
+
 		$request = $this->select_all($sql);
 
 		if(empty($request)){
@@ -270,11 +270,13 @@ class CompensatoriosModel extends Oracle{
 		//Validar duplicidad de datos
 		$sql = "SELECT * FROM BIG_COMPENSATORIOS
 			WHERE ID_FUNCIONARIO = '{$this->intIdFuncionario}' 
+			AND COM_FECHA_INICIO = TO_TIMESTAMP('{$this->strFechaInicio}', 'YYYY/MM/DD HH24:MI:SS') 
+			AND COM_FECHA_FIN = TO_TIMESTAMP('{$this->strFechaFin}', 'YYYY/MM/DD HH24:MI:SS') 
 			AND ID_TIPO_COMPENSATORIO = '{$this->intIdTipoCompensatorio}' 
-			AND COM_FECHA_INICIO = '{TO_TIMESTAMP($this->strFechaInicio, 'YYYY/MM/DD HH24:MI:SS')}' 
-			AND COM_FECHA_FIN = '{TO_TIMESTAMP($this->strFechaFin, 'YYYY/MM/DD HH24:MI:SS')}' 
 			AND COM_DESCRIPCION_ACTIVIDAD = '{$this->strDescripcionActividad}'
+			AND COM_USUARIO_FINAL = '{$this->strTrabajoRequerido}'
 			AND ID_COMPENSATORIO != $this->intIdCompensatorio";
+			
 		$request = $this->select_all($sql);
 
 		if(empty($request)){

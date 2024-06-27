@@ -141,7 +141,7 @@ function fntViewTipoCompensatorio(idTipoCompensatorio){
         }
     }
 }
-//Función para editar el tipo de compensatorio
+//Función para editar el tipo de compensatorio mostrando el modal
 function ftnEditTipoCompensatorio(element, idTipoCompensatorio){
 
     //ftnTotalUsuarios();    

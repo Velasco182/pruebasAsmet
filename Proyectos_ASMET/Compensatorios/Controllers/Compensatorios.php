@@ -32,6 +32,7 @@ class Compensatorios extends Controllers{
 		$this->views->getView($this,$_SESSION['permisosMod']['MOD_ACCESO'],$data);
 	}
 
+	//Modulo para parsear fechas
 	public function parseToDB($fecha){
 	
 		// Format the date string before passing to strtotime()
@@ -46,7 +47,12 @@ class Compensatorios extends Controllers{
 
 	}
 
+	//-----Funciones de inserción-----
+	//Modulo de creación y actualización de compensatorios
 	public function setCompensatorio() {
+
+		$option = 0; // Agregado para definir la operación (0: no definida, 1: inserción, 2: actualización)
+		
 		if ($_POST) {
 	
 			if ($_POST['txtFechaInicio'] == '' || $_POST['txtFechaFin'] == ''
@@ -75,7 +81,6 @@ class Compensatorios extends Controllers{
 					$arrData = $this->model->recuperar($listadoUsuarios); // Recuperar los datos insertados
 	
 					$request_user = 0;
-					$option = 0; // Agregado para definir la operación (0: no definida, 1: inserción, 2: actualización)
 	
 					if ($intIdCompensatorio == 0) {
 						if ($_SESSION['permisosMod']['PER_W']) {
@@ -132,17 +137,21 @@ class Compensatorios extends Controllers{
 						];
 
 						$html = generarHTML($tipoMensaje, $datos);
+						$enviarcorreo = enviarMail($remitente, $destinatario, $asunto, 'solicitud', $datos);
+						//try {
+						if($enviarcorreo){
 
-						try {
-
-							$enviarcorreo = enviarMail($remitente, $destinatario, $asunto, 'solicitud', $datos);
 							$request_user === "exist" ? $arrResponse : $arrResponse = array('status' => true, 'msg' => 'Su solicitud fue procesada con éxito, espera que el admin apruebe tu compensatorio!');
 						
-						} catch (Exception $e) {
+						}else{
 
 							$arrResponse = array('status' => false, 'msg' => 'Error al enviar el correo: ' . $e->getMessage());
 						
 						}
+						//} catch (Exception $e) {
+
+						
+						//}
 					} else {
 
 						$request_user === "exist" ? $arrResponse : $arrResponse = array('status' => true, 'msg' => 'Su compensatorio fue actualizado correctamente!');
@@ -155,6 +164,8 @@ class Compensatorios extends Controllers{
 
 	}
 
+	//-----Funciones de recuperación de datos-----
+	//Modulo para obtener todos los compensatorios
 	public function getCompensatorios(){
 		if($_SESSION['permisosMod']['PER_R']){
 
@@ -246,12 +257,12 @@ class Compensatorios extends Controllers{
 			echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
 		}
 	}
-
-	public function editCompensatorio($ID_COMPENSATORIO) {
+	//Modulo para seleccionar compensatorio por id para después actualizar el mismo llamando al modelo selectEdit
+	public function editCompensatorio($idCompensatorio) {
 		if ($_SESSION['permisosMod']['PER_R']) {
-			$ID_COMPENSATORIO = intval($ID_COMPENSATORIO);
-			if ($ID_COMPENSATORIO > 0) {
-				$arrData = $this->model->selectEdit($ID_COMPENSATORIO);
+			$idCompensatorio = intval($idCompensatorio);
+			if ($idCompensatorio > 0) {
+				$arrData = $this->model->selectEdit($idCompensatorio);
 
 				$arrData['COM_FECHA_INICIO']=formatearFechaYHora($arrData['COM_FECHA_INICIO'],"d/m/Y h:i A");
 				$arrData['COM_FECHA_FIN']=formatearFechaYHora($arrData['COM_FECHA_FIN'],"d/m/Y h:i A");
@@ -266,10 +277,10 @@ class Compensatorios extends Controllers{
 			}
 		}
 	}
-
-	public function getCompensatorio($ID_COMPENSATORIO) {
-		if ($_SESSION['permisosMod']['PER_R'] && intval($ID_COMPENSATORIO) > 0) {
-			$arrData = $this->model->selectCompensatorioVista($ID_COMPENSATORIO);
+	//Modulo paraa obtener compensatorio por id para ver el contenido llamando al modelo selectCompensatorioVista
+	public function getCompensatorio($idCompensatorio) {
+		if ($_SESSION['permisosMod']['PER_R'] && intval($idCompensatorio) > 0) {
+			$arrData = $this->model->selectCompensatorioVista($idCompensatorio);
 		
 			if (!empty($arrData)) {
 				// Comprobar y asignar la URL de la evidencia
@@ -301,20 +312,20 @@ class Compensatorios extends Controllers{
 			echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE); // Devuelve la respuesta JSON
 		}
 	}	
-	//ControladorAprobacion.php
+	//Modulo para aprovación del compensatorio llamando al modelo correoAprobacionORechazo para el correo y el modelo estadoAprobado
 	public function aprobarCompensatorio() {
 		if ($_POST) {
 			if ($_SESSION['permisosMod']['PER_R']) {
-				$ID_COMPENSATORIO = isset($_POST['ID_COMPENSATORIO']) ? intval($_POST['ID_COMPENSATORIO']) : 0;
+				$idCompensatorio = isset($_POST['ID_COMPENSATORIO']) ? intval($_POST['ID_COMPENSATORIO']) : 0;
 				
 				// Obtener los datos del propietario del compensatorio
-				$datos = $this->model->correoAprobacionORechazo($ID_COMPENSATORIO);
+				$datos = $this->model->correoAprobacionORechazo($idCompensatorio);
 
 				$datos['COM_FECHA_INICIO']=formatearFechaYHora($datos['COM_FECHA_INICIO'],"d/m/Y - h:i A");
 				$datos['COM_FECHA_FIN']=formatearFechaYHora($datos['COM_FECHA_FIN'],"d/m/Y - h:i A");
 	
-				if ($ID_COMPENSATORIO > 0 && $datos) {
-					$success = $this->model->estadoAprobado($ID_COMPENSATORIO);
+				if ($idCompensatorio > 0 && $datos) {
+					$success = $this->model->estadoAprobado($idCompensatorio);
 	
 					if ($success) {
 						$correo = $datos['FUN_NOMBRES'];
@@ -345,19 +356,19 @@ class Compensatorios extends Controllers{
 			}
 		}
 	}		
-	// ControladorRechazo.php
+	//Modulo para rechazo del compensatorio llamando al modelo correoAprobacionORechazo para el correo y el modelo estadoRechazado
 	public function rechazarCompensatorio(){
 		if ($_POST) {
 			if ($_SESSION['permisosMod']['PER_R']);
-			$ID_COMPENSATORIO = isset($_POST['ID_COMPENSATORIO']) ? intval($_POST['ID_COMPENSATORIO']) : 0;
+			$idCompensatorio = isset($_POST['ID_COMPENSATORIO']) ? intval($_POST['ID_COMPENSATORIO']) : 0;
 			// Obtener los datos del propietario del compensatorio
-			$datos = $this->model->correoAprobacionORechazo($ID_COMPENSATORIO);
+			$datos = $this->model->correoAprobacionORechazo($idCompensatorio);
 			
 			$datos['COM_FECHA_INICIO']=formatearFechaYHora($datos['COM_FECHA_INICIO'],"d/m/Y - h:i A");
 			$datos['COM_FECHA_FIN']=formatearFechaYHora($datos['COM_FECHA_FIN'],"d/m/Y - h:i A");
-			if ($ID_COMPENSATORIO > 0 && $datos) {
+			if ($idCompensatorio > 0 && $datos) {
 
-				$success = $this->model->estadoRechazado($ID_COMPENSATORIO);
+				$success = $this->model->estadoRechazado($idCompensatorio);
 
 				if ($success) {
 					$nombre = $datos['FUN_NOMBRES'];
@@ -385,7 +396,7 @@ class Compensatorios extends Controllers{
 			}
 		}
 	}
-
+	//Modulo para obetener los usuarios en el select, haciendo llamado al modelo selectUsuarios
 	public function getSelectUsuarios(){
 		$htmlOptions = "";
 		$arrData = $this->model->selectUsuarios();
@@ -405,7 +416,7 @@ class Compensatorios extends Controllers{
 		}
 		echo $htmlOptions;
 	}
-
+	//Modulo para obetener los tipos de compensatorios en el select, haciendo llamado al modelo selectTipoCompensatorio
 	public function getSelectTipoCompensatorio(){
 		$htmlOptions = "";
 		$arrData = $this->model->selectTipoCompensatorio();
@@ -417,7 +428,7 @@ class Compensatorios extends Controllers{
 		}
 		echo $htmlOptions;
 	}
-
+	//Módulo paraa verificación de rol llamando al modelo esAdministrador
 	public function verificarRol() {
 		
 		// Verificar si el usuario tiene el rol de administrador
@@ -431,10 +442,10 @@ class Compensatorios extends Controllers{
 		header('Content-Type: application/json');
 		echo json_encode($response);
 	}
-
-	public function subirEvidencia($ID_COMPENSATORIO) {
+	//Módulo para subir evidencia llamando al modelo guardarEvidencia
+	public function subirEvidencia($idCompensatorio) {
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-			$ID_COMPENSATORIO = isset($_POST['ID_COMPENSATORIO']) ? intval($_POST['ID_COMPENSATORIO']) : 0;
+			$idCompensatorio = isset($_POST['ID_COMPENSATORIO']) ? intval($_POST['ID_COMPENSATORIO']) : 0;
 
 			// Verificar que se haya subido un archivo
 			if (isset($_FILES['archivoEvidencia']) && $_FILES['archivoEvidencia']['error'] === UPLOAD_ERR_OK) {
@@ -450,7 +461,7 @@ class Compensatorios extends Controllers{
 					// Éxito: el archivo se cargó con éxito
 		
 					// Llama al método en tu modelo para guardar la evidencia en la base de datos
-					$return = $this->model->guardarEvidencia($name, $ID_COMPENSATORIO);
+					$return = $this->model->guardarEvidencia($name, $idCompensatorio);
 		
 					if ($return) {
 						$response = array('status' => true, 'msg' => 'Subida con éxito');
