@@ -37,7 +37,7 @@ class HorasModel extends Oracle{
 		$return = 0;
 
 		$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
-		//$this -> intIdFuncionario = $idFuncionario;
+		$this -> intIdFuncionario = $idFuncionario;
 
 		/*$sql = "SELECT * FROM BIG_TOMA 
 			WHERE FUN_CORREO = '{$this->strEmail}'
@@ -61,7 +61,7 @@ class HorasModel extends Oracle{
 				(
 					:TOM_MOTIVO,
 					:TOM_ESTADO,
-					TO_TIMESTAMP(:TOM_FECHA_SOLI, 'YYYY/MM/DD HH24:MI:SS'),
+					TO_DATE(:TOM_FECHA_SOLI, 'YYYY/MM/DD'),
 					:TOM_HORAS_SOLI,
 					:ID_FUNCIONARIO
 				)";
@@ -71,7 +71,7 @@ class HorasModel extends Oracle{
 				'TOM_ESTADO'		=>$this->intEstado,
 				'TOM_FECHA_SOLI'	=>$this->strFecha,
 				'TOM_HORAS_SOLI'	=>$this->strHoras,
-				'ID_FUNCIONARIO'	=>$idFuncionario
+				'ID_FUNCIONARIO'	=>$this->intIdFuncionario
 			);
 			
 			$request_insert = $this->insert($query_insert,$arrData);

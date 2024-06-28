@@ -92,7 +92,7 @@ class CompensatoriosModel extends Oracle{
 				'ID_FUNCIONARIO'			=> $this->listadoUsuarios
 			);
 	
-			$request_insert = $this->insert($query_insert, $arrData);	
+			$request_insert = $this->insert($query_insert, $arrData);
 			$return = $request_insert;
 
 		}else{
