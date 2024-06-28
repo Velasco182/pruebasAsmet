@@ -33,46 +33,60 @@ class Horas extends Controllers{
 		$this->views->getView($this,$_SESSION['permisosMod']['MOD_ACCESO'],$data);
 	}
 
+	//-----Funciones de isnserción-----
+	//Modulo para creación y actualización de horas
 	public function setHora(){
-		if($_POST){	
-			if($_POST['txtMotivo']=='' || $_POST['txtEstado']=='' || $_POST['txtFecha']=='' || $_POST['txtHoras']==''){
+
+		if($_POST){
+
+			if($_POST['txtMotivo']=='' || $_POST['txtEstado']=='' 
+			|| $_POST['txtFecha']=='' || $_POST['txtHoras']==''){
+				
 				$arrResponse = array("status" => false, "msg" => 'Ingrese todos los datos.');
+			
 			}else{
+
 				$intIdHora = intval($_POST['idHora']);
 				$intIdHora = intval($_POST['idHora']);
 				$strMotivo = mb_convert_case(strClean($_POST['txtMotivo']),MB_CASE_TITLE, "UTF-8");
 				$intEstado = intval($_POST['txtEstado']);
-				$strFecha = $_POST['txtFecha']; 
+				$strFecha = $_POST['txtFecha'];
 				$strHoras = intval($_POST['txtHoras']);
 
-				$ID_FUNCIONARIO = $_SESSION['userData']['ID_FUNCIONARIO'];
+				$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
 				//sumo las horas de los compensatorios
-				$arrHoras = $this->model->getHoras($ID_FUNCIONARIO);
+				$arrHoras = $this->model->getHoras($idFuncionario);
+				Dep($arrHoras);
 				if($arrHoras){
 					$horasRegis = intval($arrHoras["HORAS_TOTALES"]);
 				}else{
 					$horasRegis = 0;
 				}
+				Dep($horasRegis);
 				//sumo las horas consumidas
-				$arrGastadas = $this->model->getGastadas($ID_FUNCIONARIO);
+				$arrGastadas = $this->model->getGastadas($idFuncionario);
+				Dep($arrGastadas);
 				if($arrGastadas){
 					$horasGas = intval($arrGastadas["HORAS_GASTADAS"]);
 				}else{
 					$horasGas = 0;
 				}
+				Dep($horasGas);
 				//resto las horas registradas menos las horas gastadas
 				$resta=($horasRegis-$horasGas);
+				Dep($resta);
+				
 				if($resta<=0){
 					$msjResta="Error, no tienes horas para tomar";
 				}else{
 					$msjResta="Error, solo tienes ".$resta." hora para tomar";
 				}
 
-				if(($horasRegis>0 && $strHoras>0) && ($horasRegis-$horasGas)>0 && ($horasRegis-$horasGas)>=$strHoras){
+				if(($horasRegis && $strHoras>0) && ($horasRegis-$horasGas)>0 && ($horasRegis-$horasGas)>=$strHoras){
 					$request_user = "";
 					if($intIdHora == 0){
 						$option = 1;
-
+						
 						if($_SESSION['permisosMod']['PER_W']){
 							$request_user = $this->model->insertHora(
 								$strMotivo,
@@ -80,9 +94,10 @@ class Horas extends Controllers{
 								$strFecha,
 								$strHoras
 							);
+							Dep($request_user);
 						}
 					}
-					
+
 					if($request_user > 0){
 
 						$remitente = 'estivenmendez550@gmail.com';
@@ -90,12 +105,11 @@ class Horas extends Controllers{
 						$asunto = 'Solicitud de horas';
 
 						$datos = [
+							//'Funcionario' => $arrData["NOMBREFUNCIONARIO"],
 							'MotivoSolicitud' => $_POST['txtMotivo'],
 							'FechaSolicitud' => $_POST['txtFecha'],
 							'HorasSolicitar' =>$_POST['txtHoras']
 						];
-
-						$tipoMensaje = 'solicitud_horas';
 
 						$html = generarHTML($tipoMensaje, $datos);
 
@@ -114,20 +128,21 @@ class Horas extends Controllers{
 						$arrResponse = array('status' => false, 'msg' =>'No es posible almacenar los datos.');
 					}
 				}else{
-					$arrResponse = array("status" => false, "msg" => $msjResta);
+					$arrResponse = array('status' => false, 'msg' => $msjResta);
 				}
-				// ... (código anterior)
 			}
 		}
 		echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
 	}
-	//LLenar datatable
-	public function getHoras(){
+
+	//-----Funciones de recuperación de datos
+	//Modulo para llenar datatable llamando al modelo selectHoras
+	public function obtenerHoras(){
 		if($_SESSION['permisosMod']['PER_R']){
 
-			$ID_FUNCIONARIO = $_SESSION['userData']['ID_FUNCIONARIO'];
+			$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
 
-			$arrData = $this->model->selectHoras($ID_FUNCIONARIO);
+			$arrData = $this->model->selectHoras($idFuncionario);
 
 			for ($i=0; $i < count($arrData); $i++) {
 				
@@ -154,8 +169,6 @@ class Horas extends Controllers{
 					$newStatus = 'Estado Desconocido';
 				}
 				
-				
-				
 				$arrData[$i]['TOM_ESTADO'] = '<span class="badge ' . $statusClass . '">' . $newStatus . '</span>';
 
 				if($_SESSION['permisosMod']['PER_R']){
@@ -168,7 +181,7 @@ class Horas extends Controllers{
 
 				if ($_SESSION['permisosMod']['PER_U']) { // Botón de aprobaciones
 					if ($comEstado == 1 || $comEstado == 3) {
-						$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="ftnAprobar(' . $arrData[$i]['ID_TOMA'] . ')" title="Aprobar Horas"><i class="fas fa-check-circle"></i></button>';
+						$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="fntAprobar(' . $arrData[$i]['ID_TOMA'] . ')" title="Aprobar Horas"><i class="fas fa-check-circle"></i></button>';
 					} else {
 						$btnAprobar = '<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-check-circle"></i></button>';
 					}
@@ -176,7 +189,7 @@ class Horas extends Controllers{
 				
 				if ($_SESSION['permisosMod']['PER_D']) {
 					if ($comEstado == 1 || $comEstado == 2){
-						$btnRechazar = '<button class="btn btn-danger btn-sm btnDelFuncionario" onClick="ftnRechazar('.$arrData[$i]['ID_TOMA'].')" title="Rechazar Horas"><i class="fas fa-ban"></i></button>';
+						$btnRechazar = '<button class="btn btn-danger btn-sm btnDelFuncionario" onClick="fntRechazar('.$arrData[$i]['ID_TOMA'].')" title="Rechazar Horas"><i class="fas fa-ban"></i></button>';
 					} else {
 						$btnRechazar = '<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-times-circle"></i></button>';
 					}
@@ -186,12 +199,12 @@ class Horas extends Controllers{
 			echo json_encode($arrData,JSON_UNESCAPED_UNICODE);
 		}
 	}
-
-	public function getHora($ID_TOMA){
+	//Modulo para obtener horas por id
+	public function getHora($idToma){
 		if($_SESSION['permisosMod']['PER_R']){
-			$ID_TOMA = intval($ID_TOMA);
-			if($ID_TOMA > 0){
-				$arrData = $this->model->selectHoraVista($ID_TOMA);
+			$idToma = intval($idToma);
+			if($idToma > 0){
+				$arrData = $this->model->selectHoraVista($idToma);
 				if(empty($arrData)){
 					$arrResponse = array('status' => false, 'msg' => 'Datos no encontrados.');
 				}else{
@@ -201,7 +214,8 @@ class Horas extends Controllers{
 			}
 		}
 	}
-
+	//-----Funciones generales-----
+	//Modulo para verificar rol
 	public function getSelectRoles(){
 		$htmlOptions = "";
 		$arrData = $this->model->selectRoles();
@@ -214,22 +228,24 @@ class Horas extends Controllers{
 		}
 		return $htmlOptions;		
 	}
-
+	//Modulo para aprobar la solicitud de horas
 	public function aprobarSolicitud(){
+
 		if ($_POST){
+
 			if ($_SESSION['permisosMod']['PER_R']){
-				$ID_TOMA = isset($_POST['ID_TOMA']) ? intval($_POST['ID_TOMA']) : 0;
+				$idToma = isset($_POST['ID_TOMA']) ? intval($_POST['ID_TOMA']) : 0;
 				
 				//Recuperacion de datos
-				$datos = $this->model->correoAprobacionORechazo($ID_TOMA);
+				$datos = $this->model->correoAprobacionORechazo($idToma);
 				
 				$datos['TOM_FECHA_SOLI']=formatearFechaUsuComparar($datos['TOM_FECHA_SOLI'],"d/m/Y");
 				
-				if ($ID_TOMA > 0 && $datos){
-					$arrAprobado = $this->model->estadoAprobado($ID_TOMA);
+				if ($idToma > 0 && $datos){
+					$arrAprobado = $this->model->estadoAprobado($idToma);
 
 					if ($arrAprobado) {
-						$correo = $datos['FUN_NOMBRES'];
+						$nombres = $datos['FUN_NOMBRES'];
 						$correo = $datos['FUN_CORREO'];
 
 						$remitente = 'estivenmendez550@gmail.com';
@@ -256,21 +272,21 @@ class Horas extends Controllers{
 			}
 		}
 	}
-
-	public function RechazarSolicitud(){
+	//Modulo para rechazar la solicitud de horas
+	public function rechazarSolicitud(){
 		if ($_POST){
 			if ($_SESSION['permisosMod']['PER_R']);
-			$ID_TOMA = isset($_POST['ID_TOMA']) ? intval($_POST['ID_TOMA']) : 0;
+			$idToma = isset($_POST['ID_TOMA']) ? intval($_POST['ID_TOMA']) : 0;
 
-			$datos = $this->model->correoAprobacionORechazo($ID_TOMA);
+			$datos = $this->model->correoAprobacionORechazo($idToma);
 
 			$datos['TOM_FECHA_SOLI']=formatearFechaUsuComparar($datos['TOM_FECHA_SOLI'],"d/m/Y");
 
-			if ($ID_TOMA > 0){
-				$success = $this->model->estadoRechazado($ID_TOMA);
+			if ($idToma > 0){
+				$success = $this->model->estadoRechazado($idToma);
 
 				if ($success){
-					$correo = $datos['FUN_NOMBRES'];
+					$nombres = $datos['FUN_NOMBRES'];
 					$correo = $datos['FUN_CORREO'];
 
 					$remitente = 'estivenmendez550@gmail.com';

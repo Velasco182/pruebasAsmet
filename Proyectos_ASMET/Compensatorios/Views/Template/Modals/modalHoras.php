@@ -24,11 +24,6 @@
                   <textarea class="form-control" id="txtMotivo" name="txtMotivo" type="text" placeholder="Escribe tu motivo" required="" autocomplete="off"></textarea>
                 </div>
 
-                <!-- <div class="form-group">
-                  <label class="control-label">Fecha de solicitud</label>
-                  <input class="form-control" id="txtFecha" name="txtFecha" type="date" required="" autocomplete="off">
-                </div>                   -->
-
                 <div class="row">
                   <div class="form-group col-md-6">
                     <label for="txtFecha">Fecha y hora de inicio</label>
@@ -57,7 +52,7 @@
 
                   <div class="form-group col-md-6">
                     <label class="control-label">Horas a solicitar</label>
-                    <input class="form-control" id="txtHoras" name="txtHoras" type="number" min="1" placeholder="Digita las horas que vas a solicitar" required="" autocomplete="off">
+                    <input class="form-control" id="txtHoras" name="txtHoras" type="number" min="1" step="1" placeholder="Digita las horas que vas a solicitar" required="" autocomplete="off">
                   </div>
                 </div>
                 </div>

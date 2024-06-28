@@ -89,4 +89,62 @@ SELECT
 FROM your_table;
 
 /*-----------------------------------------------------------------------------------------------------*/
+/**/
+SUM(EXTRACT(HOUR FROM (c.com_fecha_fin - c.com_fecha_inicio)) +
+        EXTRACT(MINUTE FROM (c.com_fecha_fin - c.com_fecha_inicio)) / 60
+    ) AS HORAS_TOTALES,
 
+/**/
+SELECT
+  ROUND(SUM(
+    EXTRACT(HOUR FROM (I.COM_FECHA_FIN - I.COM_FECHA_INICIO)) +
+    EXTRACT(MINUTE FROM (I.COM_FECHA_FIN - I.COM_FECHA_INICIO)) / 60
+  ), 2) AS HORAS_TOTALES
+FROM big_compensatorios I;
+/*Modal completo*/
+SELECT
+  F.FUN_NOMBRES AS FUN_NOMBRES,
+  F.FUN_APELLIDOS AS FUN_APELLIDOS,
+  F.FUN_CORREO AS FUN_CORREO,
+  T.TOM_ESTADO,
+  TO_CHAR(T.TOM_FECHA_SOLI, 'DD/MM/YYYY') AS TOM_FECHA_SOLI,
+  T.TOM_MOTIVO,
+  T.TOM_HORAS_SOLI,
+  ROUND(SUM(
+    EXTRACT(HOUR FROM (I.COM_FECHA_FIN - I.COM_FECHA_INICIO)) +
+    EXTRACT(MINUTE FROM (I.COM_FECHA_FIN - I.COM_FECHA_INICIO)) / 60
+  ), 2) AS HORAS_TOTALES
+FROM BIG_COMPENSATORIOS I
+INNER JOIN BIG_FUNCIONARIOS F ON I.ID_FUNCIONARIO = F.ID_FUNCIONARIO
+INNER JOIN BIG_TOMA T ON I.ID_FUNCIONARIO = T.ID_FUNCIONARIO 
+WHERE
+  T.ID_TOMA = $this->intIdToma
+GROUP BY I.ID_FUNCIONARIO, F.FUN_NOMBRES, F.FUN_APELLIDOS, 
+F.FUN_CORREO, T.TOM_MOTIVO, T.TOM_FECHA_SOLI, T.TOM_HORAS_SOLI, T.TOM_ESTADO;
+
+/*select para vista de horas funcionando*/
+SELECT
+  f.fun_nombres AS fun_nombres,
+  f.fun_apellidos AS fun_apellidos,
+  f.fun_correo AS fun_correo,
+  SUM(
+    EXTRACT(HOUR FROM (I.COM_FECHA_FIN - I.COM_FECHA_INICIO)) +
+    EXTRACT(MINUTE FROM (I.COM_FECHA_FIN - I.COM_FECHA_INICIO)) / 60
+  ) AS HORAS_TOTALES
+FROM big_compensatorios I
+INNER JOIN big_funcionarios f ON i.id_funcionario = f.id_funcionario
+WHERE
+  i.id_funcionario = 26
+GROUP BY i.id_funcionario, f.fun_nombres, f.fun_apellidos, f.fun_correo;
+
+/***/
+            SELECT
+                T.ID_FUNCIONARIO,
+                ROUND(SUM(
+					EXTRACT(HOUR FROM (I.COM_FECHA_FIN - I.COM_FECHA_INICIO)) +
+					EXTRACT(MINUTE FROM (I.COM_FECHA_FIN - I.COM_FECHA_INICIO)) / 60
+				), 2) AS tHoras
+			FROM BIG_COMPENSATORIOS I
+            INNER JOIN BIG_TOMA T ON I.ID_FUNCIONARIO = T.ID_FUNCIONARIO
+			WHERE T.ID_FUNCIONARIO = 26 AND T.TOM_ESTADO!=3
+			GROUP BY T.ID_FUNCIONARIO;

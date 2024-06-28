@@ -4,8 +4,8 @@ let divLoading = document.querySelector("#divLoading");
 document.addEventListener('DOMContentLoaded', function(){
 
     //Llamado a la función de configuración del datetimepicker
-    ftnDateTimePickerConfiguration();
-
+    fntDatePickerConfiguration();
+    //Configuración y recuperación de datos para el datatable
     tableHoras = $('#tableHoras').dataTable({
         "aProcessing":true,
         "aServerSide":true,
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function(){
             "url": "././Assets/js/spanish.json"
         },
         "ajax":{
-            "url": " "+base_url+"/Horas/getHoras",
+            "url": " "+base_url+"/Horas/obtenerHoras",
             "dataSrc":""
         },
         "columns":[
@@ -24,9 +24,6 @@ document.addEventListener('DOMContentLoaded', function(){
             {"data":"TOM_FECHA_SOLI"},
             {"data":"TOM_HORAS_SOLI"},
             {"data":"TOM_ESTADO"},
-            
-            // {"data":"TOM_HORAS_SOLI"},
-            // {"data":"FUN_ESTADO"},
             {"data":"ACCIONES"}
         ],
         'dom': 'lBfrtip',
@@ -56,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function(){
         "resonsieve":"true",
         "bDestroy": true,
         "iDisplayLength": 10,
-        "order":[[4,"asc"]],
+        "order":[[4,"desc"]],
         "columnDefs": [
             {
                 "targets": [0, 1, 2, 3, 4, 5, 6, 7],
@@ -64,9 +61,11 @@ document.addEventListener('DOMContentLoaded', function(){
                 "className": "text-center",
             }],  
     });
-
+    //Instancia del formulario de creación de horas
     if(document.querySelector("#formHora")){
+        
         let formUsuario = document.querySelector("#formHora");
+
         formUsuario.onsubmit = function(e) {
             e.preventDefault();
             
@@ -80,6 +79,15 @@ document.addEventListener('DOMContentLoaded', function(){
                 return false;
             }
 
+            let obj = {
+                strMotivo,
+                intEstado,
+                strFecha,
+                strHoras
+            }
+
+            console.log(obj);
+
             let elementsValid = document.getElementsByClassName("valid");
             for (let i = 0; i < elementsValid.length; i++) { 
                 if(elementsValid[i].classList.contains('is-invalid')) { 
@@ -87,6 +95,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     return false;
                 } 
             } 
+
             divLoading.style.display = "flex";
             let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
             let ajaxUrl = base_url+'/Horas/setHora'; 
@@ -114,9 +123,11 @@ document.addEventListener('DOMContentLoaded', function(){
             }
         }
     }
+
 },false);
 
-function ftnDateTimePickerConfiguration(){
+//Función de configuración para el datepicker
+function fntDatePickerConfiguration(){
 
     let picker = document.querySelector('#datetimepicker');
 
@@ -152,7 +163,7 @@ function ftnDateTimePickerConfiguration(){
     });
 
 }
-
+//Función para verificar roles
 function fntRolesUsuario(){
     if(document.querySelector('#listRolid')){
         let ajaxUrl = base_url+'/Roles/getSelectRoles';
@@ -168,10 +179,10 @@ function fntRolesUsuario(){
         }
     }
 }
-
-function fntViewHora(ID_TOMA){
+//Función para llenar el modal de ver con la información del usuario
+function fntViewHora(idToma){
     let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-    let ajaxUrl = base_url+'/Horas/getHora/'+ID_TOMA;
+    let ajaxUrl = base_url+'/Horas/getHora/'+idToma;
     request.open("GET",ajaxUrl,true);
     request.send();
     request.onreadystatechange = function(){
@@ -199,115 +210,8 @@ function fntViewHora(ID_TOMA){
         }
     }
 }
-
-function fntEditFuncionario(element,idfuncionario){
-    rowTable = element.parentNode.parentNode.parentNode; 
-    document.querySelector("#listRolid").innerHTML="";
-    document.querySelector('#titleModal').innerHTML ="Actualizar Funcionario";
-    document.querySelector('.modal-header').classList.replace("headerRegister", "headerUpdate");
-    document.querySelector('#btnActionForm').classList.replace("btn-primary", "btn-info");
-    document.querySelector('#btnText').innerHTML ="Actualizar";
-    let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-    let ajaxUrl = base_url+'/Funcionarios/getFuncionario/'+idfuncionario;
-    request.open("GET",ajaxUrl,true);
-    request.send();
-    request.onreadystatechange = function(){
-
-        if(request.readyState == 4 && request.status == 200){
-            let objData = JSON.parse(request.responseText);
-
-            if(objData.status){
-                document.querySelector("#idFuncionario").value = objData.data.ID_FUNCIONARIO;
-                document.querySelector("#txtIdentificacion").value = objData.data.FUN_IDENTIFICACION;
-                document.querySelector("#txtNombre").value = objData.data.FUN_NOMBRES;
-                document.querySelector("#txtApellido").value = objData.data.FUN_APELLLIDOS;
-                document.querySelector("#txtUsuario").value = objData.data.FUN_USUARIO;
-                document.querySelector("#txtEmail").value = objData.data.FUN_CORREO;
-                document.querySelector("#listRolid").innerHTML = objData.data.ROLES;
-                document.querySelector("#listRolid").value =objData.data.ID_ROL;
-                $('#listRolid').val(objData.data.ID_ROL);
-                $('#listRolid').selectpicker('refresh');
-                $('#listRolid').selectpicker('render');
-
-                if(objData.data.FUN_ESTADO == 1){
-                    document.querySelector("#listStatus").value = 1;
-                }else{
-                    document.querySelector("#listStatus").value = 0;
-                }
-                $('#listStatus').selectpicker('render');
-            }
-        }
-        $('#modalFormFuncionario').modal('show');
-    }
-}
-
-function fntReserPass(idfuncionario){
-    swal({
-        title: "Reestablecer Contraseña",
-        text: "¿Realmente quiere realizar el restablecimiento?",
-        type: "info",
-        showCancelButton: true,
-        confirmButtonText: "Si, reestablecer!",
-        cancelButtonText: "No, cancelar!",
-        closeOnConfirm: false,
-        closeOnCancel: true
-    }, function(isConfirm){
-        if (isConfirm){
-            let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-            let ajaxUrl = base_url+'/Funcionarios/resetPassFuncionario';
-            let strData = "idFuncionario="+idfuncionario;
-            request.open("POST",ajaxUrl,true);
-            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            request.send(strData);
-            request.onreadystatechange = function(){
-                if(request.readyState == 4 && request.status == 200){
-                    let objData = JSON.parse(request.responseText);
-                    if(objData.status){
-                        swal("Reestablecer Contraseña!", objData.msg , "success");
-                        tableUsuarios.api().ajax.reload();
-                    }else{
-                        swal("Atención!", objData.msg , "error");
-                    }
-                }
-            }
-        }
-    });
-}
-
-function fntDelFuncionario(idfuncionario,estado){
-    swal({
-        title: "Cambio de Estado",
-        text: "¿Realmente quiere cambiar el estado del Funcionario?",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Si, cambiar!",
-        cancelButtonText: "No, cancelar!",
-        closeOnConfirm: false,
-        closeOnCancel: true
-    }, function(isConfirm) {
-        if (isConfirm){
-            let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-            let ajaxUrl = base_url+'/Funcionarios/statusFuncionario';
-            let strData = "idFuncionario="+idfuncionario+"&status="+estado;
-            request.open("POST",ajaxUrl,true);
-            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            request.send(strData);
-            request.onreadystatechange = function(){
-                if(request.readyState == 4 && request.status == 200){
-                    let objData = JSON.parse(request.responseText);
-                    if(objData.status){
-                        swal("Cambio de estado!", objData.msg , "success");
-                        tableUsuarios.api().ajax.reload();
-                    }else{
-                        swal("Atención!", objData.msg , "error");
-                    }
-                }
-            }
-        }
-    });
-}
-
-function ftnAprobar(ID_TOMA) { //Funcion para el boton de aprobacion
+//Función para el boton de aprobacion
+function fntAprobar(idToma) { 
     swal({
         title: "Aprobar la solicitud",
         text: "¿Realmente quieres aprobar esta solicitud?",
@@ -323,7 +227,7 @@ function ftnAprobar(ID_TOMA) { //Funcion para el boton de aprobacion
             
             let request = new XMLHttpRequest();
             let ajaxUrl = base_url + '/Horas/aprobarSolicitud';
-            let strData = "ID_TOMA=" + ID_TOMA;
+            let strData = "ID_TOMA="+idToma;
             
             request.open("POST", ajaxUrl, true);
             request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -344,8 +248,8 @@ function ftnAprobar(ID_TOMA) { //Funcion para el boton de aprobacion
         }
     });
 }
-
-function ftnRechazar(ID_TOMA) { // Funcion para boton boton de rechazo
+//Función para boton boton de rechazo
+function fntRechazar(idToma) { 
     swal({
         title: "Rechazar esta solicitud",
         text: "¿Realmente quieres rechazar esta solicitud?",
@@ -358,8 +262,8 @@ function ftnRechazar(ID_TOMA) { // Funcion para boton boton de rechazo
     }, function(isConfirm) {
         if (isConfirm) {
             let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-            let ajaxUrl = base_url + '/Horas/RechazarSolicitud';
-            let strData = "ID_TOMA=" + ID_TOMA;
+            let ajaxUrl = base_url + '/Horas/rechazarSolicitud';
+            let strData = "ID_TOMA="+idToma;
             request.open("POST", ajaxUrl, true);
             request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             request.send(strData);
@@ -377,7 +281,7 @@ function ftnRechazar(ID_TOMA) { // Funcion para boton boton de rechazo
         }
     });
 }
-
+//Función para abrir modal
 function openModal(){
     rowTable = "";
     // document.querySelector("#listRolid").innerHTML="";

@@ -2,7 +2,7 @@
     headerAdmin($data); 
     getModal('modalHoras',$data);
 ?>
-  <main class="app-content">    
+  <main class="app-content">
       <div class="app-title">
         <div>
             <h1><i class="fa <?=$data['page_icono']?>"></i> <?= $data['page_title'] ?>

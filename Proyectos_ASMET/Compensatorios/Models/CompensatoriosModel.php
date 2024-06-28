@@ -99,7 +99,7 @@ class CompensatoriosModel extends Oracle{
 			$return = "exist";
 		}
 
-		return $return; 
+		return $return;
 	}
 
 	//---Funciones de lectura----
