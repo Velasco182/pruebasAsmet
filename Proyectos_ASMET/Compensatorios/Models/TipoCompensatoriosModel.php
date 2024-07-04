@@ -113,9 +113,9 @@ class TipoCompensatoriosModel extends Oracle{
 		$this->intEstadoTipoCompensatorio = $estadoTipoCompensatorio;
 
 		//Validacion del request
-		$sql = "SELECT * FROM BIG_TIPO_COMPENSATORIO 
-		WHERE TIP_COM_NOMBRE = '{$this->strNombreTipoCompensatorio}' 
-		AND TIP_COM_DESCRIPCION = '{$this->strDescripcionTipoCompensatorio}'
+		$sql = "SELECT * FROM BIG_TIPO_COMPENSATORIO
+		WHERE (TIP_COM_NOMBRE = '{$this->strNombreTipoCompensatorio}'
+		OR TIP_COM_DESCRIPCION = '{$this->strDescripcionTipoCompensatorio}')
 		AND ID_TIPO_COMPENSATORIO != $this->intIdTipoCompensatorio";
 
 		$request = $this->select_all($sql);

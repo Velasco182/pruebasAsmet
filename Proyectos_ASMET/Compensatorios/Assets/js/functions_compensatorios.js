@@ -78,58 +78,81 @@ document.addEventListener('DOMContentLoaded', function(){
             let strActividad = document.querySelector('#txtActividad').value;
             let listadoUsuarios = document.querySelector('#listaUsuarios').value;
             let strTrabajoRequerido = document.querySelector('#txtTrabajoRequerido').value;
+            let archivo = document.getElementById("archivoEvidencia").files[0];
             let intEstado = document.querySelector('#txtEstado').value;
 
             /*let compensatorio = {strFechaInicio, strFechaFin, strDescripcionActividad, strActividad, listadoUsuarios, strTrabajoRequerido, intEstado};
             console.table(compensatorio);*/
     
-            if(strFechaInicio == '' || strFechaFin == '' || strDescripcionActividad == '' || strActividad == '' || listadoUsuarios == '' || strTrabajoRequerido == '' || intEstado == ''){
+            if(strFechaInicio == '' || strFechaFin == '' || strDescripcionActividad == '' || strActividad == '' 
+            || listadoUsuarios == '' || strTrabajoRequerido == '' || intEstado == ''){
                 swal("Atención", "Todos los campos son obligatorios." , "error");
                 return false;
-            }
+            }else{
 
-            let elementsValid = document.getElementsByClassName("valid");
-            for (let i = 0; i < elementsValid.length; i++) { 
-                if(elementsValid[i].classList.contains('is-invalid')) { 
-                    swal("Atención", "Por favor verifique los campos en rojo." , "error");
-                    return false;
-                } 
-            } 
-            divLoading.style.display = "flex";
-            let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-            let ajaxUrl = base_url+'/Compensatorios/setCompensatorio'; 
-            let formData = new FormData(formUsuario);
-            
-            request.open("POST",ajaxUrl,true);
-            request.send(formData);
-            
-            request.onreadystatechange = function(){
-                if(request.readyState == 4 && request.status == 200){
-                    let objData = JSON.parse(request.responseText);
+                let elementsValid = document.getElementsByClassName("valid");
+                for (let i = 0; i < elementsValid.length; i++) { 
+                    if(elementsValid[i].classList.contains('is-invalid')) { 
+                        swal("Atención", "Por favor verifique los campos en rojo." , "error");
+                        return false;
+                    } 
+                }
+                
+                if(archivo){
 
-                    if(objData.status === false){
+                    let nombreArchivo = archivo.name;
+                    let extension = nombreArchivo.split('.').pop().toLowerCase();
+                    let extensionesValidas = ["jpg","png","xlsx","docx","pdf"];
 
-                        swal("Error", objData.msg , "error");
-                    
-                    }else{
+                    if (extensionesValidas.includes(extension)) {
+
+                        divLoading.style.display = "flex";
+                        let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+                        let ajaxUrl = base_url+'/Compensatorios/setCompensatorio'; 
+                        let formData = new FormData(formUsuario);
                         
-                        console.log(objData.status);
-                        if(rowTable == ""){
-                            tableCompensatorios.api().ajax.reload();
-                        }else{
-                            tableCompensatorios.api().ajax.reload();
+                        request.open("POST",ajaxUrl,true);
+                        request.send(formData);
+                        
+                        request.onreadystatechange = function(){
+                            if(request.readyState == 4 && request.status == 200){
+                                let objData = JSON.parse(request.responseText);
+            
+                                if(objData.status === false){
+            
+                                    swal("Error", objData.msg , "error");
+                                
+                                }else{
+                                    
+                                    console.log(objData.status);
+                                    if(rowTable == ""){
+                                        tableCompensatorios.api().ajax.reload();
+                                    }else{
+                                        tableCompensatorios.api().ajax.reload();
+                                    }
+            
+                                    $('#modalFormCompensatorio').modal("hide");
+            
+                                    formUsuario.reset();
+                                    swal("Usuario", objData.msg ,"success");
+                                    
+                                }
+                            }
+                            divLoading.style.display = "none";
+                            return false;
                         }
 
-                        $('#modalFormCompensatorio').modal("hide");
-
-                        formUsuario.reset();
-                        swal("Usuario", objData.msg ,"success");
-                        
+                    }else {
+                        swal("Extensión no válida", "El archivo contiene una extensión no permitida", "warning");
+                        document.getElementById("archivoEvidencia").value = "";
                     }
+
+                }else {
+                    swal("Seleccione un archivo para subir", "Ningun archivo seleccionado", "info");
                 }
-                divLoading.style.display = "none";
-                return false;
+
             }
+
         }
     }
     
@@ -316,15 +339,20 @@ function ftnEditCompensatorio(element,idCompensatorio){
             let objData = JSON.parse(request.responseText);
 
             if(objData.status){
-
+                
                 document.querySelector("#idCompensatorio").value = objData.data.idCompensatorio;
                 document.querySelector("#txtFechaInicio").value = objData.data.COM_FECHA_INICIO;
                 document.querySelector("#txtFechaFin").value = objData.data.COM_FECHA_FIN;
+                document.querySelector("#txtActividad").innerHTML = objData.data.LIST_TIPOS;
                 document.querySelector("#txtActividad").value = objData.data.ID_TIPO_COMPENSATORIO;
                 document.querySelector("#txtTrabajoRequerido").value = objData.data.COM_USUARIO_FINAL;
                 document.querySelector("#txtDescripcionActividad").value = objData.data.COM_DESCRIPCION_ACTIVIDAD;
 
                 $('#modalFormCompensatorio').modal('show');
+
+                $('#txtActividad').selectpicker('render');
+                $('#txtActividad').selectpicker('refresh');
+                
 
             }else{
                 swal("Error", objData.msg, "error");
@@ -430,12 +458,13 @@ function ftnTotalTipoCompensatorio(){
             if(request.readyState == 4 && request.status == 200){
                 document.querySelector('#txtActividad').innerHTML = request.responseText;
                 
-                $('#txtActividad').selectpicker('refresh');
                 $('#txtActividad').selectpicker('render');
+                $('#txtActividad').selectpicker('refresh');
+                
             }
         }
     }
-}
+}//<option value="" selected> Seleccione</option>
 //Ajustar formulario para la renderización o no de la lista de usuarios
 function ajustarFormulario() { 
     let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');

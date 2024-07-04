@@ -2,7 +2,6 @@ let tableHoras;
 let rowTable = ""; 
 let divLoading = document.querySelector("#divLoading");
 document.addEventListener('DOMContentLoaded', function(){
-
     //Llamado a la función de configuración del datetimepicker
     fntDatePickerConfiguration();
     //Configuración y recuperación de datos para el datatable
@@ -86,8 +85,6 @@ document.addEventListener('DOMContentLoaded', function(){
                 strHoras
             }
 
-            console.log(obj);
-
             let elementsValid = document.getElementsByClassName("valid");
             for (let i = 0; i < elementsValid.length; i++) { 
                 if(elementsValid[i].classList.contains('is-invalid')) { 
@@ -103,9 +100,12 @@ document.addEventListener('DOMContentLoaded', function(){
             request.open("POST",ajaxUrl,true);
             request.send(formData);
             request.onreadystatechange = function(){
+                let objData; 
                 if(request.readyState == 4 && request.status == 200){
-                    let objData = JSON.parse(request.responseText);
+                    objData = JSON.parse(request.responseText);
+
                     if(objData.status){
+                        document.querySelector("#txtDisponibles").innerHTML = objData.msg;
                         if(rowTable == ""){
                             tableHoras.api().ajax.reload();
                         }else{
@@ -115,6 +115,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         formUsuario.reset();
                         swal("Usuarios", objData.msg ,"success");
                     }else{
+                        document.querySelector("#txtDisponibles").innerHTML = objData.msg;
                         swal("Error", objData.msg , "error");
                     }
                 }
@@ -181,6 +182,7 @@ function fntRolesUsuario(){
 }
 //Función para llenar el modal de ver con la información del usuario
 function fntViewHora(idToma){
+    
     let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
     let ajaxUrl = base_url+'/Horas/getHora/'+idToma;
     request.open("GET",ajaxUrl,true);
@@ -197,7 +199,7 @@ function fntViewHora(idToma){
 
                 document.querySelector("#celNombres").innerHTML = objData.data.FUN_NOMBRES;
                 document.querySelector("#celApellidos").innerHTML = objData.data.FUN_APELLIDOS;
-                document.querySelector("#celHorasTotales").innerHTML = objData.data.HORAS_TOTALES;
+                //document.querySelector("#celHorasTotales").innerHTML = objData.data.DIFERENCIA_HORAS;
                 document.querySelector("#celCorreo").innerHTML = objData.data.FUN_CORREO;
                 document.querySelector("#celMotivo").innerHTML = objData.data.TOM_MOTIVO;
                 document.querySelector("#celFecha").innerHTML = objData.data.TOM_FECHA_SOLI;
@@ -206,6 +208,26 @@ function fntViewHora(idToma){
                 $('#modalViewHora').modal('show');
             }else{
                 swal("Error", objData.msg , "error");
+            }
+        }
+    }
+}
+//Función para llenar horas disponibles en el modal de solicitar horas
+function fntViewHorasDisponibles(){
+    let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+    let ajaxUrl = base_url+'/Horas/getHorasDisponibles';
+    request.open("GET",ajaxUrl,true);
+    request.send();
+    request.onreadystatechange = function(){
+        if(request.readyState == 4 && request.status == 200){
+            let objData = JSON.parse(request.responseText);
+            
+            if(objData.status){
+                document.querySelector("#txtDisponibles").value = objData.msg;
+                swal("Horas disponibles:", objData.msg, "warning");
+            }else{
+                document.querySelector("#txtDisponibles").value = objData.msg;
+                swal("Horas disponibles:", objData.msg, "error");
             }
         }
     }
@@ -293,4 +315,6 @@ function openModal(){
     document.querySelector("#formHora").reset();
     fntRolesUsuario();
     $('#modalFormHora').modal('show');
+/**/
+    fntViewHorasDisponibles();
 }

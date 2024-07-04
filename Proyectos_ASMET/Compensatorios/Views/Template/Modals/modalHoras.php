@@ -19,10 +19,17 @@
                   <input class="form-control" id="txtEstado" name="txtEstado" value="1">              
                 </div>
 
-                <div class="form-group">
-                  <label class="control-label">Motivo de la solicitud</label>
-                  <textarea class="form-control" id="txtMotivo" name="txtMotivo" type="text" placeholder="Escribe tu motivo" required="" autocomplete="off"></textarea>
-                </div>
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    <label class="control-label">Motivo de la solicitud</label>
+                    <textarea class="form-control" id="txtMotivo" name="txtMotivo" type="text" placeholder="Escribe tu motivo" required="" autocomplete="off"></textarea>
+                  </div>
+
+                  <div class="form-group col-md-6">
+                    <label class="control-label">Horas disponibles</label>
+                    <input class="form-control" id="txtDisponibles" name="txtDisponibles" type="text" autocomplete="off" disabled/>
+                  </div>
+                </div>  
 
                 <div class="row">
                   <div class="form-group col-md-6">
@@ -52,7 +59,7 @@
 
                   <div class="form-group col-md-6">
                     <label class="control-label">Horas a solicitar</label>
-                    <input class="form-control" id="txtHoras" name="txtHoras" type="number" min="1" step="1" placeholder="Digita las horas que vas a solicitar" required="" autocomplete="off">
+                    <input class="form-control" id="txtHoras" name="txtHoras" type="number" min="0.5" step="0.5" placeholder="Digita las horas que vas a solicitar" required="" autocomplete="off">
                   </div>
                 </div>
                 </div>
@@ -94,10 +101,10 @@
               <td>Apellidos</td>
               <td id="celApellidos"></td>
             </tr>
-            <tr>
+            <!-- <tr>
               <td>Total de horas</td>
               <td id="celHorasTotales"></td>
-            </tr>
+            </tr> -->
             <tr>
               <td>Correo</td>
               <td id="celCorreo"></td>

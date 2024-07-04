@@ -31,6 +31,7 @@ class CompensatoriosModel extends Oracle{
 	string $descripcionActividad,
 	string $usuarios,
 	string $usuarioFinal,
+	string $evidencia,
 	string $estado) {
 			
 		$this->strFechaInicio = $fechaInicio;
@@ -39,6 +40,7 @@ class CompensatoriosModel extends Oracle{
 		$this->strDescripcionActividad = $descripcionActividad;
 		$this->listadoUsuarios = $usuarios;
 		$this->strTrabajoRequerido = $usuarioFinal;
+		$this->strEvidencia = $evidencia;
 		$this->intEstado = $estado;
 
 		$return = 0;
@@ -54,6 +56,7 @@ class CompensatoriosModel extends Oracle{
 			AND COM_FECHA_FIN = TO_TIMESTAMP('{$this->strFechaFin}', 'YYYY/MM/DD HH24:MI:SS') 
 			AND ID_TIPO_COMPENSATORIO = '{$this->intIdTipoCompensatorio}' 
 			AND COM_USUARIO_FINAL = '{$this->strTrabajoRequerido}'
+			AND COM_EVIDENCIAS = '{$this->strEvidencia}'
 			AND COM_DESCRIPCION_ACTIVIDAD = '{$this->strDescripcionActividad}'";
 
 		$request = $this->select_all($sql);
@@ -68,6 +71,7 @@ class CompensatoriosModel extends Oracle{
 				ID_TIPO_COMPENSATORIO,
 				COM_DESCRIPCION_ACTIVIDAD,
 				COM_USUARIO_FINAL,
+				COM_EVIDENCIAS,
 				COM_ESTADO
 			) 
 			VALUES
@@ -78,6 +82,7 @@ class CompensatoriosModel extends Oracle{
 				:ID_TIPO_COMPENSATORIO,
 				:COM_DESCRIPCION_ACTIVIDAD,
 				:COM_USUARIO_FINAL,
+				:COM_EVIDENCIAS,
 				:COM_ESTADO
 			)";
 	
@@ -88,6 +93,7 @@ class CompensatoriosModel extends Oracle{
 				'ID_TIPO_COMPENSATORIO' 	=> $this->intIdTipoCompensatorio,
 				'COM_DESCRIPCION_ACTIVIDAD' => $this->strDescripcionActividad,
 				'COM_USUARIO_FINAL' 		=> $this->strTrabajoRequerido,
+				'COM_EVIDENCIAS,' 			=> $this->strEvidencia,
 				'COM_ESTADO' 				=> $this->intEstado,
 				'ID_FUNCIONARIO'			=> $this->listadoUsuarios
 			);
@@ -280,7 +286,7 @@ class CompensatoriosModel extends Oracle{
 		$request = $this->select_all($sql);
 
 		if(empty($request)){
-			$sqlUpdate = "UPDATE BIG_COMPENSATORIOS 
+			$sqlUpdate = "UPDATE BIG_COMPENSATORIOS
 				SET COM_FECHA_INICIO = TO_TIMESTAMP(:COM_FECHA_INICIO, 'YYYY/MM/DD HH24:MI:SS'),
 				COM_FECHA_FIN = TO_TIMESTAMP(:COM_FECHA_FIN, 'YYYY/MM/DD HH24:MI:SS'),
 				ID_TIPO_COMPENSATORIO = :ID_TIPO_COMPENSATORIO,

@@ -51,38 +51,44 @@ class Horas extends Controllers{
 				$strMotivo = mb_convert_case(strClean($_POST['txtMotivo']),MB_CASE_TITLE, "UTF-8");
 				$intEstado = intval($_POST['txtEstado']);
 				$strFecha = $_POST['txtFecha'];
-				$strHoras = intval($_POST['txtHoras']);
+				$strHoras = floatval($_POST['txtHoras']);
 
 				$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
+
 				//sumo las horas de los compensatorios
 				$arrHoras = $this->model->getHoras($idFuncionario);
-				Dep($arrHoras);
 				if($arrHoras){
-					$horasRegis = intval($arrHoras["HORAS_TOTALES"]);
+					$horasRegistradas = floatval($arrHoras["HORAS_TOTALES"]);
+					//Dep($horasRegistradas);
 				}else{
-					$horasRegis = 0;
-				}
-				Dep($horasRegis);
-				//sumo las horas consumidas
-				$arrGastadas = $this->model->getGastadas($idFuncionario);
-				Dep($arrGastadas);
-				if($arrGastadas){
-					$horasGas = intval($arrGastadas["HORAS_GASTADAS"]);
-				}else{
-					$horasGas = 0;
-				}
-				Dep($horasGas);
-				//resto las horas registradas menos las horas gastadas
-				$resta=($horasRegis-$horasGas);
-				Dep($resta);
-				
-				if($resta<=0){
-					$msjResta="Error, no tienes horas para tomar";
-				}else{
-					$msjResta="Error, solo tienes ".$resta." hora para tomar";
+					$horasRegistradas = 0;
 				}
 
-				if(($horasRegis && $strHoras>0) && ($horasRegis-$horasGas)>0 && ($horasRegis-$horasGas)>=$strHoras){
+				//sumo las horas consumidas
+				$arrGastadas = $this->model->getGastadas($idFuncionario);
+				if($arrGastadas){
+					$horasGastadas = floatval($arrGastadas["HORAS_GASTADAS"]);
+					//Dep($horasGastadas);
+				}else{
+					$horasGastadas= 0;
+				}
+
+				//Cargar archivos en nuevo compensatorio
+
+				//resto las horas registradas menos las horas gastadas
+				$resta=($horasRegistradas-$horasGastadas);
+
+				//Dep($resta);
+
+				if($resta<=0){
+					$msjResta="Error, no tienes horas para tomar";
+				}/*elseif($resta==0){
+					$msjResta="Error, solo tienes ".$resta." hora para tomar";
+				}*/else{
+					$msjResta="Error, solo tienes ".$resta." hora/s para tomar";
+				}
+
+				if(($horasRegistradas && $strHoras>0) && ($horasRegistradas-$horasGastadas)>0 && ($horasRegistradas-$horasGastadas)>=$strHoras){
 					$request_user = "";
 					if($intIdHora == 0){
 						$option = 1;
@@ -94,24 +100,26 @@ class Horas extends Controllers{
 								$strFecha,
 								$strHoras
 							);
-							Dep($request_user);
+
+							//$horasDisponibles = $this->model->obtenerHorasDisponibles($resta);
+							//Dep($horasDisponibles);
 						}
 					}
 
-					if($request_user > 0){
-
-						$remitente = 'estivenmendez550@gmail.com';
-						$destinatario = 'aprendiz.bi@asmetsalud.com';
-						$asunto = 'Solicitud de horas';
-
-						$datos = [
-							//'Funcionario' => $arrData["NOMBREFUNCIONARIO"],
+				$arrResponse = array('status' => false, 'msg' => 'Registro de horas existente!');
+				
+				if($request_user > 0){
+					
+					$remitente = 'estivenmendez550@gmail.com';
+					$destinatario = 'aprendiz.bi@asmetsalud.com';
+					$asunto = 'Solicitud de horas';
+					
+					$datos = [
+						'Funcionario' => $arrHoras['NOMBREFUNCIONARIO'],
 							'MotivoSolicitud' => $_POST['txtMotivo'],
 							'FechaSolicitud' => $_POST['txtFecha'],
 							'HorasSolicitar' =>$_POST['txtHoras']
 						];
-
-						$html = generarHTML($tipoMensaje, $datos);
 
 						try {
 							$enviarCorreo = enviarMail($remitente, $destinatario, $asunto, 'solicitud_horas', $datos);
@@ -124,8 +132,11 @@ class Horas extends Controllers{
 						} catch (Exception $e) {
 							$arrResponse = array('status' => false, 'msg' => 'Error al enviar el correo: ' . $e->getMessage());
 						}
+						
 					} else {
-						$arrResponse = array('status' => false, 'msg' =>'No es posible almacenar los datos.');
+
+						$request_user === "exist" ? $arrResponse : $arrResponse = array('status' => false, 'msg' =>'No es posible almacenar los datos.');
+					
 					}
 				}else{
 					$arrResponse = array('status' => false, 'msg' => $msjResta);
@@ -177,6 +188,10 @@ class Horas extends Controllers{
 					}else{
 						$btnView = '<button class="btn btn-secondary btn-sm" disabled ><i class="far fa-eye"></i></button>';
 					}
+					
+					if($comEstado == 3){
+						$btnView = '<button class="btn btn-secondary btn-sm" disabled ><i class="far fa-eye"></i></button>';
+					}
 				}
 
 				if ($_SESSION['permisosMod']['PER_U']) { // Botón de aprobaciones
@@ -213,6 +228,40 @@ class Horas extends Controllers{
 				echo json_encode($arrResponse,JSON_UNESCAPED_UNICODE);
 			}
 		}
+	}
+	//Modulo para obtener horas disponibles por id
+	public function getHorasDisponibles(){
+
+		$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
+
+		//sumo las horas de los compensatorios
+		$arrHoras = $this->model->getHoras($idFuncionario);
+		if($arrHoras){
+			$horasRegistradas = floatval($arrHoras["HORAS_TOTALES"]);
+		}else{
+			$horasRegistradas = 0;
+		}
+
+		//sumo las horas consumidas
+		$arrGastadas = $this->model->getGastadas($idFuncionario);
+		if($arrGastadas){
+			$horasGastadas = floatval($arrGastadas["HORAS_GASTADAS"]);
+		}else{
+			$horasGastadas= 0;
+		}
+
+		//resto las horas registradas menos las horas gastadas
+		$resta=($horasRegistradas-$horasGastadas);
+
+		if($resta<=0){
+			$msjResta="Error, no tienes horas para tomar";
+			$arrResponse = array('status' => false, 'msg' => $msjResta);
+		}else{
+			$msjResta="Tienes ".$resta." hora/s para tomar";
+			$arrResponse = array('status' => true, 'msg' => $msjResta);
+		}
+
+		echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
 	}
 	//-----Funciones generales-----
 	//Modulo para verificar rol

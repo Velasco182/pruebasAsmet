@@ -16,6 +16,8 @@ class HorasModel extends Oracle{
 
 	public $intCodigoRol;
 
+	public $intResta;
+
 
 	public function __construct(){
 		parent::__construct();
@@ -39,15 +41,16 @@ class HorasModel extends Oracle{
 		$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
 		$this -> intIdFuncionario = $idFuncionario;
 
-		/*$sql = "SELECT * FROM BIG_TOMA 
-			WHERE FUN_CORREO = '{$this->strEmail}'
-			AND 
-			AND FUN_USUARIO = '{$this->intUsuario}'";
+		$sql = "SELECT * FROM BIG_TOMA
+			WHERE (TOM_MOTIVO = '{$this->strMotivo}'
+			AND TOM_FECHA_SOLI = TO_TIMESTAMP('{$this->strFecha}', 'DD/MM/YYYY'))
+			AND TOM_HORAS_SOLI = '{$this->strHoras}'
+			AND ID_FUNCIONARIO = '{$this->intIdFuncionario}'";
 			
-		$request = $this->select_all($sql);*/
+		$request = $this->select_all($sql);
 
 		//Verificación de inserción
-		//if(empty($request)){
+		if(empty($request)){
 
 			$query_insert  = "INSERT INTO BIG_TOMA
 				(
@@ -61,7 +64,7 @@ class HorasModel extends Oracle{
 				(
 					:TOM_MOTIVO,
 					:TOM_ESTADO,
-					TO_DATE(:TOM_FECHA_SOLI, 'YYYY/MM/DD'),
+					TO_DATE(:TOM_FECHA_SOLI, 'DD/MM/YYYY'),
 					:TOM_HORAS_SOLI,
 					:ID_FUNCIONARIO
 				)";
@@ -76,12 +79,11 @@ class HorasModel extends Oracle{
 			
 			$request_insert = $this->insert($query_insert,$arrData);
 			$return = $request_insert;
-		/*}else{
+		}else{
 			$return = "exist";
-		}*/
+		}
 		return $return;
 	}
-
 
 	//----Funciones de lectura----
 	//Obtener horas para poder comparar las  que se van solicitar con las existentes
@@ -90,14 +92,14 @@ class HorasModel extends Oracle{
 		$this -> intIdFuncionario = $idFuncionario;
 
 		$sql = "SELECT
-				T.FUN_NOMBRES,
-				T.FUN_APELLIDOS,
-				SUM(
+				T.FUN_NOMBRES || ' ' ||T.FUN_APELLIDOS NOMBREFUNCIONARIO,
+				ROUND(SUM(
 				EXTRACT(HOUR FROM (I.COM_FECHA_FIN - I.COM_FECHA_INICIO))
-				) AS HORAS_TOTALES
+				+ EXTRACT(MINUTE FROM (I.COM_FECHA_FIN - I.COM_FECHA_INICIO)) / 60 
+				), 2) AS HORAS_TOTALES
 			FROM BIG_COMPENSATORIOS I
 			INNER JOIN BIG_FUNCIONARIOS T ON I.ID_FUNCIONARIO = T.ID_FUNCIONARIO
-			WHERE I.ID_FUNCIONARIO = '{$this->intIdFuncionario}'
+			WHERE I.ID_FUNCIONARIO = '{$this->intIdFuncionario}' AND I.COM_ESTADO=2
 			GROUP BY T.FUN_NOMBRES, T.FUN_APELLIDOS
 			";
 
@@ -117,7 +119,7 @@ class HorasModel extends Oracle{
 		$sql = "SELECT T.ID_FUNCIONARIO,
 				TO_CHAR(SUM(T.TOM_HORAS_SOLI)) AS HORAS_GASTADAS
 				FROM BIG_TOMA T
-			WHERE T.ID_FUNCIONARIO = '{$this->intIdFuncionario}' AND T.TOM_ESTADO!=3
+			WHERE T.ID_FUNCIONARIO = '{$this->intIdFuncionario}' AND T.TOM_ESTADO=2
 			GROUP BY T.ID_FUNCIONARIO";
 
 		$arrData = array(
@@ -187,14 +189,10 @@ class HorasModel extends Oracle{
 				F.FUN_NOMBRES AS FUN_NOMBRES,
 				F.FUN_APELLIDOS AS FUN_APELLIDOS,
 				F.FUN_CORREO AS FUN_CORREO,
-				T.TOM_ESTADO,
+				T.TOM_ESTADO AS TOM_ESTADO,
 				TO_CHAR(T.TOM_FECHA_SOLI, 'DD/MM/YYYY') AS TOM_FECHA_SOLI,
 				T.TOM_MOTIVO,
-				T.TOM_HORAS_SOLI,
-				ROUND(SUM(
-				EXTRACT(HOUR FROM (I.COM_FECHA_FIN - I.COM_FECHA_INICIO)) +
-				EXTRACT(MINUTE FROM (I.COM_FECHA_FIN - I.COM_FECHA_INICIO)) / 60
-				), 2) AS HORAS_TOTALES
+				T.TOM_HORAS_SOLI AS TOM_HORAS_SOLI
 			FROM BIG_COMPENSATORIOS I
 			INNER JOIN BIG_FUNCIONARIOS F ON I.ID_FUNCIONARIO = F.ID_FUNCIONARIO
 			INNER JOIN BIG_TOMA T ON I.ID_FUNCIONARIO = T.ID_FUNCIONARIO
@@ -202,9 +200,45 @@ class HorasModel extends Oracle{
 			GROUP BY I.ID_FUNCIONARIO, F.FUN_NOMBRES, F.FUN_APELLIDOS,
 			F.FUN_CORREO, T.TOM_MOTIVO, T.TOM_FECHA_SOLI, T.TOM_HORAS_SOLI, T.TOM_ESTADO";
 
-			$request = $this->select($sql);
+			/*
+			,
+				ROUND(SUM(
+				CASE WHEN I.COM_ESTADO IN (2) THEN
+					EXTRACT(HOUR FROM (I.COM_FECHA_FIN - I.COM_FECHA_INICIO)) +
+					EXTRACT(MINUTE FROM (I.COM_FECHA_FIN - I.COM_FECHA_INICIO)) / 60
+				ELSE
+					0
+				END), 2) -
+				ROUND(
+				CASE WHEN TOM_ESTADO IN (2) THEN
+					TOM_HORAS_SOLI
+				ELSE
+					TOM_HORAS_SOLI
+				END, 2) AS DIFERENCIA_HORAS
+
+			SELECT
+				F.FUN_NOMBRES AS FUN_NOMBRES,
+				F.FUN_APELLIDOS AS FUN_APELLIDOS,
+				F.FUN_CORREO AS FUN_CORREO,
+				T.TOM_ESTADO,
+				TO_CHAR(T.TOM_FECHA_SOLI, 'DD/MM/YYYY') AS TOM_FECHA_SOLI,
+				T.TOM_MOTIVO,
+				T.TOM_HORAS_SOLI,
+				ROUND(SUM(
+					EXTRACT(HOUR FROM (I.COM_FECHA_FIN - I.COM_FECHA_INICIO)) +
+      				EXTRACT(MINUTE FROM (I.COM_FECHA_FIN - I.COM_FECHA_INICIO)) / 60) 
+					- SUM(T.TOM_HORAS_SOLI)
+				, 2) AS DIFERENCIA_HORAS
+			FROM BIG_COMPENSATORIOS I
+			INNER JOIN BIG_FUNCIONARIOS F ON I.ID_FUNCIONARIO = F.ID_FUNCIONARIO
+			INNER JOIN BIG_TOMA T ON I.ID_FUNCIONARIO = T.ID_FUNCIONARIO
+			WHERE T.ID_TOMA = $this->intIdToma --AND T.TOM_ESTADO != 3
+			GROUP BY I.ID_FUNCIONARIO, F.FUN_NOMBRES, F.FUN_APELLIDOS,
+			F.FUN_CORREO, T.TOM_MOTIVO, T.TOM_FECHA_SOLI, T.TOM_HORAS_SOLI, T.TOM_ESTADO*/
 			
-			return $request;
+		$request = $this->select($sql);
+			
+		return $request;
 	}
 
 	//-----Funciones para actualización de datos-----

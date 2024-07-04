@@ -56,7 +56,8 @@ class Compensatorios extends Controllers{
 			
 			if ($_POST['txtFechaInicio'] == '' || $_POST['txtFechaFin'] == ''
 			|| $_POST['txtActividad'] == '' || $_POST['txtTrabajoRequerido'] == ''
-			|| $_POST['txtEstado'] == '' || $_POST['listaUsuarios'] == '') {
+			|| $_POST['txtEstado'] == '' || $_POST['listaUsuarios'] == ''
+			|| $_FILES['archivoEvidencia'] == '') {
 				
 				$arrResponse = array("status" => false, "msg" => 'Ingrese todos los datos.');
 			
@@ -83,40 +84,68 @@ class Compensatorios extends Controllers{
 					$listadoUsuarios = intval(strClean($_POST['listaUsuarios']));
 	
 					$arrData = $this->model->recuperar($listadoUsuarios); // Recuperar los datos insertados
-	
+
 					$request_user = 0;
 					$option = 0; // Agregado para definir la operación (0: no definida, 1: inserción, 2: actualización)
 	
-					if ($intIdCompensatorio == 0) {
-						if ($_SESSION['permisosMod']['PER_W']) {
-							$request_user = $this->model->insertCompensatorio(
-								$strFechaInicio,
-								$strFechaFin,
-								$strActividad, //ID_TIPO_COMPENSATORIO
-								$strDescripcionActividad,
-								$listadoUsuarios,
-								$strTrabajoRequerido,
-								$intEstado
-							);
-							$option = 1; // Inserción
+					if (isset($_FILES['archivoEvidencia']) && $_FILES['archivoEvidencia']['error'] === UPLOAD_ERR_OK) {
+						$archivo = $_FILES['archivoEvidencia']['tmp_name'];
+						$strEvidencia = $_FILES['archivoEvidencia']['name'];
+				
+						$directorio = "archivos/";
+						$strEvidencia = strtolower($strEvidencia) . '_' . uniqid();
+						$destino = $directorio . $strEvidencia;
+				
+						// Intenta mover el archivo al directorio de destino
+						if (move_uploaded_file($archivo, $destino)) {
+							// Éxito: el archivo se cargó con éxito
+							if ($intIdCompensatorio == 0) {
+								if ($_SESSION['permisosMod']['PER_W']) {
+									$request_user = $this->model->insertCompensatorio(
+										$strFechaInicio,
+										$strFechaFin,
+										$strActividad, //ID_TIPO_COMPENSATORIO
+										$strDescripcionActividad,
+										$listadoUsuarios,
+										$strTrabajoRequerido,
+										$strEvidencia,
+										$intEstado
+									);
+									$option = 1; // Inserción
+								}
+							} else {
+								if ($_SESSION['permisosMod']['PER_U']) {
+									$request_user = $this->model->updateCompensatorio(
+										$intIdCompensatorio,
+										$strFechaInicio,
+										$strFechaFin,
+										$strActividad, //ID_TIPO_COMPENSATORIO
+										$strDescripcionActividad,
+										$strTrabajoRequerido
+									);
+									$option = 2; // Actualización
+								}
+							}
+							// Llama al método en tu modelo para guardar la evidencia en la base de datos
+							//$return = $this->model->guardarEvidencia($strEvidencia, $idCompensatorio);
+				
+							if ($request_user) {
+								$arrResponse = array('status' => true, 'msg' => 'Subida con éxito');
+							} else {
+								$arrResponse = array('status' => false, 'msg' => 'Error al subir el archivo');
+							}
+						} else {
+							// Error: no se pudo mover el archivo al directorio de destino
+							$arrResponse = array('status' => false, 'msg' => 'No se pudo mover el archivo al directorio de destino');
 						}
 					} else {
-						if ($_SESSION['permisosMod']['PER_U']) {
-							$request_user = $this->model->updateCompensatorio(
-								$intIdCompensatorio,
-								$strFechaInicio,
-								$strFechaFin,
-								$strActividad, //ID_TIPO_COMPENSATORIO
-								$strDescripcionActividad,
-								$strTrabajoRequerido
-							);
-							$option = 2; // Actualización
-						}
+						// Error: no se seleccionó ningún archivo o hubo un error al cargarlo
+						$arrResponse = array('status' => false, 'msg' => 'No se seleccionó ningún archivo');
 					}
 	
 					$arrResponse = array('status' => false, 'msg' => 'El compensatorio ya existe!');
 
-					if ($option == 1) {
+					if($option == 1) {
 						// Bloque de envío de correo para inserción
 						$remitente = 'estivenmendez550@gmail.com';
 						$destinatario = 'aprendiz.bi@asmetsalud.com';
@@ -132,11 +161,21 @@ class Compensatorios extends Controllers{
 						$fechaInicioFormateada = date('d/m/Y - h:i A', strtotime($fechaInicio));
 						$fechaFinFormateada = date('d/m/Y - h:i A', strtotime($fechaFin));
 
+						$tipoCompensatorioNombre = $this->model->selectCompensatorios(); //Recuperar nombre del tipo de compensatorio
+
+						if($tipoCompensatorioNombre){
+							$nombre = $tipoCompensatorioNombre["TIP_COM_NOMBRE"];
+							Dep($nombre);
+						}else{
+							$nombre= "";
+						}
+
 						$datos = [
 							'Funcionario' => $arrData["NOMBREFUNCIONARIO"],
 							'FechaInicio' => $fechaInicioFormateada,
 							'FechaFin' => $fechaFinFormateada,
-							'Actividad' => $_POST['txtActividad'],
+							//Revisar tipo de compensatorio, en el correo aparece ID
+							'Actividad' => $nombre,
 							'UsuarioTrabajo' => $_POST['txtTrabajoRequerido'],
 							'DescripcionAc' => $_POST['txtDescripcionActividad']
 						];
@@ -212,13 +251,11 @@ class Compensatorios extends Controllers{
 
 				$arrData[$i]['COM_ESTADO'] = '<span class="badge ' . $statusClass . '">' . $newStatus . '</span>'; // Error con los span
 
-				// var_dump($comEstado);
-
-				if ($_SESSION['permisosMod']['PER_F'] && $comEstado == 2) {
+				/*if ($_SESSION['permisosMod']['PER_F'] && $comEstado == 2) {
 					$btnReset = '<button class="btn btn-success btn-sm" onClick="ftnEvidencias(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Cargar Evidencias"><i class="fas fa-cloud-upload-alt"></i></button>';
 				} else {
 					$btnReset = ''; // Botón vacío si no se cumple la condición
-				}
+				}*/
 
 				//Revisar
 				if($_SESSION['permisosMod']['PER_R']){ // Icono de ver funcionario

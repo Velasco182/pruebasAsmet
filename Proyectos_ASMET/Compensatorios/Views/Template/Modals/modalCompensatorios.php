@@ -78,49 +78,42 @@
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="txtActividad">Tipo de Compensatorio</label>
-                  <!-- <input class="form-control" id="txtActividad" name="txtActividad" rows="4" cols="50" required autocomplete="off"></input> -->
-                  <div class="form-group">
-                    <select class="form-control" data-live-search="true" id="txtActividad" name="txtActividad" required>
-                    </select>
-                  </div>
-                </div>
-                <div class="form-group col-md-6">
-                   <label for="txtTrabajoRequerido">¿Quien requiere el trabajo?</label>
-                    <input type="text" class="form-control" id="txtTrabajoRequerido" name="txtTrabajoRequerido" required
-                    autocomplete="off">
-                </div>
-                <div class="form-group col-md-6">
-                  <label for="txtDescripcionActividad">Descripcion Actividad</label>
-                  <textarea class="form-control" id="txtDescripcionActividad" name="txtDescripcionActividad" rows="4" cols="50" required autocomplete="off"></textarea>
+                    <div class="form-group">
+                      <select class="form-control" data-live-search="true" id="txtActividad" name="txtActividad" required>
+                      </select>
+                    </div>
                 </div>
 
                 <div class="form-group col-md-6">
-                  <label for="listaUsuarios">Usuarios</label>
-                  
-                  <select class="form-control" data-live-search="true" name="listaUsuarios" id="listaUsuarios">
-                  
-                  </select>
+                   <label for="txtTrabajoRequerido">¿Quien requiere el trabajo?</label>
+                      <input type="text" class="form-control" id="txtTrabajoRequerido" name="txtTrabajoRequerido" required
+                      autocomplete="off">
+                </div>
+
+
+                <div class="form-group col-md-6">
+                  <label for="txtDescripcionActividad">Descripcion Actividad</label>
+                    <textarea class="form-control" id="txtDescripcionActividad" name="txtDescripcionActividad" rows="4" cols="50" required autocomplete="off"></textarea>
+                </div>
+
+                <div class="form-group col-md-6">
+                  <label>Seleccione un archivo</label>
+                    <input type="file" class="form-control-file tile p-2" id="archivoEvidencia" name="archivoEvidencia" multiple required>
                 </div>
                 
-              <div class="form-group col-md-6" style="display:none;">
-                <label for="txtEstado">Estado</label>
-                <input id="txtEstado" name="txtEstado" value="1">              
-              </div>
-                <!-- <div class="form-group col-md-6">
-                  <label for="txtFechaEntrega">Fecha Final de Entrega</label>
-                  <input type="date" class="form-control" id="txtFechaEntrega" name="txtFechaEntrega" required
-                    autocomplete="off">
-                </div> -->
-                <!-- <div class="form-group col-md-6">
-                  <label for="">Label sin definicion</label>
-                  <input type="text" class="form-control" id="" name="" 
-                    autocomplete="off">
-                </div> -->
-                <!-- <div class="form-group col-md-6">
-                  <label for="txtJustificacion">Justificacion</label>
-                    <textarea class="form-control" id="txtJustificacion" name="txtJustificacion" rows="4" cols="50"></textarea>
-                </div> -->
-             </div>
+
+                <div class="form-group col-md-6">
+                    <label for="listaUsuarios">Usuarios</label>
+                      <select class="form-control" data-live-search="true" name="listaUsuarios" id="listaUsuarios">
+                      </select>
+                </div>
+                
+                <div class="form-group col-md-6" style="display:none;">
+                  <label for="txtEstado">Estado</label>
+                    <input id="txtEstado" name="txtEstado" value="1">
+                </div>
+
+            </div>
               <div class="tile-footer">
                 <button id="btnActionForm" class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i><span id="btnText">Enviar solicitud</span></button>&nbsp;&nbsp;&nbsp;
                 <button class="btn btn-danger" type="button" data-dismiss="modal"><i class="fa fa-fw fa-lg fa-times-circle"></i>Cerrar</button>
@@ -181,7 +174,7 @@
     </div>
   </div>
 </div>
-<!-- Modal Evidencias --->
+<!-- Modal Evidencias 
 <div class="modal fade" id="modalFormEvidencias" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -204,7 +197,8 @@
                         <button type="button" class="btn btn-primary" id="btnSubirEvidencia">Subir Evidencia</button>
                       </div>
                     </form>
-            </div>
+                </div>
         </div>
     </div> 
 </div>
+--->
