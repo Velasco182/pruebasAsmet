@@ -53,11 +53,10 @@ class Compensatorios extends Controllers{
 	public function setCompensatorio() {
 
 		if ($_POST) {
-			
+			//|| $_POST['archivoEvidencia'] == ''
 			if ($_POST['txtFechaInicio'] == '' || $_POST['txtFechaFin'] == ''
 			|| $_POST['txtActividad'] == '' || $_POST['txtTrabajoRequerido'] == ''
-			|| $_POST['txtEstado'] == '' || $_POST['listaUsuarios'] == ''
-			|| $_FILES['archivoEvidencia'] == '') {
+			|| $_POST['txtEstado'] == '' || $_POST['listaUsuarios'] == '') {
 				
 				$arrResponse = array("status" => false, "msg" => 'Ingrese todos los datos.');
 			
@@ -71,7 +70,9 @@ class Compensatorios extends Controllers{
 					$arrResponse = array("status" => false, "msg" => 'Las horas no pueden ser las mismas');
 					
 				} else {
+
 					$intIdCompensatorio = intval($_POST['idCompensatorio']);
+
 					$strDescripcionActividad = mb_convert_case(strClean($_POST['txtDescripcionActividad']), MB_CASE_TITLE, "UTF-8");
 					$strActividad = mb_convert_case(strClean($_POST['txtActividad']), MB_CASE_TITLE, "UTF-8");
 					$strTrabajoRequerido = mb_convert_case(strClean($_POST['txtTrabajoRequerido']), MB_CASE_TITLE, "UTF-8");
@@ -82,25 +83,28 @@ class Compensatorios extends Controllers{
 					$strFechaFin = Compensatorios::parseToDB($txtFechaFin);
 
 					$listadoUsuarios = intval(strClean($_POST['listaUsuarios']));
-	
-					$arrData = $this->model->recuperar($listadoUsuarios); // Recuperar los datos insertados
+					// Recuperar los datos insertados
+					$arrData = $this->model->recuperar($listadoUsuarios);
 
 					$request_user = 0;
 					$option = 0; // Agregado para definir la operación (0: no definida, 1: inserción, 2: actualización)
-	
+
 					if (isset($_FILES['archivoEvidencia']) && $_FILES['archivoEvidencia']['error'] === UPLOAD_ERR_OK) {
 						$archivo = $_FILES['archivoEvidencia']['tmp_name'];
-						$strEvidencia = $_FILES['archivoEvidencia']['name'];
+						$name = $_FILES['archivoEvidencia']['name'];
 				
 						$directorio = "archivos/";
-						$strEvidencia = strtolower($strEvidencia) . '_' . uniqid();
-						$destino = $directorio . $strEvidencia;
+						$name = strtolower($name) . '_' . uniqid();
+						$destino = $directorio . $name;
 				
 						// Intenta mover el archivo al directorio de destino
 						if (move_uploaded_file($archivo, $destino)) {
+
 							// Éxito: el archivo se cargó con éxito
 							if ($intIdCompensatorio == 0) {
+
 								if ($_SESSION['permisosMod']['PER_W']) {
+
 									$request_user = $this->model->insertCompensatorio(
 										$strFechaInicio,
 										$strFechaFin,
@@ -108,32 +112,34 @@ class Compensatorios extends Controllers{
 										$strDescripcionActividad,
 										$listadoUsuarios,
 										$strTrabajoRequerido,
-										$strEvidencia,
+										$name, //COM_EVIDENCIAS
 										$intEstado
 									);
 									$option = 1; // Inserción
+
+									// Llama al método en tu modelo para guardar la evidencia en la base de datos
+									if ($request_user) {
+										$arrResponse = array('status' => true, 'msg' => 'Subida con éxito');
+									} else {
+										$arrResponse = array('status' => false, 'msg' => 'Error al subir el archivo');
+									}
 								}
 							} else {
 								if ($_SESSION['permisosMod']['PER_U']) {
+
 									$request_user = $this->model->updateCompensatorio(
 										$intIdCompensatorio,
 										$strFechaInicio,
 										$strFechaFin,
 										$strActividad, //ID_TIPO_COMPENSATORIO
 										$strDescripcionActividad,
+										$name,
 										$strTrabajoRequerido
 									);
 									$option = 2; // Actualización
 								}
 							}
-							// Llama al método en tu modelo para guardar la evidencia en la base de datos
-							//$return = $this->model->guardarEvidencia($strEvidencia, $idCompensatorio);
-				
-							if ($request_user) {
-								$arrResponse = array('status' => true, 'msg' => 'Subida con éxito');
-							} else {
-								$arrResponse = array('status' => false, 'msg' => 'Error al subir el archivo');
-							}
+
 						} else {
 							// Error: no se pudo mover el archivo al directorio de destino
 							$arrResponse = array('status' => false, 'msg' => 'No se pudo mover el archivo al directorio de destino');
@@ -161,21 +167,15 @@ class Compensatorios extends Controllers{
 						$fechaInicioFormateada = date('d/m/Y - h:i A', strtotime($fechaInicio));
 						$fechaFinFormateada = date('d/m/Y - h:i A', strtotime($fechaFin));
 
-						$tipoCompensatorioNombre = $this->model->selectCompensatorios(); //Recuperar nombre del tipo de compensatorio
-
-						if($tipoCompensatorioNombre){
-							$nombre = $tipoCompensatorioNombre["TIP_COM_NOMBRE"];
-							Dep($nombre);
-						}else{
-							$nombre= "";
-						}
-
+						$idTipoCompensatorio = $_POST['txtActividad'];
+						//Recuperar nombre del tipo de compensatorio
+						$tipoCompensatorioNombre = $this->model->selectTipoCompensatorioVista($idTipoCompensatorio); 
+						
 						$datos = [
 							'Funcionario' => $arrData["NOMBREFUNCIONARIO"],
 							'FechaInicio' => $fechaInicioFormateada,
 							'FechaFin' => $fechaFinFormateada,
-							//Revisar tipo de compensatorio, en el correo aparece ID
-							'Actividad' => $nombre,
+							'Actividad' => $tipoCompensatorioNombre[0]["TIP_COM_NOMBRE"],
 							'UsuarioTrabajo' => $_POST['txtTrabajoRequerido'],
 							'DescripcionAc' => $_POST['txtDescripcionActividad']
 						];
@@ -202,6 +202,7 @@ class Compensatorios extends Controllers{
 				}
 			}
 		}
+		
 		echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
 
 	}
@@ -460,9 +461,9 @@ class Compensatorios extends Controllers{
 	public function getSelectTipoCompensatorio(){
 		$htmlOptions = "";
 		$arrData = $this->model->selectTipoCompensatorio();
-		if(count($arrData) > 0 ){			
+		if(count($arrData) > 0 ){
 			// Agregar las opciones de los demás registros de tipo de compensatorios
-			for ($i=0; $i < count($arrData); $i++) { 
+			for ($i=0; $i < count($arrData); $i++) {
 				$htmlOptions .= '<option value="'.$arrData[$i]['ID_TIPO_COMPENSATORIO'].'">'.$arrData[$i]['TIP_COM_NOMBRE'].'</option>';
 			}
 		}

@@ -9,22 +9,20 @@
         </button>
       </div>
       <div class="modal-body">
-            <form id="formCompensatorio" name="formCompensatorio" class="form-horizontal">
+            <form enctype="multipart/form-data" id="formCompensatorio" name="formCompensatorio" class="form-horizontal">
               <input type="hidden" id="idCompensatorio" name="idCompensatorio" value="">
               <!-- <input type="" id="idFuncionario" name="idFuncionario" value=""> -->
               <p class="text-primary">Todos los campos son obligatorios.</p>
 
               <div class="form-row" style="display:none;">
-              
                 <div class="form-group col-md-6">
                   <label for="txtCompensatorio">Compensatorio</label>
                   <input type="text" class="form-control" id="txtCompensatorio" name="txtCompensatorio" required value="0" autocomplete="off">
                 </div>
-                
               </div>
-              <div class="form-row"> 
-              </div>
+
               <div class="form-row">
+
                 <div class="form-group col-md-6">
                   <label for="txtFechaInicio">Fecha y hora de inicio</label>
                   <div
@@ -74,12 +72,16 @@
                       </div>
                     </div>
                 </div>
+
               </div>
+
               <div class="form-row">
+
                 <div class="form-group col-md-6">
                   <label for="txtActividad">Tipo de Compensatorio</label>
                     <div class="form-group">
                       <select class="form-control" data-live-search="true" id="txtActividad" name="txtActividad" required>
+                        <option value="">Selecciona una opcion</option>
                       </select>
                     </div>
                 </div>
@@ -90,17 +92,19 @@
                       autocomplete="off">
                 </div>
 
-
                 <div class="form-group col-md-6">
                   <label for="txtDescripcionActividad">Descripcion Actividad</label>
                     <textarea class="form-control" id="txtDescripcionActividad" name="txtDescripcionActividad" rows="4" cols="50" required autocomplete="off"></textarea>
                 </div>
 
                 <div class="form-group col-md-6">
-                  <label>Seleccione un archivo</label>
-                    <input type="file" class="form-control-file tile p-2" id="archivoEvidencia" name="archivoEvidencia" multiple required>
+                  <label for="archivoEvidencia">Adjuntar evidencia</label>
+                  <div class="tile p-3">
+                      <input type="file" class="form-control-file" id="archivoEvidencia" name="archivoEvidencia" multiple required>
+                      <br>
+                      <div id="evidenciaName"></div>
+                  </div>
                 </div>
-                
 
                 <div class="form-group col-md-6">
                     <label for="listaUsuarios">Usuarios</label>
@@ -113,7 +117,8 @@
                     <input id="txtEstado" name="txtEstado" value="1">
                 </div>
 
-            </div>
+              </div>
+
               <div class="tile-footer">
                 <button id="btnActionForm" class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i><span id="btnText">Enviar solicitud</span></button>&nbsp;&nbsp;&nbsp;
                 <button class="btn btn-danger" type="button" data-dismiss="modal"><i class="fa fa-fw fa-lg fa-times-circle"></i>Cerrar</button>
@@ -174,31 +179,3 @@
     </div>
   </div>
 </div>
-<!-- Modal Evidencias 
-<div class="modal fade" id="modalFormEvidencias" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header headerView">
-                    <h5 class="modal-title" id="exampleModalLabel">Cargar Evidencias del Compensatorio</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="formCargarEvidencias" enctype="multipart/form-data">
-                        <div class="form-group">
-                            <label>Seleccione un archivo:</label>
-                            <input type="file" class="form-control-file" id="archivoEvidencia" name="archivoEvidencia" multiple>
-                        </div>
-                      </div>
-                      
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-primary" id="btnSubirEvidencia">Subir Evidencia</button>
-                      </div>
-                    </form>
-                </div>
-        </div>
-    </div> 
-</div>
---->

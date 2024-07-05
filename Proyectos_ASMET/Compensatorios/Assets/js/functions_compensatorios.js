@@ -78,14 +78,14 @@ document.addEventListener('DOMContentLoaded', function(){
             let strActividad = document.querySelector('#txtActividad').value;
             let listadoUsuarios = document.querySelector('#listaUsuarios').value;
             let strTrabajoRequerido = document.querySelector('#txtTrabajoRequerido').value;
-            let archivo = document.getElementById("archivoEvidencia").files[0];
+            let strArchivo = document.getElementById("archivoEvidencia").files[0];
             let intEstado = document.querySelector('#txtEstado').value;
 
             /*let compensatorio = {strFechaInicio, strFechaFin, strDescripcionActividad, strActividad, listadoUsuarios, strTrabajoRequerido, intEstado};
             console.table(compensatorio);*/
     
             if(strFechaInicio == '' || strFechaFin == '' || strDescripcionActividad == '' || strActividad == '' 
-            || listadoUsuarios == '' || strTrabajoRequerido == '' || intEstado == ''){
+            || listadoUsuarios == '' || strTrabajoRequerido == '' || intEstado == '' || strArchivo == ''){
                 swal("Atención", "Todos los campos son obligatorios." , "error");
                 return false;
             }else{
@@ -98,9 +98,9 @@ document.addEventListener('DOMContentLoaded', function(){
                     } 
                 }
                 
-                if(archivo){
+                if(document.getElementById("archivoEvidencia").files[0]){
 
-                    let nombreArchivo = archivo.name;
+                    let nombreArchivo = strArchivo.name;
                     let extension = nombreArchivo.split('.').pop().toLowerCase();
                     let extensionesValidas = ["jpg","png","xlsx","docx","pdf"];
 
@@ -124,14 +124,21 @@ document.addEventListener('DOMContentLoaded', function(){
                                 
                                 }else{
                                     
-                                    console.log(objData.status);
+                                    //console.log(objData.status);
                                     if(rowTable == ""){
                                         tableCompensatorios.api().ajax.reload();
                                     }else{
                                         tableCompensatorios.api().ajax.reload();
                                     }
             
-                                    $('#modalFormCompensatorio').modal("hide");
+                                    let modalHide = $('#modalFormCompensatorio').modal("hide");
+                                    modalHide;
+
+                                    if(modalHide){
+                                        $('#txtActividad').selectpicker('refresh');
+                                        $('#txtActividad').selectpicker('render');
+                                        //console.log(modalHide);
+                                    }
             
                                     formUsuario.reset();
                                     swal("Usuario", objData.msg ,"success");
@@ -301,6 +308,8 @@ function ftnViewCompensatorio(idCompensatorio){
                 document.querySelector("#InfoEstado").innerHTML = estado;
                 document.querySelector("#InfoHorasRealizadas").innerHTML = objData.data.horasrealizadas;
                 
+//revisar
+
                 if (objData.data.url_portada) {
                     document.querySelector("#DescargarSoporte").innerHTML = '<a href="' + objData.data.url_portada + '" target="_blank"><i class="fas fa-download"> Evidencia disponible</i></a>';
                 } else {
@@ -336,6 +345,7 @@ function ftnEditCompensatorio(element,idCompensatorio){
     request.onreadystatechange = function(){
 
         if(request.readyState == 4 && request.status == 200){
+
             let objData = JSON.parse(request.responseText);
 
             if(objData.status){
@@ -343,17 +353,24 @@ function ftnEditCompensatorio(element,idCompensatorio){
                 document.querySelector("#idCompensatorio").value = objData.data.idCompensatorio;
                 document.querySelector("#txtFechaInicio").value = objData.data.COM_FECHA_INICIO;
                 document.querySelector("#txtFechaFin").value = objData.data.COM_FECHA_FIN;
-                document.querySelector("#txtActividad").innerHTML = objData.data.LIST_TIPOS;
                 document.querySelector("#txtActividad").value = objData.data.ID_TIPO_COMPENSATORIO;
                 document.querySelector("#txtTrabajoRequerido").value = objData.data.COM_USUARIO_FINAL;
                 document.querySelector("#txtDescripcionActividad").value = objData.data.COM_DESCRIPCION_ACTIVIDAD;
+                
+                let evidencia = objData.data.COM_EVIDENCIAS;
+
+                if (evidencia !== undefined) {
+                    document.querySelector("#evidenciaName").innerHTML = '<a href="archivos/' + evidencia + '" target="_blank"><i class="fas fa-download">&nbsp;&nbsp;&nbsp;Evidencia disponible</i></a>';
+                }else{
+                    document.querySelector("#evidenciaName").innerHTML = '<h6 id="archivoEvidenciaName">No hay evidencia disponible</h6>';
+                }
+                
+                //Revisar
+                $('#txtActividad').selectpicker('refresh');
+                $('#txtActividad').selectpicker('render');
 
                 $('#modalFormCompensatorio').modal('show');
-
-                $('#txtActividad').selectpicker('render');
-                $('#txtActividad').selectpicker('refresh');
                 
-
             }else{
                 swal("Error", objData.msg, "error");
             }
@@ -370,6 +387,7 @@ function openModal(){
     document.querySelector('#btnText').innerHTML ="Enviar solicitud";
     document.querySelector('#titleModal').innerHTML = "Nuevo Compensatorio";
     document.querySelector("#formCompensatorio").reset();
+    document.querySelector("#evidenciaName").innerHTML = '';
     ajustarFormulario();
     ftnTotalUsuarios();
     ftnTotalTipoCompensatorio();
@@ -456,10 +474,16 @@ function ftnTotalTipoCompensatorio(){
         request.send();
         request.onreadystatechange = function(){
             if(request.readyState == 4 && request.status == 200){
-                document.querySelector('#txtActividad').innerHTML = request.responseText;
+
+                let opciones = request.responseText;
                 
-                $('#txtActividad').selectpicker('render');
+                const defaultOption = '<option value="default" selected>Selecciona una opcion</option>';
+                const options = {defaultOption, ...opciones};
+                
+                document.querySelector('#txtActividad').innerHTML = opciones;
+                
                 $('#txtActividad').selectpicker('refresh');
+                $('#txtActividad').selectpicker('render');
                 
             }
         }

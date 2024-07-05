@@ -28,7 +28,7 @@
 
 		public function selectModulo(int $ID_MENU){
 			$this->intIdmenu = $ID_MENU;
-			$sql = "SELECT BM.MEN_TITULO,MO.*  
+			$sql = "SELECT BM.MEN_TITULO, MO.*
 				FROM BIG_MODULOS MO
 				INNER JOIN BIG_MENU bm ON MO.ID_MENU  = BM.ID_MENU
 				WHERE ID_MODULO = '".$this->intIdmenu."'
@@ -60,9 +60,9 @@
 				//dep($query_insert);
 				
 	        	$arrData = array(
-				'ID_MENU'=>$this->intIdMenu,'MOD_TITULO'=>$this->strTitulo,'MOD_DESCRIPCION'=>$this->strDesc,
-				'MOD_CODIGO'=>$this->strCodigo,'MOD_ICONO'=>$this->strIcono,'MOD_ACCESO'=>$this->strAcceso,
-				'MOD_LISTAR'=>$this->intListar,'MOD_ESTADO'=>$this->intEstado
+					'ID_MENU'=>$this->intIdMenu,'MOD_TITULO'=>$this->strTitulo,'MOD_DESCRIPCION'=>$this->strDesc,
+					'MOD_CODIGO'=>$this->strCodigo,'MOD_ICONO'=>$this->strIcono,'MOD_ACCESO'=>$this->strAcceso,
+					'MOD_LISTAR'=>$this->intListar,'MOD_ESTADO'=>$this->intEstado
 				);
 				//dep($arrData);
 
@@ -110,7 +110,7 @@
 			}else{
 				$request = "exist";
 			}
-		    return $request;			
+		    return $request;
 		}
 
 		public function deleteModulo(int $idModulo){
@@ -126,21 +126,21 @@
 				$sql = "DELETE BIG_MODULOS WHERE ID_MODULO = $this->intIdModulo ";
 				$request = $this->delete($sql);
 				if($request){
-					$request = 'ok';	
+					$request = 'ok';
 				}else{
 					$request = 'error';
 				}
 			}else{
 				$request = 'exist';
-			}			
+			}
 			return $request;
 		}
 
 		public function listarMenus(){
-			$sql = "
-			SELECT 
-				* 
-			FROM BIG_MENU WHERE MEN_ESTADO='1' ORDER BY MEN_TITULO ASC";
+			$sql = "SELECT * 
+				FROM BIG_MENU 
+				WHERE MEN_ESTADO='1' 
+				ORDER BY MEN_TITULO ASC";
 			$request = $this->select_all($sql);
 			return $request;
 		}

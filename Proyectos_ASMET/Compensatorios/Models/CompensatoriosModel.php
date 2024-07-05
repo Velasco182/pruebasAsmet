@@ -12,6 +12,7 @@ class CompensatoriosModel extends Oracle{
 	public $strDescripcionActividad;
 	public $listadoUsuarios;
 	public $strTrabajoRequerido;
+	public $strEvidencia;
 	public $intEstado;
 
 	public $intIdUsuario;
@@ -44,17 +45,17 @@ class CompensatoriosModel extends Oracle{
 		$this->intEstado = $estado;
 
 		$return = 0;
-
+		
 		// Obtener el ID del funcionario de la sesión
 		$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
 		$this->intIdFuncionario = $idFuncionario;
 
 		//Validar duplicidad de datos
-		$sql = "SELECT * FROM BIG_COMPENSATORIOS 
-			WHERE ID_FUNCIONARIO = '{$this->intIdFuncionario}' 
+		$sql = "SELECT * FROM BIG_COMPENSATORIOS
+			WHERE ID_FUNCIONARIO = '{$this->intIdFuncionario}'
 			AND COM_FECHA_INICIO = TO_TIMESTAMP('{$this->strFechaInicio}', 'YYYY/MM/DD HH24:MI:SS') 
-			AND COM_FECHA_FIN = TO_TIMESTAMP('{$this->strFechaFin}', 'YYYY/MM/DD HH24:MI:SS') 
-			AND ID_TIPO_COMPENSATORIO = '{$this->intIdTipoCompensatorio}' 
+			AND COM_FECHA_FIN = TO_TIMESTAMP('{$this->strFechaFin}', 'YYYY/MM/DD HH24:MI:SS')
+			AND ID_TIPO_COMPENSATORIO = '{$this->intIdTipoCompensatorio}'
 			AND COM_USUARIO_FINAL = '{$this->strTrabajoRequerido}'
 			AND COM_EVIDENCIAS = '{$this->strEvidencia}'
 			AND COM_DESCRIPCION_ACTIVIDAD = '{$this->strDescripcionActividad}'";
@@ -93,7 +94,7 @@ class CompensatoriosModel extends Oracle{
 				'ID_TIPO_COMPENSATORIO' 	=> $this->intIdTipoCompensatorio,
 				'COM_DESCRIPCION_ACTIVIDAD' => $this->strDescripcionActividad,
 				'COM_USUARIO_FINAL' 		=> $this->strTrabajoRequerido,
-				'COM_EVIDENCIAS,' 			=> $this->strEvidencia,
+				'COM_EVIDENCIAS' 			=> $this->strEvidencia,
 				'COM_ESTADO' 				=> $this->intEstado,
 				'ID_FUNCIONARIO'			=> $this->listadoUsuarios
 			);
@@ -121,9 +122,10 @@ class CompensatoriosModel extends Oracle{
 			COM.COM_FECHA_INICIO,
 			COM.ID_TIPO_COMPENSATORIO,
 			COM.COM_USUARIO_FINAL,
-			COM.COM_DESCRIPCION_ACTIVIDAD,  
+			COM.COM_DESCRIPCION_ACTIVIDAD,
+			COM.COM_EVIDENCIAS,
 			COM.ID_TIPO_COMPENSATORIO
-		FROM BIG_COMPENSATORIOS COM 
+		FROM BIG_COMPENSATORIOS COM
 		WHERE COM.ID_COMPENSATORIO = $this->intIdCompensatorio
 		";
 		$request = $this->select($sql);
@@ -257,30 +259,60 @@ class CompensatoriosModel extends Oracle{
 	//Modulo para llenar el select de tipo de compensatorio
 	public function selectTipoCompensatorio(){
 		// Hago un select a la db para recuperar todos los tipos de compensatorios activos.
-		$sql = "SELECT ID_TIPO_COMPENSATORIO, TIP_COM_NOMBRE FROM BIG_TIPO_COMPENSATORIO TC WHERE TC.TIP_COM_ESTADO='1'";
+		$sql = "SELECT TC.ID_TIPO_COMPENSATORIO, TC.TIP_COM_NOMBRE 
+			FROM BIG_TIPO_COMPENSATORIO TC 
+			WHERE TC.TIP_COM_ESTADO='1'
+			ORDER BY TC.TIP_COM_NOMBRE ASC";
+
 		$request = $this->select_all($sql);
+		return $request;
+	}
+	//Modulo para obener el nombre del tipo de compensatorio
+	public function selectTipoCompensatorioVista(string $idTipoCompensatorio){
+
+		$this->intIdTipoCompensatorio = $idTipoCompensatorio;
+
+		$sql = "SELECT TC.TIP_COM_NOMBRE AS TIP_COM_NOMBRE
+			FROM BIG_TIPO_COMPENSATORIO TC
+			WHERE TC.ID_TIPO_COMPENSATORIO ='{$this->intIdTipoCompensatorio}'";
+
+		$arrData = array(
+			'ID_TIPO_COMPENSATORIO'	 =>$this->intIdTipoCompensatorio,
+		);
+
+		$request = $this->select_all($sql, $arrData);
+
 		return $request;
 	}
 
 	//-----Funciones para actualización de datos-----
 	//Modulo de actualización para el compensatorio
-	public function updateCompensatorio(int $idCompensatorio, string $fechainicio, string $fechafin, string $idTipoCompensatorio, string  $descripcionActividad, string $usuarioFinal){
+	public function updateCompensatorio(
+		int $idCompensatorio, 
+		string $fechainicio,
+		string $fechafin,
+		string $idTipoCompensatorio,
+		string $descripcionActividad,
+		string $evidencia, 
+		string $usuarioFinal){
 
 		$this->intIdCompensatorio = $idCompensatorio;
 		$this->strFechaInicio = $fechainicio;
 		$this->strFechaFin = $fechafin;
 		$this->intIdTipoCompensatorio = $idTipoCompensatorio;
 		$this->strDescripcionActividad = $descripcionActividad;
+		$this->strEvidencia = $evidencia;
 		$this->strTrabajoRequerido = $usuarioFinal;
 
 		//Validar duplicidad de datos
 		$sql = "SELECT * FROM BIG_COMPENSATORIOS
 			WHERE ID_FUNCIONARIO = '{$this->intIdFuncionario}' 
-			AND COM_FECHA_INICIO = TO_TIMESTAMP('{$this->strFechaInicio}', 'YYYY/MM/DD HH24:MI:SS') 
+			AND (COM_FECHA_INICIO = TO_TIMESTAMP('{$this->strFechaInicio}', 'YYYY/MM/DD HH24:MI:SS') 
 			AND COM_FECHA_FIN = TO_TIMESTAMP('{$this->strFechaFin}', 'YYYY/MM/DD HH24:MI:SS') 
 			AND ID_TIPO_COMPENSATORIO = '{$this->intIdTipoCompensatorio}' 
 			AND COM_DESCRIPCION_ACTIVIDAD = '{$this->strDescripcionActividad}'
-			AND COM_USUARIO_FINAL = '{$this->strTrabajoRequerido}'
+			AND COM_USUARIO_FINAL = '{$this->strTrabajoRequerido}')
+			--AND COM_EVIDENCIAS = '{$this->strEvidencia}'
 			AND ID_COMPENSATORIO != $this->intIdCompensatorio";
 			
 		$request = $this->select_all($sql);
@@ -291,6 +323,7 @@ class CompensatoriosModel extends Oracle{
 				COM_FECHA_FIN = TO_TIMESTAMP(:COM_FECHA_FIN, 'YYYY/MM/DD HH24:MI:SS'),
 				ID_TIPO_COMPENSATORIO = :ID_TIPO_COMPENSATORIO,
 				COM_DESCRIPCION_ACTIVIDAD = :COM_DESCRIPCION_ACTIVIDAD,
+				COM_EVIDENCIAS = :COM_EVIDENCIAS,
 				COM_USUARIO_FINAL = :COM_USUARIO_FINAL
 				WHERE ID_COMPENSATORIO = $this->intIdCompensatorio
 			";
@@ -301,6 +334,7 @@ class CompensatoriosModel extends Oracle{
 				'COM_FECHA_FIN'					=>$this->strFechaFin,
 				'ID_TIPO_COMPENSATORIO'			=>$this->intIdTipoCompensatorio,
 				'COM_DESCRIPCION_ACTIVIDAD'		=>$this->strDescripcionActividad,
+				'COM_EVIDENCIAS' 				=>$this->strEvidencia,
 				'COM_USUARIO_FINAL'				=>$this->strTrabajoRequerido
 			);
 			$requestUpdate = $this->update($sqlUpdate, $arrData);
@@ -398,7 +432,9 @@ class CompensatoriosModel extends Oracle{
 		$this->strEvidencia = $evidencia;
 		$this->intIdCompensatorio = $idCompensatorio;
 
-		$sql = "UPDATE BIG_COMPENSATORIOS SET COM_EVIDENCIAS = :COM_EVIDENCIAS WHERE ID_COMPENSATORIO = :ID_COMPENSATORIO";
+		$sql = "UPDATE BIG_COMPENSATORIOS 
+			SET COM_EVIDENCIAS = :COM_EVIDENCIAS 
+			WHERE ID_COMPENSATORIO = :ID_COMPENSATORIO";
 
 		$arrData = array(
 			'COM_EVIDENCIAS'		=>$this->strEvidencia,
@@ -407,7 +443,7 @@ class CompensatoriosModel extends Oracle{
 		
 		$request = $this->update($sql, $arrData);
 
-		return $request;		
+		return $request;
 	}
 }
  ?>

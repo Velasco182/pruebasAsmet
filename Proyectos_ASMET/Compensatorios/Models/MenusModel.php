@@ -13,7 +13,6 @@
 
 		public function selectMenus(){
 			$sql = "SELECT * FROM BIG_MENU  
-				
 				ORDER BY MEN_TITULO ASC";
 			$request = $this->select_all($sql);
 			return $request;
