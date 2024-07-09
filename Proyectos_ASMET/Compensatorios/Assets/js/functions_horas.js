@@ -105,7 +105,6 @@ document.addEventListener('DOMContentLoaded', function(){
                     objData = JSON.parse(request.responseText);
 
                     if(objData.status){
-                        document.querySelector("#txtDisponibles").innerHTML = objData.msg;
                         if(rowTable == ""){
                             tableHoras.api().ajax.reload();
                         }else{
@@ -115,7 +114,6 @@ document.addEventListener('DOMContentLoaded', function(){
                         formUsuario.reset();
                         swal("Usuarios", objData.msg ,"success");
                     }else{
-                        document.querySelector("#txtDisponibles").innerHTML = objData.msg;
                         swal("Error", objData.msg , "error");
                     }
                 }
@@ -215,19 +213,37 @@ function fntViewHora(idToma){
 //Función para llenar horas disponibles en el modal de solicitar horas
 function fntViewHorasDisponibles(){
     let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-    let ajaxUrl = base_url+'/Horas/getHorasDisponibles';
+    let ajaxUrl = base_url+'/Horas/obtenerHorasDisponibles';
     request.open("GET",ajaxUrl,true);
     request.send();
     request.onreadystatechange = function(){
         if(request.readyState == 4 && request.status == 200){
             let objData = JSON.parse(request.responseText);
-            
+
+            let response = objData.msg;
+            let arrResponse = response.split(',');
+
+            let disponibles = arrResponse[0];
+            let mensaje = arrResponse[1];
+
             if(objData.status){
-                document.querySelector("#txtDisponibles").value = objData.msg;
-                swal("Horas disponibles:", objData.msg, "warning");
+                document.querySelector("#txtDisponibles").innerHTML = `<h5>${disponibles}</h5>${mensaje}`;
+                //swal(disponibles, mensaje, "warning");
             }else{
-                document.querySelector("#txtDisponibles").value = objData.msg;
-                swal("Horas disponibles:", objData.msg, "error");
+                swal({
+                    title: disponibles,
+                    text: "",
+                    type: "error",
+                    confirmButtonText: "OK",
+                    closeOnConfirm: true,
+                }, function(isConfirm){
+            
+                    if(isConfirm){
+
+                        $('#modalFormHora').modal('hide');
+
+                    }
+                });
             }
         }
     }
@@ -311,10 +327,12 @@ function openModal(){
     document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
     document.querySelector('#btnActionForm').classList.replace("btn-info", "btn-primary");
     document.querySelector('#btnText').innerHTML ="Enviar solicitud";
-    document.querySelector('#titleModal').innerHTML = "Solicitu de horas";
+    document.querySelector('#titleModal').innerHTML = "Solicitud de horas";
     document.querySelector("#formHora").reset();
+
     fntRolesUsuario();
+    fntViewHorasDisponibles();
+    
     $('#modalFormHora').modal('show');
 /**/
-    fntViewHorasDisponibles();
 }

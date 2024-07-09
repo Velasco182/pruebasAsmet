@@ -103,6 +103,9 @@ document.addEventListener('DOMContentLoaded', function(){
                             tableTipoCompensatorios.api().ajax.reload();
                         }
 
+                        $('#txtEstadoTipoCompensatorio').selectpicker('refresh');
+                        $('#txtEstadoTipoCompensatorio').selectpicker('render');
+
                         $('#modalFormTipocompensatorios').modal("hide");
                         formTipoCompensatorio.reset();
                         swal("Tipo de Compensatorio", objData.msg ,"success");
@@ -171,6 +174,9 @@ function ftnEditTipoCompensatorio(element, idTipoCompensatorio){
                 document.querySelector("#txtDescripcionTipoCompensatorio").value = objData.data.TIP_COM_DESCRIPCION;
                 document.querySelector("#txtEstadoTipoCompensatorio").value = objData.data.TIP_COM_ESTADO;
 
+                $('#txtEstadoTipoCompensatorio').selectpicker('refresh');
+                $('#txtEstadoTipoCompensatorio').selectpicker('render');
+
                 $('#modalFormTipocompensatorios').modal('show');
             }else{
                 swal("Error", objData.msg, "error");
@@ -181,7 +187,6 @@ function ftnEditTipoCompensatorio(element, idTipoCompensatorio){
 }
 //Función para eliminar el tipo de compensatorio
 function ftnDeleteTipoCompensatorio(idTipoCompensatorio){
-    //console.log(`Eliminar js: ${idTipoCompensatorio}`);
     //Porque hacer una variable con el mismo nombre si se puede pasar directamente??
     //let idTipoCompensatorio
     swal({
@@ -230,6 +235,9 @@ function openModal(){
     //ajustarFormulario();
     // Reiniciar el valor seleccionado en el elemento <select>
     // document.querySelector("#ListaUsuarios").selectedIndex = -1;
+    $('#txtEstadoTipoCompensatorio').selectedIndex = -1;
+    $('#txtEstadoTipoCompensatorio').selectpicker('refresh');
+    $('#txtEstadoTipoCompensatorio').selectpicker('render');
 
     $('#modalFormTipocompensatorios').modal('show');
 }

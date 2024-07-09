@@ -20,15 +20,17 @@
                 </div>
 
                 <div class="row">
+                  
+                  <div class="form-group col-md-6">
+                    <div class="tile headerRegister" id="txtDisponibles" name="txtDisponibles">
+                    </div>
+                  </div>
+
                   <div class="form-group col-md-6">
                     <label class="control-label">Motivo de la solicitud</label>
                     <textarea class="form-control" id="txtMotivo" name="txtMotivo" type="text" placeholder="Escribe tu motivo" required="" autocomplete="off"></textarea>
                   </div>
 
-                  <div class="form-group col-md-6">
-                    <label class="control-label">Horas disponibles</label>
-                    <input class="form-control" id="txtDisponibles" name="txtDisponibles" type="text" autocomplete="off" disabled/>
-                  </div>
                 </div>  
 
                 <div class="row">

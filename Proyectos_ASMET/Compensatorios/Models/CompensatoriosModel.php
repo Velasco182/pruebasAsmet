@@ -381,7 +381,7 @@ class CompensatoriosModel extends Oracle{
 	//Modulo para envío del correo de aprobación o rechazo del compensatorio
 	public function correoAprobacionORechazo(int $idCompensatorio){
 
-		$this->intIdFuncionario = $idCompensatorio;
+		$this->intIdCompensatorio = $idCompensatorio;
 
 		$sql = "SELECT
 			FUN.ID_FUNCIONARIO,
@@ -389,22 +389,23 @@ class CompensatoriosModel extends Oracle{
 			FUN.FUN_APELLIDOS,
 			FUN.FUN_CORREO,
 			FUN.FUN_USUARIO,
-			COM.COM_FECHA_INICIO,  -- Reemplaza 'OtroCampo1' con el nombre del campo que deseas seleccionar
-			COM.COM_FECHA_FIN,  -- Reemplaza 'OtroCampo2' con el nombre del campo que deseas seleccionar
+			COM.COM_FECHA_INICIO AS COM_FECHA_INICIO,
+			COM.COM_FECHA_FIN AS COM_FECHA_FIN,
 			TC.TIP_COM_NOMBRE,
 			COM.COM_DESCRIPCION_ACTIVIDAD,
 			COM.COM_USUARIO_FINAL
 		FROM BIG_COMPENSATORIOS COM
 		INNER JOIN BIG_FUNCIONARIOS FUN ON FUN.ID_FUNCIONARIO = COM.ID_FUNCIONARIO
 		INNER JOIN BIG_TIPO_COMPENSATORIO TC ON COM.ID_TIPO_COMPENSATORIO = TC.ID_TIPO_COMPENSATORIO
-		WHERE COM.ID_COMPENSATORIO = $this->intIdFuncionario
+		WHERE COM.ID_COMPENSATORIO = ".$idCompensatorio." 
 		";
-
+		//'{$this->intIdCompensatorio}'
 		$arrData = array(
-			'ID_COMPENSATORIO' => $this->intIdFuncionario
+			'ID_COMPENSATORIO' => $this->intIdCompensatorio
 		);
 
 		$request = $this->select($sql, $arrData);
+
 
 		return $request;
 	}

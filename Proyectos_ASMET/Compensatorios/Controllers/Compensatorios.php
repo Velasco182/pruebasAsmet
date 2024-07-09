@@ -364,13 +364,14 @@ class Compensatorios extends Controllers{
 
 				$datos['COM_FECHA_INICIO']=formatearFechaYHora($datos['COM_FECHA_INICIO'],"d/m/Y - h:i A");
 				$datos['COM_FECHA_FIN']=formatearFechaYHora($datos['COM_FECHA_FIN'],"d/m/Y - h:i A");
-	
+
 				if ($idCompensatorio > 0 && $datos) {
 					$success = $this->model->estadoAprobado($idCompensatorio);
 	
 					if ($success) {
 						$correo = $datos['FUN_NOMBRES'];
 						$correo = $datos['FUN_CORREO'];
+
 						$remitente = 'estivenmendez550@gmail.com';
 						$destinatario = 'aprendiz.bi@asmetsalud.com';
 						$asunto = 'Aprobación de compensatorio';
@@ -407,13 +408,14 @@ class Compensatorios extends Controllers{
 			
 			$datos['COM_FECHA_INICIO']=formatearFechaYHora($datos['COM_FECHA_INICIO'],"d/m/Y - h:i A");
 			$datos['COM_FECHA_FIN']=formatearFechaYHora($datos['COM_FECHA_FIN'],"d/m/Y - h:i A");
+			
 			if ($idCompensatorio > 0 && $datos) {
 
 				$success = $this->model->estadoRechazado($idCompensatorio);
 
 				if ($success) {
 					$nombre = $datos['FUN_NOMBRES'];
-					$nombre = $datos['FUN_CORREO'];
+					$correo = $datos['FUN_CORREO'];
 					$remitente = 'estivenmendez550@gmail.com';
 					$destinatario = 'aprendiz.bi@asmetsalud.com';
 					$asunto = 'Rechazo de compensatorio';
@@ -422,7 +424,7 @@ class Compensatorios extends Controllers{
 					// Generar HTML con los datos del propietario del compensatorio
 					$html = generarHTML($tipoMensaje, $datos);
 
-					$enviarcorreo = enviarMail($remitente, $nombre, $asunto, 'rechazo', $datos);
+					$enviarcorreo = enviarMail($remitente, $correo, $asunto, 'rechazo', $datos);
 
 					if ($enviarcorreo){
 						$response = array('status' => true, 'msg' => 'El compensatorio fue rechazado y se envio un correo de confirmacion al solicitante');

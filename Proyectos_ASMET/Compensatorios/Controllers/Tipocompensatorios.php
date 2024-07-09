@@ -174,7 +174,7 @@ class Tipocompensatorios extends Controllers{
 				if($requestDelete == 'ok'){
 					$arrResponse = array('status' => true, 'msg' => 'Se ha eliminado exitosamente!.');
 				}else if($requestDelete == 'exist'){
-					$arrResponse = array('status' => false, 'msg' => 'El tipo de compensatorio está relacionado con un compensatorio, no es posible eliminarlo!');
+					$arrResponse = array('status' => false, 'msg' => 'El tipo de compensatorio está relacionado con un registro, no es posible eliminarlo!');
 				}else{
 					$arrResponse = array('status' => false, 'msg' => 'Error al eliminar.');
 				}

@@ -54,41 +54,28 @@ class Horas extends Controllers{
 				$strHoras = floatval($_POST['txtHoras']);
 
 				$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
-
-				//sumo las horas de los compensatorios
-				$arrHoras = $this->model->getHoras($idFuncionario);
+				$arrHoras = $this->model->getHorasDisponibles($idFuncionario);
+				
 				if($arrHoras){
-					$horasRegistradas = floatval($arrHoras["HORAS_TOTALES"]);
-					//Dep($horasRegistradas);
+					$horasDisponibles = floatval($arrHoras['HORAS_DISPONIBLES']);
+					$horasAprobadas = floatval($arrHoras['HORAS_APROBADAS']);
+					$horasAprobadasCompensatorios = floatval($arrHoras['HORAS_COMPENSATORIOS_APROBADAS']);
 				}else{
-					$horasRegistradas = 0;
+					$horasDisponibles = 0;
+					$horasAprobadas = 0;
+					$horasAprobadasCompensatorios = 0;
 				}
 
-				//sumo las horas consumidas
-				$arrGastadas = $this->model->getGastadas($idFuncionario);
-				if($arrGastadas){
-					$horasGastadas = floatval($arrGastadas["HORAS_GASTADAS"]);
-					//Dep($horasGastadas);
+				if($horasDisponibles<=0){
+					$msjResta="No tienes horas para tomar";
 				}else{
-					$horasGastadas= 0;
+					$msjResta="Solo tienes ".$horasDisponibles." hora/s para tomar";
 				}
 
-				//Cargar archivos en nuevo compensatorio
+				if(($horasAprobadasCompensatorios && $strHoras)>0
+					&& ($horasAprobadasCompensatorios-$horasAprobadas)>0
+					&& ($horasAprobadasCompensatorios-$horasAprobadas)>=$strHoras){
 
-				//resto las horas registradas menos las horas gastadas
-				$resta=($horasRegistradas-$horasGastadas);
-
-				//Dep($resta);
-
-				if($resta<=0){
-					$msjResta="Error, no tienes horas para tomar";
-				}/*elseif($resta==0){
-					$msjResta="Error, solo tienes ".$resta." hora para tomar";
-				}*/else{
-					$msjResta="Error, solo tienes ".$resta." hora/s para tomar";
-				}
-
-				if(($horasRegistradas && $strHoras>0) && ($horasRegistradas-$horasGastadas)>0 && ($horasRegistradas-$horasGastadas)>=$strHoras){
 					$request_user = "";
 					if($intIdHora == 0){
 						$option = 1;
@@ -100,9 +87,6 @@ class Horas extends Controllers{
 								$strFecha,
 								$strHoras
 							);
-
-							//$horasDisponibles = $this->model->obtenerHorasDisponibles($resta);
-							//Dep($horasDisponibles);
 						}
 					}
 
@@ -115,13 +99,14 @@ class Horas extends Controllers{
 					$asunto = 'Solicitud de horas';
 					
 					$datos = [
-						'Funcionario' => $arrHoras['NOMBREFUNCIONARIO'],
-							'MotivoSolicitud' => $_POST['txtMotivo'],
-							'FechaSolicitud' => $_POST['txtFecha'],
-							'HorasSolicitar' =>$_POST['txtHoras']
+							'Funcionario' 		=> 	$arrHoras['NOMBREFUNCIONARIO'],
+							'MotivoSolicitud' 	=>	$_POST['txtMotivo'],
+							'FechaSolicitud' 	=> 	$_POST['txtFecha'],
+							'HorasSolicitar' 	=>	$_POST['txtHoras']
 						];
 
 						try {
+
 							$enviarCorreo = enviarMail($remitente, $destinatario, $asunto, 'solicitud_horas', $datos);
 							
 							if ($enviarCorreo == "1"){
@@ -129,6 +114,7 @@ class Horas extends Controllers{
 							} else {
 								$arrResponse = array('status' => true, 'msg' => 'Su solicitud fue enviada, pero no se pudo enviar el correo de confirmación.');
 							}
+							
 						} catch (Exception $e) {
 							$arrResponse = array('status' => false, 'msg' => 'Error al enviar el correo: ' . $e->getMessage());
 						}
@@ -186,11 +172,11 @@ class Horas extends Controllers{
 					if($arrData[$i]['TOM_FECHA_SOLI']!="1"){
 						$btnView = '<button class="btn btn-info btn-sm btnViewFuncionario" onClick="fntViewHora('.$arrData[$i]['ID_TOMA'].')" title="Ver Horas"><i class="far fa-eye"></i></button>';
 					}else{
-						$btnView = '<button class="btn btn-secondary btn-sm" disabled ><i class="far fa-eye"></i></button>';
+						$btnView = '<button class="btn btn-info btn-sm"><i class="far fa-eye"></i></button>';
 					}
 					
 					if($comEstado == 3){
-						$btnView = '<button class="btn btn-secondary btn-sm" disabled ><i class="far fa-eye"></i></button>';
+						$btnView = '<button class="btn btn-info btn-sm btnViewFuncionario" onClick="fntViewHora('.$arrData[$i]['ID_TOMA'].')" title="Ver Horas"><i class="far fa-eye"></i></button>';
 					}
 				}
 
@@ -198,7 +184,7 @@ class Horas extends Controllers{
 					if ($comEstado == 1 || $comEstado == 3) {
 						$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="fntAprobar(' . $arrData[$i]['ID_TOMA'] . ')" title="Aprobar Horas"><i class="fas fa-check-circle"></i></button>';
 					} else {
-						$btnAprobar = '<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-check-circle"></i></button>';
+						$btnAprobar = '';//<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-check-circle"></i></button>
 					}
 				}
 				
@@ -206,7 +192,7 @@ class Horas extends Controllers{
 					if ($comEstado == 1 || $comEstado == 2){
 						$btnRechazar = '<button class="btn btn-danger btn-sm btnDelFuncionario" onClick="fntRechazar('.$arrData[$i]['ID_TOMA'].')" title="Rechazar Horas"><i class="fas fa-ban"></i></button>';
 					} else {
-						$btnRechazar = '<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-times-circle"></i></button>';
+						$btnRechazar = '';//<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-times-circle"></i></button>
 					}
 				}
 				$arrData[$i]['ACCIONES'] = '<div class="text-center">'.$btnView.' '.$btnAprobar.' '.$btnRechazar.'</div>';
@@ -230,34 +216,30 @@ class Horas extends Controllers{
 		}
 	}
 	//Modulo para obtener horas disponibles por id
-	public function getHorasDisponibles(){
+	public function obtenerHorasDisponibles(){
 
 		$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
 
-		//sumo las horas de los compensatorios
-		$arrHoras = $this->model->getHoras($idFuncionario);
+		//Respuesta de la DB
+		$arrHoras = $this->model->getHorasDisponibles($idFuncionario);
+
 		if($arrHoras){
-			$horasRegistradas = floatval($arrHoras["HORAS_TOTALES"]);
+			$horasDisponibles = floatval($arrHoras['HORAS_DISPONIBLES']);
+			$horasAprobadas = floatval($arrHoras['HORAS_APROBADAS']);
+			$horasAprobadasCompensatorios = floatval($arrHoras['HORAS_COMPENSATORIOS_APROBADAS']);
 		}else{
-			$horasRegistradas = 0;
+			$horasDisponibles = 0;
+			$horasAprobadas = 0;
+			$horasAprobadasCompensatorios = 0;
 		}
 
-		//sumo las horas consumidas
-		$arrGastadas = $this->model->getGastadas($idFuncionario);
-		if($arrGastadas){
-			$horasGastadas = floatval($arrGastadas["HORAS_GASTADAS"]);
-		}else{
-			$horasGastadas= 0;
-		}
-
-		//resto las horas registradas menos las horas gastadas
-		$resta=($horasRegistradas-$horasGastadas);
-
-		if($resta<=0){
-			$msjResta="Error, no tienes horas para tomar";
+		if($horasDisponibles<=0){
+			$msjResta="No tienes horas para tomar";
 			$arrResponse = array('status' => false, 'msg' => $msjResta);
 		}else{
-			$msjResta="Tienes ".$resta." hora/s para tomar";
+			$msjResta="Tienes ".$horasDisponibles." hora/s para tomar.,
+			".$horasAprobadas." hora/s aprobadas y
+			".$horasAprobadasCompensatorios." hora/s en compensatorios aprobadas.";
 			$arrResponse = array('status' => true, 'msg' => $msjResta);
 		}
 
@@ -275,7 +257,7 @@ class Horas extends Controllers{
 				}
 			}
 		}
-		return $htmlOptions;		
+		return $htmlOptions;
 	}
 	//Modulo para aprobar la solicitud de horas
 	public function aprobarSolicitud(){

@@ -81,7 +81,7 @@
                   <label for="txtActividad">Tipo de Compensatorio</label>
                     <div class="form-group">
                       <select class="form-control" data-live-search="true" id="txtActividad" name="txtActividad" required>
-                        <option value="">Selecciona una opcion</option>
+                        <option value="" selected>Selecciona una opcion</option>
                       </select>
                     </div>
                 </div>

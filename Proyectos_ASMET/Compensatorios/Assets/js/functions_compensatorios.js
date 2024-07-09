@@ -231,7 +231,7 @@ function ftnAprobarCompensatorio(idCompensatorio) { //Funcion para el boton de a
             
             let request = new XMLHttpRequest();
             let ajaxUrl = base_url + '/Compensatorios/aprobarCompensatorio';
-            let strData = "idCompensatorio=" + idCompensatorio;
+            let strData = "ID_COMPENSATORIO=" + idCompensatorio;
             
             request.open("POST", ajaxUrl, true);
             request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -267,7 +267,7 @@ function ftnRechazarCompensatorio(idCompensatorio) { // Funcion para boton boton
         if (isConfirm) {
             let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
             let ajaxUrl = base_url + '/Compensatorios/rechazarCompensatorio';
-            let strData = "idCompensatorio=" + idCompensatorio;
+            let strData = "ID_COMPENSATORIO=" + idCompensatorio;
             request.open("POST", ajaxUrl, true);
             request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             request.send(strData);
@@ -377,22 +377,6 @@ function ftnEditCompensatorio(element,idCompensatorio){
         }
        
     }
-}
-//función para abrir el modal
-function openModal(){
-    rowTable = "";
-    document.querySelector('#idCompensatorio').value ="";
-    document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
-    document.querySelector('#btnActionForm').classList.replace("btn-info", "btn-primary");
-    document.querySelector('#btnText').innerHTML ="Enviar solicitud";
-    document.querySelector('#titleModal').innerHTML = "Nuevo Compensatorio";
-    document.querySelector("#formCompensatorio").reset();
-    document.querySelector("#evidenciaName").innerHTML = '';
-    ajustarFormulario();
-    ftnTotalUsuarios();
-    ftnTotalTipoCompensatorio();
-
-    $('#modalFormCompensatorio').modal('show');
 }
 //Función para subir evidencias mostrando el modal
 function ftnEvidencias(idCompensatorio) {
@@ -508,7 +492,22 @@ function ajustarFormulario() {
     }
     request.send();
 }
+//función para abrir el modal
+function openModal(){
+    rowTable = "";
+    document.querySelector('#idCompensatorio').value ="";
+    document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
+    document.querySelector('#btnActionForm').classList.replace("btn-info", "btn-primary");
+    document.querySelector('#btnText').innerHTML ="Enviar solicitud";
+    document.querySelector('#titleModal').innerHTML = "Nuevo Compensatorio";
+    document.querySelector("#formCompensatorio").reset();
+    document.querySelector("#evidenciaName").innerHTML = '';
+    ajustarFormulario();
+    ftnTotalUsuarios();
+    ftnTotalTipoCompensatorio();
 
+    $('#modalFormCompensatorio').modal('show');
+}
 window.onload = function() {
     ajustarFormulario();
 };
