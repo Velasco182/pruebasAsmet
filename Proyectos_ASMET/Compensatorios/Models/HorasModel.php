@@ -26,10 +26,10 @@ class HorasModel extends Oracle{
 	//----Función de inserción----
 	//Modulo de inserción de horas
 	public function insertHora(
-		string $tomMotivo,
-		int $tomEstado,
-		string $tomFechaSolicitada,
-		string $tomHorasSolicitadas){
+	string $tomMotivo,
+	int $tomEstado,
+	string $tomFechaSolicitada,
+	string $tomHorasSolicitadas){
 
 		$this->strMotivo = $tomMotivo;
 		$this->intEstado = $tomEstado;
@@ -235,12 +235,78 @@ class HorasModel extends Oracle{
 			
 		return $request;
 	}
+	//Modulo para llenar el modal de editar horas
+	public function selectEditHora(int $idToma){
+		
+		$this->intIdToma = $idToma;
+
+		$sql = "SELECT
+			TOM.ID_FUNCIONARIO,
+			TOM.ID_TOMA,
+			TOM.TOM_ESTADO,
+			TOM.TOM_MOTIVO,
+			TO_CHAR(TOM.TOM_FECHA_SOLI, 'DD/MM/YYYY') AS TOM_FECHA_SOLI,
+			TOM.TOM_HORAS_SOLI
+		FROM BIG_TOMA TOM
+		WHERE TOM.ID_TOMA = $this->intIdToma";
+
+		$request = $this->select($sql);
+
+		return $request;
+	}
 
 	//-----Funciones para actualización de datos-----
+	//Modulo de actualización de horas
+	public function updateHora(
+	int $idToma,
+	string $motivo,
+	string $fecha,
+	float $horas){
+
+		$this->intIdToma = $idToma;
+		$this->strMotivo = $motivo;
+		$this->strFecha = $fecha;
+		$this->strHoras = $horas;
+
+		$sql = "SELECT * FROM BIG_TOMA
+			WHERE TOM_MOTIVO = '{$this->strMotivo}'
+			AND TOM_FECHA_SOLI = TO_TIMESTAMP('{$this->strFecha}', 'DD/MM/YYYY')
+			AND TOM_HORAS_SOLI = '{$this->strHoras}'
+			AND ID_TOMA != $this->intIdToma";
+
+		$request = $this->select_all($sql);
+
+		if(empty($request)){
+
+			$sqlUpdate = "UPDATE BIG_TOMA
+			SET TOM_MOTIVO = :TOM_MOTIVO,
+			TOM_FECHA_SOLI = TO_DATE(:TOM_FECHA_SOLI, 'DD/MM/YYYY'),
+			TOM_HORAS_SOLI = :TOM_HORAS_SOLI
+			WHERE ID_TOMA = :ID_TOMA
+			";
+
+			$arrData = array(
+				'ID_TOMA' 			=> $this->intIdToma,
+				'TOM_MOTIVO' 		=> $this->strMotivo,
+				'TOM_FECHA_SOLI' 	=> $this->strFecha,
+				'TOM_HORAS_SOLI' 	=> $this->strHoras
+			);
+			///Ir borrando linea por linea hasta verificar en qué linea se queda
+			//Posiblemente sea la de fecha
+
+			$requestUpdate = $this->update($sqlUpdate, $arrData);
+
+		}else{
+			$requestUpdate = "exist";
+		}
+
+		return $requestUpdate;
+
+	}
 	//Modulo para cambiar el estado de horas aprobado 
 	public function estadoAprobado(int $idToma){
 
-		$this->intIdFuncionario = $idToma;
+		$this->intIdToma = $idToma;
 		//$estadoAprobado = 2;
 
 		$plsql = "DECLARE
@@ -272,19 +338,19 @@ class HorasModel extends Oracle{
 						T.TOM_HORAS_SOLI
 					INTO v_horas_solicitadas
 					FROM BIG_TOMA T
-					WHERE T.ID_TOMA = '{$this->intIdFuncionario}';
+					WHERE T.ID_TOMA = '{$this->intIdToma}';
 				
 					-- Condicional para actualizar BIG_TOMA
 					IF v_horas_disponibles >= v_horas_solicitadas THEN
 						UPDATE BIG_TOMA
 						SET TOM_ESTADO = 2
-						WHERE ID_TOMA = '{$this->intIdFuncionario}';
+						WHERE ID_TOMA = '{$this->intIdToma}';
 					ELSE
 						UPDATE BIG_TOMA
 						SET TOM_ESTADO = 3
-						WHERE ID_TOMA = '{$this->intIdFuncionario}';
+						WHERE ID_TOMA = '{$this->intIdToma}';
 					END IF;
-				END";
+				END;";
 
 		/*$sql = "UPDATE BIG_TOMA
 			SET TOM_ESTADO = :TOM_ESTADO
@@ -292,23 +358,23 @@ class HorasModel extends Oracle{
 
 		$arrData = array(
 			//'TOM_ESTADO' 	=> $estadoAprobado,
-			'ID_TOMA' 		=> $this->intIdFuncionario
+			'ID_TOMA' 		=> $this->intIdToma
 		);
 
-		$request = $this->update($plsql);//, $arrData
+		$request = $this->select_all($plsql);//, $arrData antes update
 	
 		return $request;
 	}
 	//Modulo para cambiar el estado de horas rechazado
 	public function estadoRechazado(int $idToma){
-		$this->intIdFuncionario = $idToma;
+		$this->intIdToma = $idToma;
 		$estadoRechazado = 3;
 	
 		$sql = "UPDATE BIG_TOMA SET TOM_ESTADO = :TOM_ESTADO WHERE ID_TOMA = :ID_TOMA";
 	
 		$arrData = array(
 			'TOM_ESTADO' 	=> $estadoRechazado,
-			'ID_TOMA' 		=> $this->intIdFuncionario
+			'ID_TOMA' 		=> $this->intIdToma
 		);
 	
 		$request = $this->update($sql, $arrData);
@@ -341,5 +407,25 @@ class HorasModel extends Oracle{
 
 		return $request;
 	}
+
+	//----Funciones generales------
+	//Modulo de verificación de rol
+	public function esAdministrador($idRol) {
+
+		$this->intIdRol = $idRol;
+
+		$sql = "SELECT distinct ID_ROL
+			FROM BIG_FUNCIONARIOS
+			WHERE ID_ROL = ID_ROL";
+
+		$arrData = array(
+			':ID_ROL' 		=> $this->intIdRol
+		);
+
+		$request = $this->select($sql, $arrData);
+
+		return $request['ID_ROL'] == 1;
+	}
+
 }
  ?>

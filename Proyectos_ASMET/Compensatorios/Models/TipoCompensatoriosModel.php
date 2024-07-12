@@ -11,11 +11,12 @@ class TipoCompensatoriosModel extends Oracle{
 		parent::__construct();
 	}
 
+	//----Funciones de inserción de datos------
 	//Método para insertar datos
 	public function insertTipoCompensatorio(
-		string $nombreTipoCompensatorio,
-		string $descripcionTipoCompensatorio,
-		int $estadoTipoCompensatorio){
+	string $nombreTipoCompensatorio,
+	string $descripcionTipoCompensatorio,
+	int $estadoTipoCompensatorio){
 
 		$this->strNombreTipoCompensatorio = $nombreTipoCompensatorio;
 		$this->strDescripcionTipoCompensatorio = $descripcionTipoCompensatorio;
@@ -59,6 +60,8 @@ class TipoCompensatoriosModel extends Oracle{
 
 		return $return; 
 	}
+
+	//----Funciones de lectura de datos------
 	//Método para seleccionar tipo de compensatorio para editar
 	public function selectTipoCompensatorioEdit(int $idTipoCompensatorio){
 
@@ -100,12 +103,14 @@ class TipoCompensatoriosModel extends Oracle{
 	
 		return $request;
 	}
+
+	//----Funciones de actualización de datos------
 	//Método para actualizar el tipo de compensatorio
 	public function updateTipoCompensatorio(
-		int $idTipoCompensatorio,
-		string $nombreTipoCompensatorio, 
-		string $descripcionTipoCompensatorio,
-		int $estadoTipoCompensatorio){
+	int $idTipoCompensatorio,
+	string $nombreTipoCompensatorio, 
+	string $descripcionTipoCompensatorio,
+	int $estadoTipoCompensatorio){
 
 		$this->intIdTipoCompensatorio = $idTipoCompensatorio;
 		$this->strNombreTipoCompensatorio = $nombreTipoCompensatorio;
@@ -134,6 +139,7 @@ class TipoCompensatoriosModel extends Oracle{
 				'TIP_COM_DESCRIPCION'	=>$this->strDescripcionTipoCompensatorio,
 				'TIP_COM_ESTADO'		=>$this->intEstadoTipoCompensatorio
 			);
+
 			$requestUp = $this->update($sqlUp, $arrData);
 		}else{
 			$requestUp = "exist";
@@ -164,5 +170,7 @@ class TipoCompensatoriosModel extends Oracle{
 		}
 		return $request;
 	}
+
+	//----Funciones generales------
 }
  ?>

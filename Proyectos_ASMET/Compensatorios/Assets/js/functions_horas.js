@@ -248,6 +248,43 @@ function fntViewHorasDisponibles(){
         }
     }
 }
+//Función para actualizar el registro de horas
+function ftnEditToma(element, idToma){
+
+    fntViewHorasDisponibles();
+
+    rowTable = element.parentNode.parentNode.parentNode; 
+    document.querySelector('#titleModal').innerHTML ="Actualizar solicitud de horas";
+    document.querySelector('.modal-header').classList.replace("headerRegister", "headerUpdate");
+    document.querySelector('#btnActionForm').classList.replace("btn-primary", "btn-info");
+    document.querySelector('#btnText').innerHTML ="Actualizar";
+
+    let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+    let ajaxUrl = base_url+'/Horas/editHora/'+idToma;
+    request.open("GET",ajaxUrl,true);
+    request.send();
+    request.onreadystatechange = function(){
+
+        if(request.readyState == 4 && request.status == 200){
+
+            let objData = JSON.parse(request.responseText);
+
+            if(objData.status){
+
+                document.querySelector("#idHora").value = objData.data.ID_TOMA;
+                document.querySelector("#txtMotivo").value = objData.data.TOM_MOTIVO;
+                document.querySelector("#txtFecha").value = objData.data.TOM_FECHA_SOLI;
+                document.querySelector("#txtHoras").value = objData.data.TOM_HORAS_SOLI;
+
+                $('#modalFormHora').modal('show');
+
+            }else{
+                swal("Error", objData.msg, "error");
+            }
+        }
+    }
+
+}
 //Función para el boton de aprobacion
 function fntAprobar(idToma) { 
     swal({
@@ -319,10 +356,17 @@ function fntRechazar(idToma) {
         }
     });
 }
+//Función para verificar tipo de usuario y así mismo permisos
+function ajustarFormulario() { 
+    let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+    let ajaxUrl = base_url + '/Horas/verificarRol';
+    request.open("GET", ajaxUrl, true);
+    request.send();
+}
 //Función para abrir modal
 function openModal(){
+    
     rowTable = "";
-    // document.querySelector("#listRolid").innerHTML="";
     document.querySelector('#idHora').value ="";
     document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
     document.querySelector('#btnActionForm').classList.replace("btn-info", "btn-primary");
@@ -332,7 +376,12 @@ function openModal(){
 
     fntRolesUsuario();
     fntViewHorasDisponibles();
+    ajustarFormulario();
     
     $('#modalFormHora').modal('show');
 /**/
 }
+
+window.onload = function() {
+    ajustarFormulario();
+};

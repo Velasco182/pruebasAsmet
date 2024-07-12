@@ -1,3 +1,25 @@
+SELECT
+			TOM.ID_FUNCIONARIO,
+			TOM.ID_TOMA,
+			TOM.TOM_ESTADO,
+			TOM.TOM_MOTIVO,
+			TOM.TOM_FECHA_SOLI,
+			TOM.TOM_HORAS_SOLI
+		FROM BIG_TOMA TOM
+		WHERE TOM.ID_TOMA = 111;
+        
+UPDATE BIG_TOMA
+			SET TOM_MOTIVO = 'Yyppp8881',
+			TOM_FECHA_SOLI = TO_DATE('24/07/2024', 'DD/MM/YYYY'),
+			TOM_HORAS_SOLI = 0.5
+			WHERE ID_TOMA = 111;
+            
+UPDATE BIG_TOMA
+			SET TOM_MOTIVO = :TOM_MOTIVO,
+			TOM_FECHA_SOLI = TO_DATE(:TOM_FECHA_SOLI, 'DD/MM/YYYY'),
+			TOM_HORAS_SOLI = :TOM_HORAS_SOLI
+			WHERE ID_TOMA = 111;
+
 /*SELECT
     F.FUN_NOMBRES || ' ' ||F.FUN_APELLIDOS NOMBREFUNCIONARIO,
     ROUND(SUM(
@@ -66,17 +88,17 @@ BEGIN
         T.TOM_HORAS_SOLI
     INTO v_horas_solicitadas
     FROM BIG_TOMA T
-    WHERE T.ID_TOMA = 97;
+    WHERE T.ID_TOMA = 115;
 
     -- Condicional para actualizar BIG_TOMA
     IF v_horas_disponibles >= v_horas_solicitadas THEN
         UPDATE BIG_TOMA
         SET TOM_ESTADO = 2
-        WHERE ID_TOMA = 97;
+        WHERE ID_TOMA = 115;
     ELSE
         UPDATE BIG_TOMA
         SET TOM_ESTADO = 3
-        WHERE ID_TOMA = 97;
+        WHERE ID_TOMA = 115;
     END IF;
 END;
 

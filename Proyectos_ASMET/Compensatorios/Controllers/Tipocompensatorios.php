@@ -32,6 +32,7 @@ class Tipocompensatorios extends Controllers{
 		$this->views->getView($this,$_SESSION['permisosMod']['MOD_ACCESO'],$data);
 	}
 
+	//------Función de Inserción de datos-------
 	//Módulo para crear tipo de compensatorio llamando al modelo insertTipoCompensatorio
 	public function setTipoCompensatorio(){
 		
@@ -89,6 +90,8 @@ class Tipocompensatorios extends Controllers{
 		}
 		echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
 	}
+
+	//-----Funciones de recuperación de datos----
 	//Módulo para obtener tipos de compensatorios llamando al modelo selectTipoCompensatorios
 	public function getTipoCompensatorios(){
 		if($_SESSION['permisosMod']['PER_R']){
@@ -145,6 +148,8 @@ class Tipocompensatorios extends Controllers{
 			echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE); // Devuelve la respuesta JSON
 		}
 	}
+
+	//-----Funciones de actualización-----
 	//Módulo para editar el tipo de compensatorio llamando al modelo selectTipoCompensatorioEdit
 	public function editTipoCompensatorio($idTipoCompensatorio) {
 
@@ -183,6 +188,8 @@ class Tipocompensatorios extends Controllers{
 			}
 		}
 	}
+
+	//-----Funciones generales-----
 }
  ?>
 

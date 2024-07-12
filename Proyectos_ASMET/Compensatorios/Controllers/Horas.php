@@ -47,7 +47,7 @@ class Horas extends Controllers{
 			}else{
 
 				$intIdHora = intval($_POST['idHora']);
-				$intIdHora = intval($_POST['idHora']);
+				//$intIdHora = intval($_POST['idHora']);
 				$strMotivo = mb_convert_case(strClean($_POST['txtMotivo']),MB_CASE_TITLE, "UTF-8");
 				$intEstado = intval($_POST['txtEstado']);
 				$strFecha = $_POST['txtFecha'];
@@ -55,6 +55,8 @@ class Horas extends Controllers{
 
 				$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
 				$arrHoras = $this->model->getHorasDisponibles($idFuncionario);
+
+				$option = 0;
 				
 				if($arrHoras){
 					$horasDisponibles = floatval($arrHoras['HORAS_DISPONIBLES']);
@@ -78,7 +80,6 @@ class Horas extends Controllers{
 
 					$request_user = "";
 					if($intIdHora == 0){
-						$option = 1;
 						
 						if($_SESSION['permisosMod']['PER_W']){
 							$request_user = $this->model->insertHora(
@@ -87,12 +88,30 @@ class Horas extends Controllers{
 								$strFecha,
 								$strHoras
 							);
+
+							$option = 1; //Inserción
+
 						}
+
+					}else{
+
+						//if($_SESSION['permisosMod']['PER_U']){
+
+							$request_user = $this->model->updateHora(
+								$intIdHora,
+								$strMotivo,
+								$strFecha,
+								$strHoras
+							);
+
+							$option = 2; //Actualización
+
+						//}
 					}
 
 				$arrResponse = array('status' => false, 'msg' => 'Registro de horas existente!');
 				
-				if($request_user > 0){
+				if($option == 1){
 					
 					$remitente = 'estivenmendez550@gmail.com';
 					$destinatario = 'aprendiz.bi@asmetsalud.com';
@@ -121,11 +140,13 @@ class Horas extends Controllers{
 						
 					} else {
 
-						$request_user === "exist" ? $arrResponse : $arrResponse = array('status' => false, 'msg' =>'No es posible almacenar los datos.');
+						$request_user === "exist" ? $arrResponse : $arrResponse = array('status' => true, 'msg' =>'Registro de horas actualizado correctamente!');
 					
 					}
 				}else{
+
 					$arrResponse = array('status' => false, 'msg' => $msjResta);
+					
 				}
 			}
 		}
@@ -148,6 +169,7 @@ class Horas extends Controllers{
 				$btnView = '';
 				$btnAprobar = '';
 				$btnRechazar = '';
+				$btnEdit = '';
 
 				$newStatus="";
 					
@@ -169,7 +191,7 @@ class Horas extends Controllers{
 				$arrData[$i]['TOM_ESTADO'] = '<span class="badge ' . $statusClass . '">' . $newStatus . '</span>';
 
 				if($_SESSION['permisosMod']['PER_R']){
-					if($arrData[$i]['TOM_FECHA_SOLI']!="1"){
+					if($arrData[$i]['TOM_FECHA_SOLI'] !="1"){
 						$btnView = '<button class="btn btn-info btn-sm btnViewFuncionario" onClick="fntViewHora('.$arrData[$i]['ID_TOMA'].')" title="Ver Horas"><i class="far fa-eye"></i></button>';
 					}else{
 						$btnView = '<button class="btn btn-info btn-sm"><i class="far fa-eye"></i></button>';
@@ -179,12 +201,22 @@ class Horas extends Controllers{
 						$btnView = '<button class="btn btn-info btn-sm btnViewFuncionario" onClick="fntViewHora('.$arrData[$i]['ID_TOMA'].')" title="Ver Horas"><i class="far fa-eye"></i></button>';
 					}
 				}
-
-				if ($_SESSION['permisosMod']['PER_U']) { // Botón de aprobaciones
+					// Botón de aprobaciones
+				if ($_SESSION['permisosMod']['PER_U']) {
 					if ($comEstado == 1 || $comEstado == 3) {
 						$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="fntAprobar(' . $arrData[$i]['ID_TOMA'] . ')" title="Aprobar Horas"><i class="fas fa-check-circle"></i></button>';
 					} else {
 						$btnAprobar = '';//<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-check-circle"></i></button>
+					}
+				}
+				
+				//$_SESSION['permisosMod']['PER_U'] && 
+				if($_SESSION['permisosMod']['ID_ROL'] !== '1') {
+					if($arrData[$i]['TOM_FECHA_SOLI'] != "1" && ($comEstado == 1)) {
+						//ftnEditToma(this,'.$arrData[$i]['ID_TOMA'].')
+						$btnEdit = '<button class="btn btn-primary btn-sm btnEditFuncionario" onClick="ftnEditToma(this,'.$arrData[$i]['ID_TOMA'].')" title="Editar Toma de Horas"><i class="fas fa-pencil-alt"></i></button>';
+					} else {
+						$btnEdit = '';
 					}
 				}
 				
@@ -195,7 +227,7 @@ class Horas extends Controllers{
 						$btnRechazar = '';//<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-times-circle"></i></button>
 					}
 				}
-				$arrData[$i]['ACCIONES'] = '<div class="text-center">'.$btnView.' '.$btnAprobar.' '.$btnRechazar.'</div>';
+				$arrData[$i]['ACCIONES'] = '<div class="text-center">'.$btnView.' '.$btnEdit.' '.$btnAprobar.' '.$btnRechazar.'</div>';
 			}
 			echo json_encode($arrData,JSON_UNESCAPED_UNICODE);
 		}
@@ -245,7 +277,26 @@ class Horas extends Controllers{
 
 		echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
 	}
-	//-----Funciones generales-----
+	
+	//-----Funciones de actualización-----
+	//Modulo para actualizar la solicitud de horas
+	public function editHora($idToma){
+		if($_SESSION['permisosMod']['PER_R']){
+			$idToma = intval($idToma);
+
+			if($idToma>0){
+				$arrData = $this->model->selectEditHora($idToma);
+
+				if (empty($arrData)) {
+					$arrResponse = array('status' => false, 'msg' => 'Datos no encontrados.');
+				} else {
+					$arrResponse = array('status' => true, 'data' => $arrData);
+				}
+				echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
+			}
+		}
+	}
+
 	//Modulo para verificar rol
 	public function getSelectRoles(){
 		$htmlOptions = "";
@@ -253,7 +304,7 @@ class Horas extends Controllers{
 		if(count($arrData) > 0 ){
 			for ($i=0; $i < count($arrData); $i++) { 
 				if($arrData[$i]['ROL_ESTADO'] == 1 ){
-				$htmlOptions .= '<option value="'.$arrData[$i]['ID_ROL'].'">'.$arrData[$i]['ROL_NOMBRE'].'</option>';
+					$htmlOptions .= '<option value="'.$arrData[$i]['ID_ROL'].'">'.$arrData[$i]['ROL_NOMBRE'].'</option>';
 				}
 			}
 		}
@@ -278,7 +329,7 @@ class Horas extends Controllers{
 					if ($arrAprobado) {
 						$nombres = $datos['FUN_NOMBRES'];
 						$correo = $datos['FUN_CORREO'];
-
+						
 						$remitente = 'estivenmendez550@gmail.com';
 						$destinatario = 'aprendiz.bi@asmetsalud.com';
 						$asunto = 'Aprobacion de horas';
@@ -312,24 +363,24 @@ class Horas extends Controllers{
 			$datos = $this->model->correoAprobacionORechazo($idToma);
 
 			$datos['TOM_FECHA_SOLI']=formatearFechaUsuComparar($datos['TOM_FECHA_SOLI'],"d/m/Y");
-
+			
 			if ($idToma > 0){
 				$success = $this->model->estadoRechazado($idToma);
 
 				if ($success){
 					$nombres = $datos['FUN_NOMBRES'];
 					$correo = $datos['FUN_CORREO'];
-
+					
 					$remitente = 'estivenmendez550@gmail.com';
 					$destinatario = 'aprendiz.bi@asmetsalud.com';
 					$asunto = 'Solicitud rechazada';
-
+					
 					$tipoMensaje = 'Rechazo de horas';
-
+					
 					$html = generarHTML($tipoMensaje, $datos);
 
 					$enviarMail = enviarMail($remitente, $destinatario, $asunto, 'Rechazo de horas', $datos);
-
+					
 					if ($enviarMail){
 						$response = array('status' => true, 'msg' => 'La solicitud fue rechazada y se envio un correo de confirmacion al solicitante');
 					} else {
@@ -342,6 +393,22 @@ class Horas extends Controllers{
 			exit;
 			}
 		}
+	}
+
+	//-----Funciones generales-----
+	//Módulo paraa verificación de rol llamando al modelo esAdministrador
+	public function verificarRol() {
+		
+		// Verificar si el usuario tiene el rol de administrador
+		$idRol = $_SESSION['userData']['ID_ROL'];
+		$esAdministrador = $this->model->esAdministrador($idRol);
+		
+		$response = array(
+			'esAdministrador' => $idRol
+		);
+		
+		header('Content-Type: application/json');
+		echo json_encode($response);
 	}
 }
 ?>

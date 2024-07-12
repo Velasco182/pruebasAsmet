@@ -11,7 +11,6 @@
       <div class="modal-body">
             <form enctype="multipart/form-data" id="formCompensatorio" name="formCompensatorio" class="form-horizontal">
               <input type="hidden" id="idCompensatorio" name="idCompensatorio" value="">
-              <!-- <input type="" id="idFuncionario" name="idFuncionario" value=""> -->
               <p class="text-primary">Todos los campos son obligatorios.</p>
 
               <div class="form-row" style="display:none;">
@@ -98,7 +97,7 @@
                 </div>
 
                 <div class="form-group col-md-6">
-                  <label for="archivoEvidencia">Adjuntar evidencia</label>
+                  <label id="labelEvidencia" for="archivoEvidencia">Adjuntar evidencia</label>
                   <div class="tile p-3">
                       <input type="file" class="form-control-file" id="archivoEvidencia" name="archivoEvidencia" multiple required>
                       <br>

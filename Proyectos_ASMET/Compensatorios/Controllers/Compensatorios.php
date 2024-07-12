@@ -117,12 +117,6 @@ class Compensatorios extends Controllers{
 									);
 									$option = 1; // Inserción
 
-									// Llama al método en tu modelo para guardar la evidencia en la base de datos
-									if ($request_user) {
-										$arrResponse = array('status' => true, 'msg' => 'Subida con éxito');
-									} else {
-										$arrResponse = array('status' => false, 'msg' => 'Error al subir el archivo');
-									}
 								}
 							} else {
 								if ($_SESSION['permisosMod']['PER_U']) {
@@ -137,6 +131,7 @@ class Compensatorios extends Controllers{
 										$strTrabajoRequerido
 									);
 									$option = 2; // Actualización
+
 								}
 							}
 
@@ -147,6 +142,16 @@ class Compensatorios extends Controllers{
 					} else {
 						// Error: no se seleccionó ningún archivo o hubo un error al cargarlo
 						$arrResponse = array('status' => false, 'msg' => 'No se seleccionó ningún archivo');
+
+						$request_user = $this->model->updateCompensatorioSinEvidencia(
+							$intIdCompensatorio,
+							$strFechaInicio,
+							$strFechaFin,
+							$strActividad, //ID_TIPO_COMPENSATORIO
+							$strDescripcionActividad,
+							$strTrabajoRequerido
+						);
+						$option = 2; // Actualización
 					}
 	
 					$arrResponse = array('status' => false, 'msg' => 'El compensatorio ya existe!');

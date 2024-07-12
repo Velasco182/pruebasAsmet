@@ -241,3 +241,4 @@ function openModal(){
 
     $('#modalFormTipocompensatorios').modal('show');
 }
+
