@@ -99,10 +99,6 @@ document.addEventListener('DOMContentLoaded', function(){
                     } 
                 }
 
-                //console.log(`Antes del if false ${validacionEvidencia}`);
-                
-                //if(validacionEvidencia == false){
-
                 if(document.getElementById("archivoEvidencia").files[0]){
 
                     let nombreArchivo = document.getElementById("archivoEvidencia").files[0].name;
@@ -129,7 +125,6 @@ document.addEventListener('DOMContentLoaded', function(){
                                 
                                 }else{
                                     
-                                    //console.log(objData.status);
                                     if(rowTable == ""){
                                         tableCompensatorios.api().ajax.reload();
                                     }else{
@@ -180,7 +175,6 @@ document.addEventListener('DOMContentLoaded', function(){
                                 
                                 }else{
                                     
-                                    //console.log(objData.status);
                                     if(rowTable == ""){
                                         tableCompensatorios.api().ajax.reload();
                                     }else{
@@ -202,51 +196,6 @@ document.addEventListener('DOMContentLoaded', function(){
                         }
                     } 
                 }
-
-                /*}else{
-
-                    divLoading.style.display = "flex";
-                    let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-                    let ajaxUrl = base_url+'/Compensatorios/setCompensatorio'; 
-                    let formData = new FormData(formUsuario);
-                    
-                    request.open("POST",ajaxUrl,true);
-                    request.send(formData);
-                    
-                    request.onreadystatechange = function(){
-                        if(request.readyState == 4 && request.status == 200){
-                            let objData = JSON.parse(request.responseText);
-
-                            console.log(objData);
-        
-                            if(objData.status === false){
-        
-                                swal("Error", objData.msg , "error");
-                            
-                            }else{
-                                
-                                //console.log(objData.status);
-                                if(rowTable == ""){
-                                    tableCompensatorios.api().ajax.reload();
-                                }else{
-                                    tableCompensatorios.api().ajax.reload();
-                                }
-        
-                                $('#modalFormCompensatorio').modal("hide");
-
-                                $('#txtActividad').selectpicker('refresh');
-                                $('#txtActividad').selectpicker('render');
-                                //console.log(modalHide);
-        
-                                formUsuario.reset();
-                                swal("Usuario", objData.msg ,"success");
-                                
-                            }
-                        }
-                        divLoading.style.display = "none";
-                        return false;
-                    }
-                }*/
 
             }
 

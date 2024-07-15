@@ -39,7 +39,7 @@ class Horas extends Controllers{
 
 		if($_POST){
 
-			if($_POST['txtMotivo']=='' || $_POST['txtEstado']=='' 
+			if($_POST['txtMotivo']=='' || $_POST['txtEstado']==''
 			|| $_POST['txtFecha']=='' || $_POST['txtHoras']==''){
 				
 				$arrResponse = array("status" => false, "msg" => 'Ingrese todos los datos.');
@@ -59,9 +59,9 @@ class Horas extends Controllers{
 				$option = 0;
 				
 				if($arrHoras){
-					$horasDisponibles = floatval($arrHoras['HORAS_DISPONIBLES']);
-					$horasAprobadas = floatval($arrHoras['HORAS_APROBADAS']);
-					$horasAprobadasCompensatorios = floatval($arrHoras['HORAS_COMPENSATORIOS_APROBADAS']);
+					$horasDisponibles = floatval($arrHoras[0]['HORAS_DISPONIBLES']);
+					$horasAprobadas = floatval($arrHoras[0]['HORAS_APROBADAS']);
+					$horasAprobadasCompensatorios = floatval($arrHoras[0]['HORAS_COMPENSATORIOS_APROBADAS']);
 				}else{
 					$horasDisponibles = 0;
 					$horasAprobadas = 0;
@@ -118,7 +118,7 @@ class Horas extends Controllers{
 					$asunto = 'Solicitud de horas';
 					
 					$datos = [
-							'Funcionario' 		=> 	$arrHoras['NOMBREFUNCIONARIO'],
+							'Funcionario' 		=> 	$arrHoras[0]['NOMBREFUNCIONARIO'],
 							'MotivoSolicitud' 	=>	$_POST['txtMotivo'],
 							'FechaSolicitud' 	=> 	$_POST['txtFecha'],
 							'HorasSolicitar' 	=>	$_POST['txtHoras']
@@ -165,6 +165,7 @@ class Horas extends Controllers{
 			for ($i=0; $i < count($arrData); $i++) {
 				
 				$arrData[$i]['TOM_FECHA_SOLI']=formatearFechaUsuComparar($arrData[$i]['TOM_FECHA_SOLI'],"d/m/Y");
+				$arrData[$i]['TOM_HORAS_SOLI']=floatval($arrData[$i]['TOM_HORAS_SOLI']);
 
 				$btnView = '';
 				$btnAprobar = '';
@@ -203,8 +204,8 @@ class Horas extends Controllers{
 				}
 					// Botón de aprobaciones
 				if ($_SESSION['permisosMod']['PER_U']) {
-					if ($comEstado == 1 || $comEstado == 3) {
-						$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="fntAprobar(' . $arrData[$i]['ID_TOMA'] . ')" title="Aprobar Horas"><i class="fas fa-check-circle"></i></button>';
+					if ($comEstado == 1) {//|| $comEstado == 3
+						$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="fntAprobar('. $arrData[$i]['ID_TOMA'] .')" title="Aprobar Horas"><i class="fas fa-check-circle"></i></button>';
 					} else {
 						$btnAprobar = '';//<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-check-circle"></i></button>
 					}
@@ -221,7 +222,7 @@ class Horas extends Controllers{
 				}
 				
 				if ($_SESSION['permisosMod']['PER_D']) {
-					if ($comEstado == 1 || $comEstado == 2){
+					if ($comEstado == 1){//|| $comEstado == 2
 						$btnRechazar = '<button class="btn btn-danger btn-sm btnDelFuncionario" onClick="fntRechazar('.$arrData[$i]['ID_TOMA'].')" title="Rechazar Horas"><i class="fas fa-ban"></i></button>';
 					} else {
 						$btnRechazar = '';//<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-times-circle"></i></button>
@@ -256,9 +257,9 @@ class Horas extends Controllers{
 		$arrHoras = $this->model->getHorasDisponibles($idFuncionario);
 
 		if($arrHoras){
-			$horasDisponibles = floatval($arrHoras['HORAS_DISPONIBLES']);
-			$horasAprobadas = floatval($arrHoras['HORAS_APROBADAS']);
-			$horasAprobadasCompensatorios = floatval($arrHoras['HORAS_COMPENSATORIOS_APROBADAS']);
+			$horasDisponibles = floatval($arrHoras[0]['HORAS_DISPONIBLES']);
+			$horasAprobadas = floatval($arrHoras[0]['HORAS_APROBADAS']);
+			$horasAprobadasCompensatorios = floatval($arrHoras[0]['HORAS_COMPENSATORIOS_APROBADAS']);
 		}else{
 			$horasDisponibles = 0;
 			$horasAprobadas = 0;
@@ -322,35 +323,59 @@ class Horas extends Controllers{
 				$datos = $this->model->correoAprobacionORechazo($idToma);
 				
 				$datos['TOM_FECHA_SOLI']=formatearFechaUsuComparar($datos['TOM_FECHA_SOLI'],"d/m/Y");
+
+				$horasSolicitadas = floatval($datos['TOM_HORAS_SOLI']);
 				
-				if ($idToma > 0 && $datos){
-					$arrAprobado = $this->model->estadoAprobado($idToma);
+				$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
+				$arrHoras = $this->model->getHorasDisponibles($idFuncionario);
 
-					if ($arrAprobado) {
-						$nombres = $datos['FUN_NOMBRES'];
-						$correo = $datos['FUN_CORREO'];
-						
-						$remitente = 'estivenmendez550@gmail.com';
-						$destinatario = 'aprendiz.bi@asmetsalud.com';
-						$asunto = 'Aprobacion de horas';
-
-						$tipoMensaje = 'Aprobacion de horas';
-
-						$html = generarHTML($tipoMensaje, $datos);
-
-						$enviarMail = enviarMail($remitente, $destinatario, $asunto, 'Aprobacion de horas', $datos);
-
-						if ($enviarMail){
-							$response = array('status' => true, 'msg' => 'Solicitud aprobada exitosamente y se envio un correo de confirmacion al solicitante');
-						} else {
-							$response = array('status' => false, 'msg' => 'Solicitud aprobada exitosamente, pero no se pudo enviar el correo de confirmacion');
-						}
-					} else {
-						$response = array('status' => false, 'msg' => 'Error al aprobar la solicitud');
-					}
-					echo json_encode($response, JSON_UNESCAPED_UNICODE);
-					exit;
+				if($arrHoras){
+					$horasDisponibles = floatval($arrHoras[0]['HORAS_DISPONIBLES']);
+					$horasAprobadas = floatval($arrHoras[0]['HORAS_APROBADAS']);
+					$horasAprobadasCompensatorios = floatval($arrHoras[0]['HORAS_COMPENSATORIOS_APROBADAS']);
+				}else{
+					$horasDisponibles = 0;
+					$horasAprobadas = 0;
+					$horasAprobadasCompensatorios = 0;
 				}
+				
+				if($horasDisponibles>=$horasSolicitadas){
+					
+					if ($idToma > 0 && $datos){
+	
+						$arrAprobado = $this->model->estadoAprobado($idToma);
+	
+						if ($arrAprobado) {
+							$nombres = $datos['FUN_NOMBRES'];
+							$correo = $datos['FUN_CORREO'];
+							
+							$remitente = 'estivenmendez550@gmail.com';
+							$destinatario = 'aprendiz.bi@asmetsalud.com';
+							$asunto = 'Aprobacion de horas';
+	
+							$tipoMensaje = 'Aprobacion de horas';
+	
+							$html = generarHTML($tipoMensaje, $datos);
+	
+							$enviarMail = enviarMail($remitente, $destinatario, $asunto, 'Aprobacion de horas', $datos);
+	
+							if ($enviarMail){
+								$response = array('status' => true, 'msg' => 'Se envió un correo de confirmación al solicitante.');
+							} else {
+								$response = array('status' => false, 'msg' => 'No se pudo enviar el correo de confirmación.');
+							}
+						} else {
+							$response = array('status' => false, 'msg' => 'Al aprobar la solicitud');
+						}
+					}
+					
+				}else{
+					$response = array('status' => false, 'msg' => 'Tiempo insuficiente.
+					Disponibles: '.$horasDisponibles.' hora/s.');
+				}
+				
+				echo json_encode($response, JSON_UNESCAPED_UNICODE);
+				exit;
 			}
 		}
 	}
@@ -382,12 +407,12 @@ class Horas extends Controllers{
 					$enviarMail = enviarMail($remitente, $destinatario, $asunto, 'Rechazo de horas', $datos);
 					
 					if ($enviarMail){
-						$response = array('status' => true, 'msg' => 'La solicitud fue rechazada y se envio un correo de confirmacion al solicitante');
+						$response = array('status' => true, 'msg' => 'Se envió un correo de confirmación al solicitante.');
 					} else {
-						$response = array('status' => false, 'msg' => 'Solicitud rechazada, pero no se pudo enviar el correo de confirmacion');
+						$response = array('status' => false, 'msg' => 'No se pudo enviar el correo de confirmación.');
 					}
 				} else {
-					$response = array('status' => false, 'msg' => 'Error al rechazar la solicitud');
+					$response = array('status' => false, 'msg' => 'Al rechazar la solicitud.');
 				}
 				echo json_encode($response, JSON_UNESCAPED_UNICODE);
 			exit;

@@ -1,6 +1,7 @@
 let tableHoras;
 let rowTable = ""; 
 let divLoading = document.querySelector("#divLoading");
+
 document.addEventListener('DOMContentLoaded', function(){
     //Llamado a la función de configuración del datetimepicker
     fntDatePickerConfiguration();
@@ -112,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         }
                         $('#modalFormHora').modal("hide");
                         formUsuario.reset();
-                        swal("Usuarios", objData.msg ,"success");
+                        swal("Usuario", objData.msg ,"success");
                     }else{
                         swal("Error", objData.msg , "error");
                     }
@@ -200,8 +201,8 @@ function fntViewHora(idToma){
                 //document.querySelector("#celHorasTotales").innerHTML = objData.data.DIFERENCIA_HORAS;
                 document.querySelector("#celCorreo").innerHTML = objData.data.FUN_CORREO;
                 document.querySelector("#celMotivo").innerHTML = objData.data.TOM_MOTIVO;
-                document.querySelector("#celFecha").innerHTML = objData.data.TOM_FECHA_SOLI;
-                document.querySelector("#celHoras").innerHTML = objData.data.TOM_HORAS_SOLI;
+                document.querySelector("#celFecha").innerHTML =  objData.data.TOM_FECHA_SOLI;
+                document.querySelector("#celHoras").innerHTML = parseFloat(objData.data.TOM_HORAS_SOLI);
                 document.querySelector("#celEstado").innerHTML = estado;
                 $('#modalViewHora').modal('show');
             }else{

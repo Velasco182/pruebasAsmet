@@ -91,6 +91,42 @@ class HorasModel extends Oracle{
 
 		$this -> intIdFuncionario = $idFuncionario;
 
+		$codigoRol = $_SESSION['userData']['ROL_CODIGO'];
+		$this -> intCodigoRol = $codigoRol;
+
+		if ($this -> intCodigoRol == '1A') {
+			
+			$sql = "SELECT
+						FUN_NOMBRES || ' ' ||FUN_APELLIDOS AS NOMBREFUNCIONARIO,
+						ROUND(SUM(TOM_HORAS_SOLI_SUBQUERY),2) AS HORAS_APROBADAS,
+						ROUND(AVG(COMP_HORAS_SUBQUERY),2) AS HORAS_COMPENSATORIOS_APROBADAS,
+						AVG(COMP_HORAS_SUBQUERY) - SUM(TOM_HORAS_SOLI_SUBQUERY) AS HORAS_DISPONIBLES
+					FROM(
+							SELECT
+								F.FUN_NOMBRES,
+								F.FUN_APELLIDOS,
+								C.ID_FUNCIONARIO,
+								T.TOM_HORAS_SOLI,
+								C.COM_ESTADO,
+								T.TOM_ESTADO,
+								T.TOM_MOTIVO,
+								T.TOM_FECHA_SOLI,
+								T.TOM_HORAS_SOLI AS TOM_HORAS_SOLI_SUBQUERY,
+								SUM(EXTRACT(HOUR FROM (C.COM_FECHA_FIN - C.COM_FECHA_INICIO)) +
+									EXTRACT(MINUTE FROM (C.COM_FECHA_FIN - C.COM_FECHA_INICIO)) / 60) AS COMP_HORAS_SUBQUERY
+							FROM BIG_COMPENSATORIOS C
+							INNER JOIN BIG_TOMA T ON C.ID_FUNCIONARIO = T.ID_FUNCIONARIO
+							INNER JOIN BIG_FUNCIONARIOS F ON C.ID_FUNCIONARIO = F.ID_FUNCIONARIO
+							WHERE T.TOM_ESTADO = 2 AND C.COM_ESTADO = 2
+							GROUP BY C.ID_FUNCIONARIO, T.TOM_HORAS_SOLI, C.COM_ESTADO, T.TOM_ESTADO, T.TOM_MOTIVO,
+							T.TOM_FECHA_SOLI, F.FUN_NOMBRES, F.FUN_APELLIDOS
+						)GROUP BY FUN_NOMBRES || ' ' ||FUN_APELLIDOS";//T.ID_FUNCIONARIO = '{$this->intIdFuncionario}' AND
+	
+			$request = $this->select_all($sql);
+			return $request;
+
+		}
+
 		$sql = "SELECT
 					FUN_NOMBRES || ' ' ||FUN_APELLIDOS AS NOMBREFUNCIONARIO,
 					ROUND(SUM(TOM_HORAS_SOLI_SUBQUERY),2) AS HORAS_APROBADAS,
@@ -116,15 +152,13 @@ class HorasModel extends Oracle{
 						GROUP BY C.ID_FUNCIONARIO, T.TOM_HORAS_SOLI, C.COM_ESTADO, T.TOM_ESTADO, T.TOM_MOTIVO, 
 						T.TOM_FECHA_SOLI, F.FUN_NOMBRES, F.FUN_APELLIDOS
 					)GROUP BY FUN_NOMBRES || ' ' ||FUN_APELLIDOS";
-
+	
 		$arrData = array(
 			'ID_FUNCIONARIO' => $this->intIdFuncionario
 		);
 
-		$request = $this->select($sql, $arrData);
-
+		$request = $this->select_all($sql, $arrData);
 		return $request;
-
 	}
 	//Modulo para llenar el DataTable +
 	public function selectHoras(int $idFuncionario){
@@ -303,65 +337,22 @@ class HorasModel extends Oracle{
 		return $requestUpdate;
 
 	}
-	//Modulo para cambiar el estado de horas aprobado 
+	//Modulo para cambiar el estado de horas aprobado
 	public function estadoAprobado(int $idToma){
 
 		$this->intIdToma = $idToma;
-		//$estadoAprobado = 2;
-
-		$plsql = "DECLARE
-					v_horas_disponibles NUMBER;
-					v_horas_solicitadas NUMBER;
-					
-					BEGIN
-					-- Obtener el valor de HORAS_DISPONIBLES
-					SELECT ROUND(AVG(COMP_HORAS_SUBQUERY), 2) - ROUND(SUM(TOM_HORAS_SOLI_SUBQUERY), 2)
-					INTO v_horas_disponibles
-					FROM (
-						SELECT
-							C.ID_FUNCIONARIO,
-							T.TOM_HORAS_SOLI,
-							C.COM_ESTADO,
-							T.TOM_ESTADO,
-							T.TOM_MOTIVO,
-							T.TOM_FECHA_SOLI,
-							T.TOM_HORAS_SOLI AS TOM_HORAS_SOLI_SUBQUERY,
-							SUM(EXTRACT(HOUR FROM (C.COM_FECHA_FIN - C.COM_FECHA_INICIO)) +
-								EXTRACT(MINUTE FROM (C.COM_FECHA_FIN - C.COM_FECHA_INICIO)) / 60) AS COMP_HORAS_SUBQUERY
-						FROM BIG_COMPENSATORIOS C
-						INNER JOIN BIG_TOMA T ON C.ID_FUNCIONARIO = T.ID_FUNCIONARIO
-						WHERE T.ID_FUNCIONARIO = 26 AND T.TOM_ESTADO = 2 AND C.COM_ESTADO = 2
-						GROUP BY C.ID_FUNCIONARIO, T.TOM_HORAS_SOLI, C.COM_ESTADO, T.TOM_ESTADO, T.TOM_MOTIVO, T.TOM_FECHA_SOLI
-					);
-					-- Obtener el valor de TOM_HORAS_SOLI
-					SELECT
-						T.TOM_HORAS_SOLI
-					INTO v_horas_solicitadas
-					FROM BIG_TOMA T
-					WHERE T.ID_TOMA = '{$this->intIdToma}';
-				
-					-- Condicional para actualizar BIG_TOMA
-					IF v_horas_disponibles >= v_horas_solicitadas THEN
-						UPDATE BIG_TOMA
-						SET TOM_ESTADO = 2
-						WHERE ID_TOMA = '{$this->intIdToma}';
-					ELSE
-						UPDATE BIG_TOMA
-						SET TOM_ESTADO = 3
-						WHERE ID_TOMA = '{$this->intIdToma}';
-					END IF;
-				END;";
-
-		/*$sql = "UPDATE BIG_TOMA
+		$estadoAprobado = 2;
+		
+		$sql = "UPDATE BIG_TOMA
 			SET TOM_ESTADO = :TOM_ESTADO
-			WHERE ID_TOMA = :ID_TOMA";*/
+			WHERE ID_TOMA = :ID_TOMA";
 
 		$arrData = array(
-			//'TOM_ESTADO' 	=> $estadoAprobado,
+			'TOM_ESTADO' 	=> $estadoAprobado,
 			'ID_TOMA' 		=> $this->intIdToma
 		);
 
-		$request = $this->select_all($plsql);//, $arrData antes update
+		$request = $this->update($sql, $arrData);//, $arrData antes update
 	
 		return $request;
 	}
@@ -370,7 +361,9 @@ class HorasModel extends Oracle{
 		$this->intIdToma = $idToma;
 		$estadoRechazado = 3;
 	
-		$sql = "UPDATE BIG_TOMA SET TOM_ESTADO = :TOM_ESTADO WHERE ID_TOMA = :ID_TOMA";
+		$sql = "UPDATE BIG_TOMA 
+			SET TOM_ESTADO = :TOM_ESTADO 
+			WHERE ID_TOMA = :ID_TOMA";
 	
 		$arrData = array(
 			'TOM_ESTADO' 	=> $estadoRechazado,
