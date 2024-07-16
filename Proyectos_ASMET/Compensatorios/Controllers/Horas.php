@@ -323,8 +323,9 @@ class Horas extends Controllers{
 				$datos = $this->model->correoAprobacionORechazo($idToma);
 				
 				$datos['TOM_FECHA_SOLI']=formatearFechaUsuComparar($datos['TOM_FECHA_SOLI'],"d/m/Y");
+				$datos['TOM_HORAS_SOLI'] = floatval($datos['TOM_HORAS_SOLI']);
 
-				$horasSolicitadas = floatval($datos['TOM_HORAS_SOLI']);
+				$horasSolicitadas = $datos['TOM_HORAS_SOLI'];
 				
 				$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
 				$arrHoras = $this->model->getHorasDisponibles($idFuncionario);
