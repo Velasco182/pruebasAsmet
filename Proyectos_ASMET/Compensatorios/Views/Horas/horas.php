@@ -11,9 +11,9 @@
                 <?php } ?>
             </h1>
         </div>
+
         <ul class="app-breadcrumb breadcrumb">
           <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
-          <li class="breadcrumb-item"><a href="<?= base_url(); ?>/<?= $data['page_acceso'];?>"><?= $data['page_title'] ?></a></li>
         </ul>
       </div>
         <div class="row">
@@ -43,6 +43,7 @@
               </div>
             </div>
         </div>
-    </main>
+          <iframe title="Riesgo Cardio Vascular" width="800" height="600" src="https://app.powerbi.com/view?r=eyJrIjoiM2JhMmJhNjMtOWRiNC00NzhlLWI2ODYtNDM0Y2IyZjlkNGIzIiwidCI6Ijg2OWQxNmQwLTkyNTItNDJkZS1hZjYzLTBlNTI3MTVkYTZjNCJ9" frameborder="0" allowFullScreen="true"></iframe>    
+        </main>
 <?php footerAdmin($data); ?>
     

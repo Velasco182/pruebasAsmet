@@ -15,7 +15,7 @@
     <script type="text/javascript" src="<?= media(); ?>/js/tinymce/tinymce.min.js"></script>
 
     <!-- Data table plugin-->
-    <script type="text/javascript" src="<?= media(); ?>/js/plugins/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="<?= media(); ?>/js/plugins/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="<?= media(); ?>/js/plugins/dataTables.bootstrap.min.js"></script>
     <script type="text/javascript" src="<?= media();?>/js/plugins/bootstrap-select.min.js"></script>
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
@@ -28,5 +28,5 @@
     <script src="<?= media(); ?>/js/<?= $data['page_functions_js']; ?>"></script>
 
     <!-- Tempus Dominus - DateTimePicker - JS-->
-    <script type="text/javascript" src="<?= media();?>/js//moment-with-locales.min.js"></script>
+    <script type="text/javascript" src="<?= media();?>/js/moment-with-locales.min.js"></script>
     <script type="text/javascript" src="<?= media();?>/js/tempusdominus-bootstrap-4.min.js"></script>

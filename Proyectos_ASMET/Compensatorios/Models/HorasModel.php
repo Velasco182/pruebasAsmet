@@ -42,10 +42,10 @@ class HorasModel extends Oracle{
 		$this -> intIdFuncionario = $idFuncionario;
 
 		$sql = "SELECT * FROM BIG_TOMA
-			WHERE (TOM_MOTIVO = '{$this->strMotivo}'
-			AND TOM_FECHA_SOLI = TO_TIMESTAMP('{$this->strFecha}', 'DD/MM/YYYY'))
-			AND TOM_HORAS_SOLI = '{$this->strHoras}'
-			AND ID_FUNCIONARIO = '{$this->intIdFuncionario}'";
+			WHERE ID_FUNCIONARIO = '{$this->intIdFuncionario}'
+			AND TOM_MOTIVO = '{$this->strMotivo}'
+			AND TOM_FECHA_SOLI = TO_TIMESTAMP('{$this->strFecha}', 'DD/MM/YYYY')
+			AND TOM_HORAS_SOLI = '{$this->strHoras}'";
 			
 		$request = $this->select_all($sql);
 
@@ -181,7 +181,8 @@ class HorasModel extends Oracle{
 					FUN.FUN_APELLIDOS AS FUN_APELLIDOS,
 					FUN.FUN_CORREO AS FUN_CORREO
 				FROM BIG_TOMA TOM
-				INNER JOIN BIG_FUNCIONARIOS FUN ON TOM.ID_FUNCIONARIO = FUN.ID_FUNCIONARIO";
+				INNER JOIN BIG_FUNCIONARIOS FUN ON TOM.ID_FUNCIONARIO = FUN.ID_FUNCIONARIO
+				ORDER BY TOM.TOM_FECHA_SOLI DESC";
 
 			$request = $this->select_all($sql);
 			return $request;
@@ -198,7 +199,8 @@ class HorasModel extends Oracle{
 				FUN.FUN_CORREO AS FUN_CORREO
 			FROM BIG_TOMA TOM
 			INNER JOIN BIG_FUNCIONARIOS FUN ON TOM.ID_FUNCIONARIO = FUN.ID_FUNCIONARIO
-			WHERE TOM.ID_FUNCIONARIO = $this->intIdUsuario";
+			WHERE TOM.ID_FUNCIONARIO = $this->intIdUsuario
+			ORDER BY TOM.TOM_FECHA_SOLI DESC";
 
 		$arrData = array(
 			':ID_FUNCIONARIO'	=>$this	->intIdUsuario

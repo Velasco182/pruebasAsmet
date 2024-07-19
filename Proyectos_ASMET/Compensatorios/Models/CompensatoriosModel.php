@@ -57,7 +57,6 @@ class CompensatoriosModel extends Oracle{
 			AND COM_FECHA_FIN = TO_TIMESTAMP('{$this->strFechaFin}', 'YYYY/MM/DD HH24:MI:SS')
 			AND ID_TIPO_COMPENSATORIO = '{$this->intIdTipoCompensatorio}'
 			AND COM_USUARIO_FINAL = '{$this->strTrabajoRequerido}'
-			AND COM_EVIDENCIAS = '{$this->strEvidencia}'
 			AND COM_DESCRIPCION_ACTIVIDAD = '{$this->strDescripcionActividad}'";
 
 		$request = $this->select_all($sql);
@@ -181,7 +180,7 @@ class CompensatoriosModel extends Oracle{
 			FROM BIG_COMPENSATORIOS I
 			INNER JOIN BIG_TIPO_COMPENSATORIO TC ON I.ID_TIPO_COMPENSATORIO = TC.ID_TIPO_COMPENSATORIO
 			INNER JOIN BIG_FUNCIONARIOS F ON I.ID_FUNCIONARIO = F.ID_FUNCIONARIO
-			";
+			ORDER BY I.COM_FECHA_INICIO DESC, I.COM_FECHA_FIN DESC";
 
 			$request = $this->select_all($sql);
 
@@ -204,7 +203,8 @@ class CompensatoriosModel extends Oracle{
 		FROM BIG_COMPENSATORIOS I
 		INNER JOIN BIG_FUNCIONARIOS F ON I.ID_FUNCIONARIO = F.ID_FUNCIONARIO
 		INNER JOIN BIG_TIPO_COMPENSATORIO TC ON I.ID_TIPO_COMPENSATORIO = TC.ID_TIPO_COMPENSATORIO
-		WHERE I.ID_FUNCIONARIO = $this->intIdUsuario"; 
+		WHERE I.ID_FUNCIONARIO = $this->intIdUsuario
+		ORDER BY I.COM_FECHA_INICIO DESC, I.COM_FECHA_FIN DESC";
 		
 		$arrData = array(
 			':ID_FUNCIONARIO'=> $this->intIdUsuario
@@ -342,7 +342,6 @@ class CompensatoriosModel extends Oracle{
 			AND ID_TIPO_COMPENSATORIO = '{$this->intIdTipoCompensatorio}' 
 			AND COM_DESCRIPCION_ACTIVIDAD = '{$this->strDescripcionActividad}'
 			AND COM_USUARIO_FINAL = '{$this->strTrabajoRequerido}'
-			--AND COM_EVIDENCIAS = '{$this->strEvidencia}'
 			AND ID_COMPENSATORIO != $this->intIdCompensatorio";
 			
 		$request = $this->select_all($sql);
@@ -357,7 +356,7 @@ class CompensatoriosModel extends Oracle{
 			COM_EVIDENCIAS = :COM_EVIDENCIAS
 			WHERE ID_COMPENSATORIO = :ID_COMPENSATORIO
 			";
-//--$this->intIdCompensatorio
+
 			$arrData = array(
 				'ID_COMPENSATORIO'				=>$this->intIdCompensatorio,
 				'COM_FECHA_INICIO'				=>$this->strFechaInicio,

@@ -115,7 +115,7 @@ class Compensatorios extends Controllers{
 										$name, //COM_EVIDENCIAS
 										$intEstado
 									);
-									$option = 1; // Inserción
+									$option = 1;//Inserción
 
 								}
 							} else {
@@ -130,7 +130,7 @@ class Compensatorios extends Controllers{
 										$name,
 										$strTrabajoRequerido
 									);
-									$option = 2; // Actualización
+									$option = 2;//Actualización
 
 								}
 							}
@@ -217,17 +217,15 @@ class Compensatorios extends Controllers{
 	public function getCompensatorios(){
 		if($_SESSION['permisosMod']['PER_R']){
 
-			$ID_FUNCIONARIO = $_SESSION['userData']['ID_FUNCIONARIO']; // ID del funcionario que deseas mostrar
+			$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO']; // ID del funcionario que deseas mostrar
 			
-			$arrData = $this ->model->selectCompensatorios($ID_FUNCIONARIO);
+			$arrData = $this->model->selectCompensatorios($idFuncionario);
 			// Procesa $resultado para mostrar los compensatorios del funcionario
 
 			for ($i=0; $i < count($arrData); $i++) {
 
 				$arrData[$i]['COM_FECHA_INICIO']=formatearFechaYHora($arrData[$i]['COM_FECHA_INICIO'],"d/m/Y - h:i A");
 				$arrData[$i]['COM_FECHA_FIN']=formatearFechaYHora($arrData[$i]['COM_FECHA_FIN'],"d/m/Y - h:i A");
-
-				// var_dump($arrData);
 
 				$btnVer = '';
 				$btnCancelar = '';
@@ -237,8 +235,7 @@ class Compensatorios extends Controllers{
 				$btnEdit = '';
 				$btnReset = '';
 				$btnDelete = '';
-				$btnPendiente = '';
-				$newStatus="";
+				$newStatus= '';
 
 				$comEstado = $arrData[$i]['COM_ESTADO'];
 				if ($comEstado == 1) {
@@ -256,12 +253,6 @@ class Compensatorios extends Controllers{
 				}
 
 				$arrData[$i]['COM_ESTADO'] = '<span class="badge ' . $statusClass . '">' . $newStatus . '</span>'; // Error con los span
-
-				/*if ($_SESSION['permisosMod']['PER_F'] && $comEstado == 2) {
-					$btnReset = '<button class="btn btn-success btn-sm" onClick="ftnEvidencias(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Cargar Evidencias"><i class="fas fa-cloud-upload-alt"></i></button>';
-				} else {
-					$btnReset = ''; // Botón vacío si no se cumple la condición
-				}*/
 
 				//Revisar
 				if($_SESSION['permisosMod']['PER_R']){ // Icono de ver funcionario
@@ -357,7 +348,7 @@ class Compensatorios extends Controllers{
 		
 			echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE); // Devuelve la respuesta JSON
 		}
-	}	
+	}
 	//Modulo para aprovación del compensatorio llamando al modelo correoAprobacionORechazo para el correo y el modelo estadoAprobado
 	public function aprobarCompensatorio() {
 		if ($_POST) {
@@ -402,7 +393,7 @@ class Compensatorios extends Controllers{
 				}
 			}
 		}
-	}		
+	}
 	//Modulo para rechazo del compensatorio llamando al modelo correoAprobacionORechazo para el correo y el modelo estadoRechazado
 	public function rechazarCompensatorio(){
 		if ($_POST) {

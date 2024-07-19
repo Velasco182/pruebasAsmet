@@ -84,7 +84,9 @@ class TipoCompensatoriosModel extends Oracle{
 	public function selectTipoCompensatorios() {
 		
 		// WHERE TC.TIP_COM_ESTADO='1'
-		$sql = "SELECT * FROM BIG_TIPO_COMPENSATORIO TC";
+		$sql = "SELECT *
+			FROM BIG_TIPO_COMPENSATORIO TC
+			ORDER BY TC.TIP_COM_NOMBRE DESC";
 		return $this->select_all($sql);
 
 	}

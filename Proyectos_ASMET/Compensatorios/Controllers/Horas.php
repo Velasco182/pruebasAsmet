@@ -47,8 +47,7 @@ class Horas extends Controllers{
 			}else{
 
 				$intIdHora = intval($_POST['idHora']);
-				//$intIdHora = intval($_POST['idHora']);
-				$strMotivo = mb_convert_case(strClean($_POST['txtMotivo']),MB_CASE_TITLE, "UTF-8");
+				$strMotivo = mb_convert_case(strClean($_POST['txtMotivo']), MB_CASE_TITLE, "UTF-8");
 				$intEstado = intval($_POST['txtEstado']);
 				$strFecha = $_POST['txtFecha'];
 				$strHoras = floatval($_POST['txtHoras']);
@@ -126,13 +125,12 @@ class Horas extends Controllers{
 
 						try {
 
-							$enviarCorreo = enviarMail($remitente, $destinatario, $asunto, 'solicitud_horas', $datos);
-							
-							if ($enviarCorreo == "1"){
-								$arrResponse = array('status' => true, 'msg' => 'Su solicitud fue procesada con éxito, espera que el administrador la apruebe');
-							} else {
-								$arrResponse = array('status' => true, 'msg' => 'Su solicitud fue enviada, pero no se pudo enviar el correo de confirmación.');
-							}
+							if ($request_user === "exist"){
+								$arrResponse;
+							}else{
+								$arrResponse = array('status' => true, 'msg' => 'Su solicitud fue procesada con éxito, espera que el admin apruebe tu compensatorio!');
+								$enviarcorreo = enviarMail($remitente, $destinatario, $asunto, 'solicitud_horas', $datos);
+							} 
 							
 						} catch (Exception $e) {
 							$arrResponse = array('status' => false, 'msg' => 'Error al enviar el correo: ' . $e->getMessage());
@@ -165,6 +163,7 @@ class Horas extends Controllers{
 			for ($i=0; $i < count($arrData); $i++) {
 				
 				$arrData[$i]['TOM_FECHA_SOLI']=formatearFechaUsuComparar($arrData[$i]['TOM_FECHA_SOLI'],"d/m/Y");
+				//$arrData[$i]['TOM_MOTIVO'] = mb_convert_case($arrData[$i]['TOM_MOTIVO'], MB_CASE_TITLE, "UTF-8");
 				$arrData[$i]['TOM_HORAS_SOLI']=floatval($arrData[$i]['TOM_HORAS_SOLI']);
 
 				$btnView = '';

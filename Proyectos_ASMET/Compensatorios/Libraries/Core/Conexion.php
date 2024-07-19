@@ -14,7 +14,7 @@ class Conexion{
 			)
 		";
 
-		$this->conect = oci_connect(DB_USER, DB_PASSWORD, $tns);
+		$this->conect = oci_connect(DB_USER, DB_PASSWORD, $tns,'AL32UTF8');
 
 		if(!$this->conect) {
 		    $error = oci_error();
