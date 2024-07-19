@@ -160,6 +160,74 @@ class HorasModel extends Oracle{
 		$request = $this->select_all($sql, $arrData);
 		return $request;
 	}
+	//Modulo para verificar horas disponibles sin toma
+	public function getHorasDisponiblesSinToma(int $idFuncionario){
+
+		$this -> intIdFuncionario = $idFuncionario;
+
+		$sql = "SELECT
+					FUN_NOMBRES || ' ' ||FUN_APELLIDOS AS NOMBREFUNCIONARIO,
+					ROUND(AVG(COMP_HORAS_SUBQUERY),2) AS HORAS_COMPENSATORIOS_APROBADAS
+				FROM(
+						SELECT
+							F.FUN_NOMBRES,
+							F.FUN_APELLIDOS,
+							C.ID_FUNCIONARIO,
+							C.COM_ESTADO,
+							SUM(EXTRACT(HOUR FROM (C.COM_FECHA_FIN - C.COM_FECHA_INICIO)) +
+								EXTRACT(MINUTE FROM (C.COM_FECHA_FIN - C.COM_FECHA_INICIO)) / 60) AS COMP_HORAS_SUBQUERY
+						FROM BIG_COMPENSATORIOS C
+						INNER JOIN BIG_FUNCIONARIOS F ON C.ID_FUNCIONARIO = F.ID_FUNCIONARIO
+						WHERE C.ID_FUNCIONARIO = '{$this->intIdFuncionario}' AND C.COM_ESTADO = 2
+						GROUP BY C.ID_FUNCIONARIO, C.COM_ESTADO, F.FUN_NOMBRES, F.FUN_APELLIDOS
+					)GROUP BY FUN_NOMBRES || ' ' ||FUN_APELLIDOS";
+	
+		$arrData = array(
+			'ID_FUNCIONARIO' => $this->intIdFuncionario
+		);
+
+		$request = $this->select_all($sql, $arrData);
+		return $request;
+	}
+	//Modulo para verificar existencia de horas por id
+	public function getHorasExistentes(int $idFuncionario){
+		$this -> intIdFuncionario = $idFuncionario;
+
+		$codigoRol = $_SESSION['userData']['ROL_CODIGO'];
+		$this -> intCodigoRol = $codigoRol;
+
+		if ($this -> intCodigoRol == '1A') {
+			
+			$sql = "SELECT
+						F.FUN_NOMBRES,
+						F.FUN_APELLIDOS,
+						T.TOM_ESTADO
+					FROM BIG_TOMA T
+					INNER JOIN BIG_FUNCIONARIOS F ON T.ID_FUNCIONARIO = F.ID_FUNCIONARIO
+					WHERE T.ID_FUNCIONARIO = 26 AND T.TOM_ESTADO = 2
+					GROUP BY T.ID_FUNCIONARIO, T.TOM_ESTADO, F.FUN_NOMBRES, F.FUN_APELLIDOS";
+	
+			$request = $this->select_all($sql);
+			return $request;
+
+		}
+
+		$sql = "SELECT
+					F.FUN_NOMBRES,
+					F.FUN_APELLIDOS,
+					T.TOM_ESTADO
+				FROM BIG_TOMA T
+				INNER JOIN BIG_FUNCIONARIOS F ON T.ID_FUNCIONARIO = F.ID_FUNCIONARIO
+				WHERE T.ID_FUNCIONARIO = '{$this->intIdFuncionario}' AND T.TOM_ESTADO = 2
+				GROUP BY T.ID_FUNCIONARIO, T.TOM_ESTADO, F.FUN_NOMBRES, F.FUN_APELLIDOS";
+	
+		$arrData = array(
+			'ID_FUNCIONARIO' => $this->intIdFuncionario
+		);
+
+		$request = $this->select_all($sql, $arrData);
+		return $request;
+	}
 	//Modulo para llenar el DataTable +
 	public function selectHoras(int $idFuncionario){
 

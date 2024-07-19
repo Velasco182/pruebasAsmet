@@ -21,12 +21,12 @@
 
                 <div class="row">
                   
-                  <div class="form-group col-md-6">
-                    <div class="tile headerRegister" id="txtDisponibles" name="txtDisponibles">
+                  <div class="form-group col-md-12">
+                    <div class="card headerRegister p-3 text-center" id="txtDisponibles" name="txtDisponibles">
                     </div>
                   </div>
 
-                  <div class="form-group col-md-6">
+                  <div class="form-group col-md-12">
                     <label class="control-label">Motivo de la solicitud</label>
                     <textarea class="form-control" id="txtMotivo" name="txtMotivo" type="text" placeholder="Escribe tu motivo" required="" autocomplete="off"></textarea>
                   </div>
@@ -35,7 +35,7 @@
 
                 <div class="row">
                   <div class="form-group col-md-6">
-                    <label for="txtFecha">Fecha y hora de inicio</label>
+                    <label for="txtFecha">Fecha de solicitud</label>
                     <div
                         class="input-group date"
                         id="datetimepicker"

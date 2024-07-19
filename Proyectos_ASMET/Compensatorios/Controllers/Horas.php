@@ -53,7 +53,9 @@ class Horas extends Controllers{
 				$strHoras = floatval($_POST['txtHoras']);
 
 				$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
+
 				$arrHoras = $this->model->getHorasDisponibles($idFuncionario);
+				$arrHorasSinToma = $this->model->getHorasDisponiblesSinToma($idFuncionario);
 
 				$option = 0;
 				
@@ -61,10 +63,20 @@ class Horas extends Controllers{
 					$horasDisponibles = floatval($arrHoras[0]['HORAS_DISPONIBLES']);
 					$horasAprobadas = floatval($arrHoras[0]['HORAS_APROBADAS']);
 					$horasAprobadasCompensatorios = floatval($arrHoras[0]['HORAS_COMPENSATORIOS_APROBADAS']);
+					$funcionario = $arrHoras[0]['NOMBREFUNCIONARIO'];
 				}else{
 					$horasDisponibles = 0;
 					$horasAprobadas = 0;
 					$horasAprobadasCompensatorios = 0;
+					$funcionario = "";
+				}
+
+				if($arrHorasSinToma){
+					$funcionario = $arrHorasSinToma[0]['NOMBREFUNCIONARIO'];
+					$horasAprobadasCompensatoriosSinToma = floatval($arrHorasSinToma[0]['HORAS_COMPENSATORIOS_APROBADAS']);
+				}else{
+					$funcionario = "";
+					$horasAprobadasCompensatoriosSinToma = 0;
 				}
 
 				if($horasDisponibles<=0){
@@ -73,9 +85,15 @@ class Horas extends Controllers{
 					$msjResta="Solo tienes ".$horasDisponibles." hora/s para tomar";
 				}
 
-				if(($horasAprobadasCompensatorios && $strHoras)>0
-					&& ($horasAprobadasCompensatorios-$horasAprobadas)>0
-					&& ($horasAprobadasCompensatorios-$horasAprobadas)>=$strHoras){
+				if($horasAprobadasCompensatoriosSinToma<=0){
+					$msjResta="No tienes horas para tomar";
+				}else{
+					$msjResta="Tienes ".$horasAprobadasCompensatoriosSinToma." hora/s para tomar.";
+				}
+
+				if((($horasAprobadasCompensatorios && $strHoras) || ($horasAprobadasCompensatoriosSinToma && $strHoras))>0
+					&& ($horasAprobadasCompensatorios-$horasAprobadas) || ($horasAprobadasCompensatoriosSinToma-$horasAprobadas)>0
+					&& ($horasAprobadasCompensatorios-$horasAprobadas) || ($horasAprobadasCompensatoriosSinToma-$horasAprobadas) >=$strHoras){
 
 					$request_user = "";
 					if($intIdHora == 0){
@@ -117,7 +135,7 @@ class Horas extends Controllers{
 					$asunto = 'Solicitud de horas';
 					
 					$datos = [
-							'Funcionario' 		=> 	$arrHoras[0]['NOMBREFUNCIONARIO'],
+							'Funcionario' 		=> 	$funcionario,
 							'MotivoSolicitud' 	=>	$_POST['txtMotivo'],
 							'FechaSolicitud' 	=> 	$_POST['txtFecha'],
 							'HorasSolicitar' 	=>	$_POST['txtHoras']
@@ -128,7 +146,7 @@ class Horas extends Controllers{
 							if ($request_user === "exist"){
 								$arrResponse;
 							}else{
-								$arrResponse = array('status' => true, 'msg' => 'Su solicitud fue procesada con éxito, espera que el admin apruebe tu compensatorio!');
+								$arrResponse = array('status' => true, 'msg' => 'Su solicitud fue procesada con éxito, espera que el admin la apruebe!');
 								$enviarcorreo = enviarMail($remitente, $destinatario, $asunto, 'solicitud_horas', $datos);
 							} 
 							
@@ -163,7 +181,6 @@ class Horas extends Controllers{
 			for ($i=0; $i < count($arrData); $i++) {
 				
 				$arrData[$i]['TOM_FECHA_SOLI']=formatearFechaUsuComparar($arrData[$i]['TOM_FECHA_SOLI'],"d/m/Y");
-				//$arrData[$i]['TOM_MOTIVO'] = mb_convert_case($arrData[$i]['TOM_MOTIVO'], MB_CASE_TITLE, "UTF-8");
 				$arrData[$i]['TOM_HORAS_SOLI']=floatval($arrData[$i]['TOM_HORAS_SOLI']);
 
 				$btnView = '';
@@ -252,27 +269,51 @@ class Horas extends Controllers{
 
 		$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
 
-		//Respuesta de la DB
-		$arrHoras = $this->model->getHorasDisponibles($idFuncionario);
+		$horasExistentes = $this->model->getHorasExistentes($idFuncionario);
 
-		if($arrHoras){
-			$horasDisponibles = floatval($arrHoras[0]['HORAS_DISPONIBLES']);
-			$horasAprobadas = floatval($arrHoras[0]['HORAS_APROBADAS']);
-			$horasAprobadasCompensatorios = floatval($arrHoras[0]['HORAS_COMPENSATORIOS_APROBADAS']);
-		}else{
-			$horasDisponibles = 0;
-			$horasAprobadas = 0;
-			$horasAprobadasCompensatorios = 0;
-		}
+		if($horasExistentes){
+			//Respuesta de la DB
+			$arrHoras = $this->model->getHorasDisponibles($idFuncionario);
 
-		if($horasDisponibles<=0){
-			$msjResta="No tienes horas para tomar";
-			$arrResponse = array('status' => false, 'msg' => $msjResta);
+			if($arrHoras){
+				$horasDisponibles = floatval($arrHoras[0]['HORAS_DISPONIBLES']);
+				$horasAprobadas = floatval($arrHoras[0]['HORAS_APROBADAS']);
+				$horasAprobadasCompensatorios = floatval($arrHoras[0]['HORAS_COMPENSATORIOS_APROBADAS']);
+			}else{
+				$horasDisponibles = 0;
+				$horasAprobadas = 0;
+				$horasAprobadasCompensatorios = 0;
+			}
+
+			if($horasDisponibles<=0){
+				$msjResta="No tienes horas para tomar";
+				$arrResponse = array('status' => false, 'msg' => $msjResta);
+			}else{
+				$msjResta="Tienes ".$horasDisponibles." hora/s para tomar.";
+				/*,
+				".$horasAprobadas." hora/s aprobadas y
+				".$horasAprobadasCompensatorios." hora/s en compensatorios aprobadas.*/
+				$arrResponse = array('status' => true, 'msg' => $msjResta);
+			}
+
 		}else{
-			$msjResta="Tienes ".$horasDisponibles." hora/s para tomar.,
-			".$horasAprobadas." hora/s aprobadas y
-			".$horasAprobadasCompensatorios." hora/s en compensatorios aprobadas.";
-			$arrResponse = array('status' => true, 'msg' => $msjResta);
+
+			$arrHorasSinToma = $this->model->getHorasDisponiblesSinToma($idFuncionario);
+
+			if($arrHorasSinToma){
+				$horasAprobadasCompensatoriosSinToma = floatval($arrHorasSinToma[0]['HORAS_COMPENSATORIOS_APROBADAS']);
+			}else{
+				$horasAprobadasCompensatoriosSinToma = 0;
+			}
+
+			if($horasAprobadasCompensatoriosSinToma<=0){
+				$msjResta="No tienes horas para tomar";
+				$arrResponse = array('status' => false, 'msg' => $msjResta);
+			}else{
+				$msjResta="Tienes ".$horasAprobadasCompensatoriosSinToma." hora/s para tomar.";
+				$arrResponse = array('status' => true, 'msg' => $msjResta);
+			}
+
 		}
 
 		echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);

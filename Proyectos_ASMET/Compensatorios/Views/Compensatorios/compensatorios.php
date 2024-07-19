@@ -30,9 +30,9 @@
                           <th>Apellidos</th>
                           <th>Fecha Inicio</th>
                           <th>Fecha Fin</th>
+                          <th>Horas</th>
                           <th>Tipo</th>
                           <th>¿Quien requiere?</th>
-                          <th>Descripcion</th>
                           <th>Estado</th>
                           <th>Acciones</th>
                         </tr>

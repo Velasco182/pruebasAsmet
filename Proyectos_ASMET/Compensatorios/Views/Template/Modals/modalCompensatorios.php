@@ -156,9 +156,13 @@
               <td>Tipo de Compensatorio</td>
               <td id="InfoTipoCompensatorio"></td>
             </tr>
-            <tr>
+            <!-- <tr>
               <td>Horas realizadas</td>
               <td id="InfoHorasRealizadas"></td>
+            </tr> -->
+            <tr>
+              <td>Descripcion</td>
+              <td id="InfoDescripcion"></td>
             </tr>
             <tr>
               <td>Estado</td>

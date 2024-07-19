@@ -43,7 +43,6 @@
               </div>
             </div>
         </div>
-          <iframe title="Riesgo Cardio Vascular" width="800" height="600" src="https://app.powerbi.com/view?r=eyJrIjoiM2JhMmJhNjMtOWRiNC00NzhlLWI2ODYtNDM0Y2IyZjlkNGIzIiwidCI6Ijg2OWQxNmQwLTkyNTItNDJkZS1hZjYzLTBlNTI3MTVkYTZjNCJ9" frameborder="0" allowFullScreen="true"></iframe>    
         </main>
 <?php footerAdmin($data); ?>
     

@@ -273,7 +273,7 @@ class Compensatorios extends Controllers{
 
 				if ($_SESSION['permisosMod']['PER_U'] && $_SESSION['permisosMod']['ID_ROL'] === '1') {
 					if ($comEstado == 1) {
-						$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="ftnAprobarCompensatorio(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Aprobar Compensatorio"><i class="fas fa-check-double"></i></button>';
+						$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="ftnAprobarCompensatorio(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Aprobar Compensatorio"><i class="fas fa-check-circle"></i></button>';
 					} else {
 						$btnAprobar = '';
 					}
@@ -324,24 +324,10 @@ class Compensatorios extends Controllers{
 				$arrData['url_portada'] = isset($arrData['COM_EVIDENCIAS']) && !empty($arrData['COM_EVIDENCIAS'])
 				? 'archivos/' . $arrData['COM_EVIDENCIAS']
 				: ''; // Puedes asignar una URL por defecto aquí
-		
-				// Calcular la diferencia en horas
-				$fechaInicioObj = DateTime::createFromFormat('d/m/Y - h:i A', $arrData['COM_FECHA_INICIO']);
-				$fechaFinObj = DateTime::createFromFormat('d/m/Y - h:i A', $arrData['COM_FECHA_FIN']);
-		
-				if ($fechaInicioObj !== false && $fechaFinObj !== false) {
-					$intervalo = $fechaInicioObj->diff($fechaFinObj);
-					$diferenciaHoras = $intervalo->days * 24 + $intervalo->h;
-					$diferenciaMinutos = $intervalo->i;
-		
-					// Agregar la diferencia de horas al arreglo $arrData
-					$arrData['horasrealizadas'] = $diferenciaHoras . ' Horas y ' . $diferenciaMinutos . ' Minutos';
-		
-					// Preparar la respuesta
-					$arrResponse = array('status' => true, 'data' => $arrData);
-				} else {
-					$arrResponse = array('status' => false, 'msg' => 'Error al convertir fechas.');
-				}
+
+				// Preparar la respuesta
+				$arrResponse = array('status' => true, 'data' => $arrData);
+			
 			} else {
 				$arrResponse = array('status' => false, 'msg' => 'Datos no encontrados');
 			}

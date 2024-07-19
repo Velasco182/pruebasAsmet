@@ -22,10 +22,9 @@ document.addEventListener('DOMContentLoaded', function(){
             {"data":"FUN_APELLIDOS"},
             {"data":"COM_FECHA_INICIO"},
             {"data":"COM_FECHA_FIN"},
-            //{"data":"ID_TIPO_COMPENSATORIO"},
+            {"data":"HORAS_REALIZADAS"},
             {"data":"TIP_COM_NOMBRE"},
             {"data":"COM_USUARIO_FINAL"},
-            {"data":"COM_DESCRIPCION_ACTIVIDAD"},
             {"data":"COM_ESTADO"},
             {"data":"ACCIONES"}
         ],
@@ -56,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function(){
         "resonsieve":"true",
         "bDestroy": true,
         "iDisplayLength": 10,
-        //"order":[[2,"desc"]],
+        "order": [], // Desactiva el ordenamiento por defecto
         "columnDefs": [
         {
             "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8],
@@ -345,9 +344,8 @@ function ftnViewCompensatorio(idCompensatorio){
                 document.querySelector("#InfoCorreo").innerHTML = objData.data.FUN_CORREO;
                 document.querySelector("#InfoTipoCompensatorio").innerHTML = objData.data.TIP_COM_NOMBRE;
                 document.querySelector("#InfoEstado").innerHTML = estado;
-                document.querySelector("#InfoHorasRealizadas").innerHTML = objData.data.horasrealizadas;
-                
-//revisar
+                //document.querySelector("#InfoHorasRealizadas").innerHTML = objData.data.horasrealizadas;
+                document.querySelector("#InfoDescripcion").innerHTML = objData.data.COM_DESCRIPCION_ACTIVIDAD;
 
                 if (objData.data.url_portada) {
                     document.querySelector("#DescargarSoporte").innerHTML = '<a href="' + objData.data.url_portada + '" target="_blank"><i class="fas fa-download"> Evidencia disponible</i></a>';

@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function(){
         "resonsieve":"true",
         "bDestroy": true,
         "iDisplayLength": 10,
-        "order":[[4,"desc"]],
+        "order": [], // Desactiva el ordenamiento por defecto
         "columnDefs": [
             {
                 "targets": [0, 1, 2, 3, 4, 5, 6, 7],
@@ -226,9 +226,9 @@ function fntViewHorasDisponibles(){
 
             let disponibles = arrResponse[0];
             let mensaje = arrResponse[1];
-
+            //${mensaje}
             if(objData.status){
-                document.querySelector("#txtDisponibles").innerHTML = `<h5>${disponibles}</h5>${mensaje}`;
+                document.querySelector("#txtDisponibles").innerHTML = `<h5>${disponibles}</h5>`;
                 //swal(disponibles, mensaje, "warning");
             }else{
                 swal({
