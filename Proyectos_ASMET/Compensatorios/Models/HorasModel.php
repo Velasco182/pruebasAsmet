@@ -36,52 +36,61 @@ class HorasModel extends Oracle{
 		$this->strFecha = $tomFechaSolicitada;
 		$this->strHoras = $tomHorasSolicitadas;
 
+		$horasSolicitadas = $this->strHoras;
+
 		$return = 0;
 
 		$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
 		$this -> intIdFuncionario = $idFuncionario;
 
-		$sql = "SELECT * FROM BIG_TOMA
-			WHERE ID_FUNCIONARIO = '{$this->intIdFuncionario}'
-			AND TOM_MOTIVO = '{$this->strMotivo}'
-			AND TOM_FECHA_SOLI = TO_TIMESTAMP('{$this->strFecha}', 'DD/MM/YYYY')
-			AND TOM_HORAS_SOLI = '{$this->strHoras}'";
-			
-		$request = $this->select_all($sql);
+		if($horasSolicitadas >= 0.5){
 
-		//Verificación de inserción
-		if(empty($request)){
+			$sql = "SELECT * FROM BIG_TOMA
+				WHERE ID_FUNCIONARIO = '{$this->intIdFuncionario}'
+				AND TOM_MOTIVO = '{$this->strMotivo}'
+				AND TOM_FECHA_SOLI = TO_TIMESTAMP('{$this->strFecha}', 'DD/MM/YYYY')
+				AND TOM_HORAS_SOLI = '{$this->strHoras}'";
+				
+			$request = $this->select_all($sql);
+	
+			//Verificación de inserción
+			if(empty($request)){
+	
+				$query_insert  = "INSERT INTO BIG_TOMA
+					(
+						TOM_MOTIVO,
+						TOM_ESTADO,
+						TOM_FECHA_SOLI,
+						TOM_HORAS_SOLI,
+						ID_FUNCIONARIO
+					)
+					VALUES
+					(
+						:TOM_MOTIVO,
+						:TOM_ESTADO,
+						TO_DATE(:TOM_FECHA_SOLI, 'DD/MM/YYYY'),
+						:TOM_HORAS_SOLI,
+						:ID_FUNCIONARIO
+					)";
+				
+				$arrData = array(
+					'TOM_MOTIVO'		=>$this->strMotivo,
+					'TOM_ESTADO'		=>$this->intEstado,
+					'TOM_FECHA_SOLI'	=>$this->strFecha,
+					'TOM_HORAS_SOLI'	=>$this->strHoras,
+					'ID_FUNCIONARIO'	=>$this->intIdFuncionario
+				);
+				
+				$request_insert = $this->insert($query_insert, $arrData);
+				$return = $request_insert;
+			}else{
+				$return = "exist";
+			}
 
-			$query_insert  = "INSERT INTO BIG_TOMA
-				(
-					TOM_MOTIVO,
-					TOM_ESTADO,
-					TOM_FECHA_SOLI,
-					TOM_HORAS_SOLI,
-					ID_FUNCIONARIO
-				)
-				VALUES
-				(
-					:TOM_MOTIVO,
-					:TOM_ESTADO,
-					TO_DATE(:TOM_FECHA_SOLI, 'DD/MM/YYYY'),
-					:TOM_HORAS_SOLI,
-					:ID_FUNCIONARIO
-				)";
-			
-			$arrData = array(
-				'TOM_MOTIVO'		=>$this->strMotivo,
-				'TOM_ESTADO'		=>$this->intEstado,
-				'TOM_FECHA_SOLI'	=>$this->strFecha,
-				'TOM_HORAS_SOLI'	=>$this->strHoras,
-				'ID_FUNCIONARIO'	=>$this->intIdFuncionario
-			);
-			
-			$request_insert = $this->insert($query_insert,$arrData);
-			$return = $request_insert;
 		}else{
-			$return = "exist";
+			$return = "time_error";
 		}
+
 		return $return;
 	}
 
@@ -117,10 +126,14 @@ class HorasModel extends Oracle{
 							FROM BIG_COMPENSATORIOS C
 							INNER JOIN BIG_TOMA T ON C.ID_FUNCIONARIO = T.ID_FUNCIONARIO
 							INNER JOIN BIG_FUNCIONARIOS F ON C.ID_FUNCIONARIO = F.ID_FUNCIONARIO
-							WHERE T.TOM_ESTADO = 2 AND C.COM_ESTADO = 2
+							WHERE T.ID_FUNCIONARIO = '{$this->intIdFuncionario}' AND T.TOM_ESTADO = 2 AND C.COM_ESTADO = 2
 							GROUP BY C.ID_FUNCIONARIO, T.TOM_HORAS_SOLI, C.COM_ESTADO, T.TOM_ESTADO, T.TOM_MOTIVO,
 							T.TOM_FECHA_SOLI, F.FUN_NOMBRES, F.FUN_APELLIDOS
 						)GROUP BY FUN_NOMBRES || ' ' ||FUN_APELLIDOS";//T.ID_FUNCIONARIO = '{$this->intIdFuncionario}' AND
+
+			$arrData = array(
+				'ID_FUNCIONARIO' => $this->intIdFuncionario
+			);
 	
 			$request = $this->select_all($sql);
 			return $request;
@@ -149,7 +162,7 @@ class HorasModel extends Oracle{
 						INNER JOIN BIG_TOMA T ON C.ID_FUNCIONARIO = T.ID_FUNCIONARIO
 						INNER JOIN BIG_FUNCIONARIOS F ON C.ID_FUNCIONARIO = F.ID_FUNCIONARIO
 						WHERE T.ID_FUNCIONARIO = '{$this->intIdFuncionario}' AND T.TOM_ESTADO = 2 AND C.COM_ESTADO = 2
-						GROUP BY C.ID_FUNCIONARIO, T.TOM_HORAS_SOLI, C.COM_ESTADO, T.TOM_ESTADO, T.TOM_MOTIVO, 
+						GROUP BY C.ID_FUNCIONARIO, T.TOM_HORAS_SOLI, C.COM_ESTADO, T.TOM_ESTADO, T.TOM_MOTIVO,
 						T.TOM_FECHA_SOLI, F.FUN_NOMBRES, F.FUN_APELLIDOS
 					)GROUP BY FUN_NOMBRES || ' ' ||FUN_APELLIDOS";
 	
@@ -157,7 +170,7 @@ class HorasModel extends Oracle{
 			'ID_FUNCIONARIO' => $this->intIdFuncionario
 		);
 
-		$request = $this->select_all($sql, $arrData);
+		$request = $this->select_all($sql);
 		return $request;
 	}
 	//Modulo para verificar horas disponibles sin toma
@@ -186,7 +199,7 @@ class HorasModel extends Oracle{
 			'ID_FUNCIONARIO' => $this->intIdFuncionario
 		);
 
-		$request = $this->select_all($sql, $arrData);
+		$request = $this->select_all($sql);
 		return $request;
 	}
 	//Modulo para verificar existencia de horas por id
@@ -204,7 +217,7 @@ class HorasModel extends Oracle{
 						T.TOM_ESTADO
 					FROM BIG_TOMA T
 					INNER JOIN BIG_FUNCIONARIOS F ON T.ID_FUNCIONARIO = F.ID_FUNCIONARIO
-					WHERE T.ID_FUNCIONARIO = 26 AND T.TOM_ESTADO = 2
+					WHERE T.TOM_ESTADO = 2
 					GROUP BY T.ID_FUNCIONARIO, T.TOM_ESTADO, F.FUN_NOMBRES, F.FUN_APELLIDOS";
 	
 			$request = $this->select_all($sql);
@@ -225,7 +238,7 @@ class HorasModel extends Oracle{
 			'ID_FUNCIONARIO' => $this->intIdFuncionario
 		);
 
-		$request = $this->select_all($sql, $arrData);
+		$request = $this->select_all($sql);
 		return $request;
 	}
 	//Modulo para llenar el DataTable +
@@ -274,7 +287,7 @@ class HorasModel extends Oracle{
 			':ID_FUNCIONARIO'	=>$this	->intIdUsuario
 		);
 
-		$request = $this->select_all($sql, $arrData);
+		$request = $this->select_all($sql);
 
 		return $request;
 	}
@@ -376,7 +389,7 @@ class HorasModel extends Oracle{
 			WHERE TOM_MOTIVO = '{$this->strMotivo}'
 			AND TOM_FECHA_SOLI = TO_TIMESTAMP('{$this->strFecha}', 'DD/MM/YYYY')
 			AND TOM_HORAS_SOLI = '{$this->strHoras}'
-			AND ID_TOMA != $this->intIdToma";
+			AND ID_TOMA != '{$this->intIdToma}'";
 
 		$request = $this->select_all($sql);
 
@@ -395,8 +408,6 @@ class HorasModel extends Oracle{
 				'TOM_FECHA_SOLI' 	=> $this->strFecha,
 				'TOM_HORAS_SOLI' 	=> $this->strHoras
 			);
-			///Ir borrando linea por linea hasta verificar en qué linea se queda
-			//Posiblemente sea la de fecha
 
 			$requestUpdate = $this->update($sqlUpdate, $arrData);
 
@@ -450,6 +461,7 @@ class HorasModel extends Oracle{
 		$this->	intIdToma = $idToma;
 
 		$sql = "SELECT
+				FUN.ID_FUNCIONARIO,
 				FUN.FUN_NOMBRES,
 				FUN.FUN_APELLIDOS,
 				FUN.FUN_CORREO,

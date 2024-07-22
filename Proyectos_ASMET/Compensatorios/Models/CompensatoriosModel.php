@@ -50,61 +50,71 @@ class CompensatoriosModel extends Oracle{
 		$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
 		$this->intIdFuncionario = $idFuncionario;
 
-		//Validar duplicidad de datos
-		$sql = "SELECT * FROM BIG_COMPENSATORIOS
-			WHERE ID_FUNCIONARIO = '{$this->intIdFuncionario}'
-			AND COM_FECHA_INICIO = TO_TIMESTAMP('{$this->strFechaInicio}', 'YYYY/MM/DD HH24:MI:SS') 
-			AND COM_FECHA_FIN = TO_TIMESTAMP('{$this->strFechaFin}', 'YYYY/MM/DD HH24:MI:SS')
-			AND ID_TIPO_COMPENSATORIO = '{$this->intIdTipoCompensatorio}'
-			AND COM_USUARIO_FINAL = '{$this->strTrabajoRequerido}'
-			AND COM_DESCRIPCION_ACTIVIDAD = '{$this->strDescripcionActividad}'";
+		// Convertir fechas a timestamps y calcular la diferencia en minutos
+		$timestampInicio = strtotime($this->strFechaInicio);
+		$timestampFin = strtotime($this->strFechaFin);
+		$diferenciaMinutos = ($timestampFin - $timestampInicio) / 60;
 
-		$request = $this->select_all($sql);
+		if($diferenciaMinutos >= 30){
 
-		if(empty($request)){
-
-			$query_insert  = "INSERT INTO BIG_COMPENSATORIOS
-			(
-				ID_FUNCIONARIO,
-				COM_FECHA_INICIO,
-				COM_FECHA_FIN,
-				ID_TIPO_COMPENSATORIO,
-				COM_DESCRIPCION_ACTIVIDAD,
-				COM_USUARIO_FINAL,
-				COM_EVIDENCIAS,
-				COM_ESTADO
-			) 
-			VALUES
-			(
-				:ID_FUNCIONARIO,
-				TO_TIMESTAMP(:COM_FECHA_INICIO, 'YYYY/MM/DD HH24:MI:SS'),
-				TO_TIMESTAMP(:COM_FECHA_FIN, 'YYYY/MM/DD HH24:MI:SS'),
-				:ID_TIPO_COMPENSATORIO,
-				:COM_DESCRIPCION_ACTIVIDAD,
-				:COM_USUARIO_FINAL,
-				:COM_EVIDENCIAS,
-				:COM_ESTADO
-			)";
+			//Validar duplicidad de datos
+			$sql = "SELECT * FROM BIG_COMPENSATORIOS
+				WHERE ID_FUNCIONARIO = '{$this->intIdFuncionario}'
+				AND COM_FECHA_INICIO = TO_TIMESTAMP('{$this->strFechaInicio}', 'YYYY/MM/DD HH24:MI:SS') 
+				AND COM_FECHA_FIN = TO_TIMESTAMP('{$this->strFechaFin}', 'YYYY/MM/DD HH24:MI:SS')
+				AND ID_TIPO_COMPENSATORIO = '{$this->intIdTipoCompensatorio}'
+				AND COM_USUARIO_FINAL = '{$this->strTrabajoRequerido}'
+				AND COM_DESCRIPCION_ACTIVIDAD = '{$this->strDescripcionActividad}'";
 	
-			$arrData = array(
-				'ID_FUNCIONARIO' 			=> $this->intIdFuncionario, // Usar el ID del funcionario
-				'COM_FECHA_INICIO' 			=> $this->strFechaInicio,
-				'COM_FECHA_FIN' 			=> $this->strFechaFin,
-				'ID_TIPO_COMPENSATORIO' 	=> $this->intIdTipoCompensatorio,
-				'COM_DESCRIPCION_ACTIVIDAD' => $this->strDescripcionActividad,
-				'COM_USUARIO_FINAL' 		=> $this->strTrabajoRequerido,
-				'COM_EVIDENCIAS' 			=> $this->strEvidencia,
-				'COM_ESTADO' 				=> $this->intEstado,
-				'ID_FUNCIONARIO'			=> $this->listadoUsuarios
-			);
+			$request = $this->select_all($sql);
 	
-			$request_insert = $this->insert($query_insert, $arrData);
-			$return = $request_insert;
-
+			if(empty($request)){
+	
+				$query_insert  = "INSERT INTO BIG_COMPENSATORIOS
+				(
+					ID_FUNCIONARIO,
+					COM_FECHA_INICIO,
+					COM_FECHA_FIN,
+					ID_TIPO_COMPENSATORIO,
+					COM_DESCRIPCION_ACTIVIDAD,
+					COM_USUARIO_FINAL,
+					COM_EVIDENCIAS,
+					COM_ESTADO
+				) 
+				VALUES
+				(
+					:ID_FUNCIONARIO,
+					TO_TIMESTAMP(:COM_FECHA_INICIO, 'YYYY/MM/DD HH24:MI:SS'),
+					TO_TIMESTAMP(:COM_FECHA_FIN, 'YYYY/MM/DD HH24:MI:SS'),
+					:ID_TIPO_COMPENSATORIO,
+					:COM_DESCRIPCION_ACTIVIDAD,
+					:COM_USUARIO_FINAL,
+					:COM_EVIDENCIAS,
+					:COM_ESTADO
+				)";
+		
+				$arrData = array(
+					'ID_FUNCIONARIO' 			=> $this->intIdFuncionario, // Usar el ID del funcionario
+					'COM_FECHA_INICIO' 			=> $this->strFechaInicio,
+					'COM_FECHA_FIN' 			=> $this->strFechaFin,
+					'ID_TIPO_COMPENSATORIO' 	=> $this->intIdTipoCompensatorio,
+					'COM_DESCRIPCION_ACTIVIDAD' => $this->strDescripcionActividad,
+					'COM_USUARIO_FINAL' 		=> $this->strTrabajoRequerido,
+					'COM_EVIDENCIAS' 			=> $this->strEvidencia,
+					'COM_ESTADO' 				=> $this->intEstado,
+					'ID_FUNCIONARIO'			=> $this->listadoUsuarios
+				);
+		
+				$request_insert = $this->insert($query_insert, $arrData);
+				$return = $request_insert;
+	
+			}else{
+				$return = "exist";
+			}
+			
 		}else{
-			$return = "exist";
+			$return = "time_error";
 		}
-
 		return $return;
 	}
 
@@ -222,7 +232,7 @@ class CompensatoriosModel extends Oracle{
 				FROM BIG_COMPENSATORIOS I
 				INNER JOIN BIG_TIPO_COMPENSATORIO TC ON I.ID_TIPO_COMPENSATORIO = TC.ID_TIPO_COMPENSATORIO
 				INNER JOIN BIG_FUNCIONARIOS F ON I.ID_FUNCIONARIO = F.ID_FUNCIONARIO
-				WHERE I.ID_FUNCIONARIO = $this->intIdUsuario
+				WHERE I.ID_FUNCIONARIO = '{$this->intIdUsuario}'
 				GROUP BY 
 					I.ID_COMPENSATORIO,
 					I.ID_FUNCIONARIO,
@@ -244,7 +254,7 @@ class CompensatoriosModel extends Oracle{
 			':ID_FUNCIONARIO'=> $this->intIdUsuario
 		);
 		
-		return $this->select_all($sql, $arrData);; 
+		return $this->select_all($sql);
 	}
 	//Modulo para llenar el modal de detalles del compensatorio
 	public function selectCompensatorioVista(int $idCompensatorio) {
@@ -312,7 +322,7 @@ class CompensatoriosModel extends Oracle{
 			'ID_TIPO_COMPENSATORIO'	 =>$this->intIdTipoCompensatorio,
 		);
 
-		$request = $this->select_all($sql, $arrData);
+		$request = $this->select_all($sql);
 
 		return $request;
 	}	
@@ -468,7 +478,9 @@ class CompensatoriosModel extends Oracle{
 		$this->intIdCompensatorio = $idCompensatorio;
 		$estadoAprobado = 2;
 
-		$sql = "UPDATE BIG_COMPENSATORIOS SET COM_ESTADO = :COM_ESTADO WHERE ID_COMPENSATORIO = :ID_COMPENSATORIO";
+		$sql = "UPDATE BIG_COMPENSATORIOS 
+				SET COM_ESTADO = :COM_ESTADO 
+				WHERE ID_COMPENSATORIO = :ID_COMPENSATORIO";
 
 		$arrData = array(
 			'COM_ESTADO' 		=> $estadoAprobado,
@@ -503,8 +515,8 @@ class CompensatoriosModel extends Oracle{
 
 		$this->intIdRol = $idRol;
 
-		$sql = "SELECT distinct ID_ROL 
-			FROM BIG_FUNCIONARIOS 
+		$sql = "SELECT distinct ID_ROL
+			FROM BIG_FUNCIONARIOS
 			WHERE ID_ROL = ID_ROL";
 
 		$arrData = array(
@@ -513,7 +525,7 @@ class CompensatoriosModel extends Oracle{
 
 		$request = $this->select($sql, $arrData);
 
-		return $request['ID_ROL'] == 1;		
+		return $request['ID_ROL'] == 1;
 	}
 	//Modulo para guardar la evidencia del compensatorio
 	public function guardarEvidencia(string $evidencia, int $idCompensatorio){ // Esta definitivamente funciona

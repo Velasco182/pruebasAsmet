@@ -94,11 +94,12 @@ document.addEventListener('DOMContentLoaded', function(){
                 } 
             } 
 
+            //Agregar donde sea necesario
             divLoading.style.display = "flex";
             let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
             let ajaxUrl = base_url+'/Horas/setHora'; 
             let formData = new FormData(formUsuario);
-            request.open("POST",ajaxUrl,true);
+            request.open("POST", ajaxUrl, true);
             request.send(formData);
             request.onreadystatechange = function(){
                 let objData; 
@@ -155,7 +156,7 @@ function fntDatePickerConfiguration(){
                 close: "fa fa-xmark",
             },
             useCurrent: true,   
-
+            minDate: moment(), // Establecer la fecha mínima seleccionable como la fecha y hora actual
         };
 
         $(picker).datetimepicker(timePickerConfiguration);
@@ -229,8 +230,10 @@ function fntViewHorasDisponibles(){
             //${mensaje}
             if(objData.status){
                 document.querySelector("#txtDisponibles").innerHTML = `<h5>${disponibles}</h5>`;
+                openModal();
                 //swal(disponibles, mensaje, "warning");
             }else{
+                document.querySelector("#txtDisponibles").innerHTML = `<h5>${disponibles}</h5>`;
                 swal({
                     title: disponibles,
                     text: "",
@@ -240,9 +243,7 @@ function fntViewHorasDisponibles(){
                 }, function(isConfirm){
             
                     if(isConfirm){
-
                         $('#modalFormHora').modal('hide');
-
                     }
                 });
             }
@@ -250,7 +251,7 @@ function fntViewHorasDisponibles(){
     }
 }
 //Función para actualizar el registro de horas
-function ftnEditToma(element, idToma){
+function fntEditToma(element, idToma){
 
     fntViewHorasDisponibles();
 
@@ -348,7 +349,7 @@ function fntRechazar(idToma) {
                     let objData = JSON.parse(request.responseText);
                     if (objData.status) {
                         tableHoras.api().ajax.reload();
-                        swal("Solicitud rechazada", objData.msg, "error");
+                        swal("Solicitud rechazada", objData.msg, "info");
                     } else {
                         swal("Error", objData.msg, "error");
                     }
@@ -364,6 +365,7 @@ function ajustarFormulario() {
     request.open("GET", ajaxUrl, true);
     request.send();
 }
+
 //Función para abrir modal
 function openModal(){
     
@@ -376,7 +378,7 @@ function openModal(){
     document.querySelector("#formHora").reset();
 
     fntRolesUsuario();
-    fntViewHorasDisponibles();
+    //fntViewHorasDisponibles();
     ajustarFormulario();
     
     $('#modalFormHora').modal('show');

@@ -229,7 +229,8 @@ function ftnDateTimePickerConfiguration(){
                 today: "fa fa-calendar-check",
                 clear: "fa fa-trash",
                 close: "fa fa-xmark",
-            }
+            },
+            minDate: moment(), // Establecer la fecha mínima seleccionable como la fecha y hora actual
               
         };
 
@@ -344,7 +345,6 @@ function ftnViewCompensatorio(idCompensatorio){
                 document.querySelector("#InfoCorreo").innerHTML = objData.data.FUN_CORREO;
                 document.querySelector("#InfoTipoCompensatorio").innerHTML = objData.data.TIP_COM_NOMBRE;
                 document.querySelector("#InfoEstado").innerHTML = estado;
-                //document.querySelector("#InfoHorasRealizadas").innerHTML = objData.data.horasrealizadas;
                 document.querySelector("#InfoDescripcion").innerHTML = objData.data.COM_DESCRIPCION_ACTIVIDAD;
 
                 if (objData.data.url_portada) {

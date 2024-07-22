@@ -155,6 +155,7 @@ class Compensatorios extends Controllers{
 					}
 	
 					$arrResponse = array('status' => false, 'msg' => 'El compensatorio ya existe!');
+					$diferencia = array('status' => false, 'msg' => 'La diferencia debe ser de por lo menos 30 minutos.');
 
 					if($option == 1) {
 						// Bloque de envío de correo para inserción
@@ -187,21 +188,28 @@ class Compensatorios extends Controllers{
 						
 						try {
 							
-							if ($request_user === "exist"){
-									$arrResponse;
+							if($request_user === "time_error"){
+								$arrResponse = $diferencia;
+							}elseif($request_user === "exist"){
+								$arrResponse;
 							}else{
 								$arrResponse = array('status' => true, 'msg' => 'Su solicitud fue procesada con éxito, espera que el admin apruebe tu compensatorio!');
 								$enviarcorreo = enviarMail($remitente, $destinatario, $asunto, 'solicitud', $datos);
-							} 
-								
+							}
+
 						} catch (Exception $e) {
 							
 							$arrResponse = array('status' => false, 'msg' => 'Error al enviar el correo: ' . $e->getMessage());
 						
 						}
+
 					} else {
 
-						$request_user === "exist" ? $arrResponse : $arrResponse = array('status' => true, 'msg' => 'Su compensatorio fue actualizado correctamente!');
+						if($request_user === "time_error"){
+							$arrResponse = $diferencia;
+						}else{
+							$request_user === "exist" ? $arrResponse : $arrResponse = array('status' => true, 'msg' => 'Su compensatorio fue actualizado correctamente!');
+						}
 					
 					}
 				}
@@ -226,6 +234,8 @@ class Compensatorios extends Controllers{
 
 				$arrData[$i]['COM_FECHA_INICIO']=formatearFechaYHora($arrData[$i]['COM_FECHA_INICIO'],"d/m/Y - h:i A");
 				$arrData[$i]['COM_FECHA_FIN']=formatearFechaYHora($arrData[$i]['COM_FECHA_FIN'],"d/m/Y - h:i A");
+
+				$arrData[$i]['HORAS_REALIZADAS'] = floatval($arrData[$i]['HORAS_REALIZADAS']);
 
 				$btnVer = '';
 				$btnCancelar = '';
@@ -367,7 +377,7 @@ class Compensatorios extends Controllers{
 						$enviarcorreo = enviarMail($remitente, $correo, $asunto, 'aprobacion', $datos);
 	
 						if ($enviarcorreo) {
-							$response = array('status' => true, 'msg' => 'Compensatorio aprobado exitosamente y se envió un correo de confirmación al solicitante.');
+							$response = array('status' => true, 'msg' => 'Se envió un correo de confirmación al solicitante.');
 						} else {
 							$response = array('status' => false, 'msg' => 'Compensatorio aprobado exitosamente, pero no se pudo enviar el correo de confirmación.');
 						}
@@ -409,7 +419,7 @@ class Compensatorios extends Controllers{
 					$enviarcorreo = enviarMail($remitente, $correo, $asunto, 'rechazo', $datos);
 
 					if ($enviarcorreo){
-						$response = array('status' => true, 'msg' => 'El compensatorio fue rechazado y se envio un correo de confirmacion al solicitante');
+						$response = array('status' => true, 'msg' => 'Se envio un correo de confirmacion al solicitante');
 					} else {
 						$response = array('status' => false, 'msg' => 'El compensatorio fue rechazado, pero no se pudo enviar el correo de confirmacion');
 					}

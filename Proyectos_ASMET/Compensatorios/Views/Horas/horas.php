@@ -7,7 +7,7 @@
         <div>
             <h1><i class="fa <?=$data['page_icono']?>"></i> <?= $data['page_title'] ?>
                 <?php if($_SESSION['permisosMod']['PER_W']){ ?>
-                  <button class="btn btn-primary" type="button" onclick="openModal();" ><i class="fas fa-plus-circle"></i>&nbsp;&nbsp;&nbsp;&nbsp;Nuevo</button>
+                  <button class="btn btn-primary" type="button" onclick="fntViewHorasDisponibles();" ><i class="fas fa-plus-circle"></i>&nbsp;&nbsp;&nbsp;&nbsp;Nuevo</button>
                 <?php } ?>
             </h1>
         </div>
