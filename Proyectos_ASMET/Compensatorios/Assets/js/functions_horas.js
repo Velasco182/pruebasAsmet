@@ -94,8 +94,6 @@ document.addEventListener('DOMContentLoaded', function(){
                 } 
             } 
 
-            //Agregar donde sea necesario
-            divLoading.style.display = "flex";
             let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
             let ajaxUrl = base_url+'/Horas/setHora'; 
             let formData = new FormData(formUsuario);
@@ -105,8 +103,10 @@ document.addEventListener('DOMContentLoaded', function(){
                 let objData; 
                 if(request.readyState == 4 && request.status == 200){
                     objData = JSON.parse(request.responseText);
-
+                    
                     if(objData.status){
+                        //Agregar donde sea necesario
+                        divLoading.style.display = "flex";
                         if(rowTable == ""){
                             tableHoras.api().ajax.reload();
                         }else{
@@ -199,7 +199,6 @@ function fntViewHora(idToma){
 
                 document.querySelector("#celNombres").innerHTML = objData.data.FUN_NOMBRES;
                 document.querySelector("#celApellidos").innerHTML = objData.data.FUN_APELLIDOS;
-                //document.querySelector("#celHorasTotales").innerHTML = objData.data.DIFERENCIA_HORAS;
                 document.querySelector("#celCorreo").innerHTML = objData.data.FUN_CORREO;
                 document.querySelector("#celMotivo").innerHTML = objData.data.TOM_MOTIVO;
                 document.querySelector("#celFecha").innerHTML =  objData.data.TOM_FECHA_SOLI;
@@ -212,48 +211,58 @@ function fntViewHora(idToma){
         }
     }
 }
-//Función para llenar horas disponibles en el modal de solicitar horas
+//Función que retorna una promesa para llenar horas disponibles en el modal de solicitar horas
 function fntViewHorasDisponibles(){
-    let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-    let ajaxUrl = base_url+'/Horas/obtenerHorasDisponibles';
-    request.open("GET",ajaxUrl,true);
-    request.send();
-    request.onreadystatechange = function(){
-        if(request.readyState == 4 && request.status == 200){
-            let objData = JSON.parse(request.responseText);
 
-            let response = objData.msg;
-            let arrResponse = response.split(',');
+    return new Promise((resolve, reject) => {
 
-            let disponibles = arrResponse[0];
-            let mensaje = arrResponse[1];
-            //${mensaje}
-            if(objData.status){
-                document.querySelector("#txtDisponibles").innerHTML = `<h5>${disponibles}</h5>`;
-                openModal();
-                //swal(disponibles, mensaje, "warning");
-            }else{
-                document.querySelector("#txtDisponibles").innerHTML = `<h5>${disponibles}</h5>`;
-                swal({
-                    title: disponibles,
-                    text: "",
-                    type: "error",
-                    confirmButtonText: "OK",
-                    closeOnConfirm: true,
-                }, function(isConfirm){
-            
-                    if(isConfirm){
-                        $('#modalFormHora').modal('hide');
-                    }
-                });
+        let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+        let ajaxUrl = base_url+'/Horas/obtenerHorasDisponibles';
+        request.open("GET",ajaxUrl,true);
+        request.send();
+        request.onreadystatechange = function(){
+            if(request.readyState == 4 && request.status == 200){
+                let objData = JSON.parse(request.responseText);
+
+                let response = objData.msg;
+                let arrResponse = response.split(',');
+
+                let disponibles = arrResponse[0];
+                let mensaje = arrResponse[1];
+                //${mensaje}
+                if(objData.status){
+                    document.querySelector("#txtDisponibles").innerHTML = `<h5>${disponibles}</h5>`;
+                    openModal();
+                    resolve(true);
+                    //swal(disponibles, mensaje, "warning");
+                }else{
+                    document.querySelector("#txtDisponibles").innerHTML = `<h5>${disponibles}</h5>`;
+                    swal({
+                        title: disponibles,
+                        text: "",
+                        type: "error",
+                        confirmButtonText: "OK",
+                        closeOnConfirm: true,
+                    }, function(isConfirm){
+                
+                        if(isConfirm){
+                            $('#modalFormHora').modal('hide');
+                        }
+                    });
+                    resolve(false);
+                }
             }
         }
-    }
+    });
 }
-//Función para actualizar el registro de horas
-function fntEditToma(element, idToma){
+//Función asíncrona para actualizar el registro de horas
+async function fntEditToma(element, idToma){
 
-    fntViewHorasDisponibles();
+    let horasDisponibles = await fntViewHorasDisponibles();
+
+    if (horasDisponibles) {
+        divLoading.style.display = "flex"; // Mostrar el div de carga
+    }
 
     rowTable = element.parentNode.parentNode.parentNode; 
     document.querySelector('#titleModal').innerHTML ="Actualizar solicitud de horas";
@@ -278,12 +287,15 @@ function fntEditToma(element, idToma){
                 document.querySelector("#txtFecha").value = objData.data.TOM_FECHA_SOLI;
                 document.querySelector("#txtHoras").value = objData.data.TOM_HORAS_SOLI;
 
-                $('#modalFormHora').modal('show');
+                if(horasDisponibles){
+                    $('#modalFormHora').modal('show');
+                }
 
             }else{
                 swal("Error", objData.msg, "error");
             }
         }
+        divLoading.style.display = "none"; // Ocultar el div de carga
     }
 
 }
@@ -338,6 +350,7 @@ function fntRechazar(idToma) {
         closeOnCancel: true
     }, function(isConfirm) {
         if (isConfirm) {
+            divLoading.style.display = "flex"; // Mostrar el div de carga
             let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
             let ajaxUrl = base_url + '/Horas/rechazarSolicitud';
             let strData = "ID_TOMA="+idToma;
@@ -345,14 +358,15 @@ function fntRechazar(idToma) {
             request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             request.send(strData);
             request.onreadystatechange = function() {
-                if (request.readyState == 4 && request.status == 200) {
+                if (request.readyState === 4 && request.status === 200) {
                     let objData = JSON.parse(request.responseText);
                     if (objData.status) {
                         tableHoras.api().ajax.reload();
-                        swal("Solicitud rechazada", objData.msg, "info");
+                        swal("Solicitud rechazada", objData.msg, "success");
                     } else {
                         swal("Error", objData.msg, "error");
                     }
+                    divLoading.style.display = "none"; // Ocultar el div de carga
                 }
             }
         }

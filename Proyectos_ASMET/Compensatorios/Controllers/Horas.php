@@ -52,9 +52,13 @@ class Horas extends Controllers{
 				$strFecha = $_POST['txtFecha'];
 				$strHoras = floatval($_POST['txtHoras']);
 
+				//$ListadoUsuarios = intval(strClean($_POST['ListaUsuarios']));
+				//$arrData = $this->model->recuperar($ListadoUsuarios); // Recuperar los datos insertados
+
 				$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
 				
 				$option = 0;
+				//$request_user = 0;
 				
 				$horasExistentes = $this->model->getHorasExistentes($idFuncionario);
 				
@@ -84,7 +88,7 @@ class Horas extends Controllers{
 					
 					if($arrHorasSinToma){
 						$funcionario = $arrHorasSinToma[0]['NOMBREFUNCIONARIO'];
-						$horasAprobadasCompensatorios = floatval($arrHorasSinToma[0]['HORAS_COMPENSATORIOS_APROBADAS']);
+						$horasAprobadasCompensatorios = floatval($arrHorasSinToma[0]['HORAS_APROBADAS_SIN_TOMA']);
 						$horasAprobadas = 0;
 						$horasDisponibles = 0;
 					}else{
@@ -101,11 +105,6 @@ class Horas extends Controllers{
 					}
 
 				}
-				
-
-
-				/*Dep($horasDisponibles);
-				Dep($horasAprobadasCompensatoriosSinToma);//($horasAprobadasCompensatorios || $horasAprobadasCompensatoriosSinToma)*/
 
 				if(($horasAprobadasCompensatorios && $strHoras) > 0
 					&& ($horasAprobadasCompensatorios - $horasAprobadas) > 0
@@ -313,9 +312,6 @@ class Horas extends Controllers{
 				$arrResponse = array('status' => false, 'msg' => $msjResta);
 			}else{
 				$msjResta="Tienes ".$horasDisponibles." hora/s para tomar.";
-				/*,
-				".$horasAprobadas." hora/s aprobadas y
-				".$horasAprobadasCompensatorios." hora/s en compensatorios aprobadas.*/
 				$arrResponse = array('status' => true, 'msg' => $msjResta);
 			}
 
@@ -324,7 +320,7 @@ class Horas extends Controllers{
 			$arrHorasSinToma = $this->model->getHorasDisponiblesSinToma($idFuncionario);
 
 			if($arrHorasSinToma){
-				$horasAprobadasCompensatoriosSinToma = floatval($arrHorasSinToma[0]['HORAS_COMPENSATORIOS_APROBADAS']);
+				$horasAprobadasCompensatoriosSinToma = floatval($arrHorasSinToma[0]['HORAS_APROBADAS_SIN_TOMA']);
 			}else{
 				$horasAprobadasCompensatoriosSinToma = 0;
 			}
@@ -393,20 +389,29 @@ class Horas extends Controllers{
 				$idFuncionario = $datos['ID_FUNCIONARIO'];
 				
 				$arrHoras = $this->model->getHorasDisponibles($idFuncionario);
+				$arrHorasSinToma = $this->model->getHorasDisponiblesSinToma($idFuncionario);
 
-				Dep($arrHoras);
-
+				if($arrHorasSinToma){
+					$horasDisponiblesSinToma = floatval($arrHorasSinToma[0]['HORAS_APROBADAS_SIN_TOMA']);
+					$horasDisponibles = null;
+					$horasAprobadas = null;
+					$horasAprobadasCompensatorios = null;
+				}else{
+					$horasDisponiblesSinToma = 0;
+				}
+				
 				if($arrHoras){
 					$horasDisponibles = floatval($arrHoras[0]['HORAS_DISPONIBLES']);
 					$horasAprobadas = floatval($arrHoras[0]['HORAS_APROBADAS']);
 					$horasAprobadasCompensatorios = floatval($arrHoras[0]['HORAS_COMPENSATORIOS_APROBADAS']);
+					$horasDisponiblesSinToma = null;
 				}else{
 					$horasDisponibles = 0;
 					$horasAprobadas = 0;
 					$horasAprobadasCompensatorios = 0;
 				}
 				
-				if($horasDisponibles>=$horasSolicitadas){
+				if(($arrHoras && $horasDisponibles>=$horasSolicitadas) || ($arrHorasSinToma && $horasDisponiblesSinToma>=$horasSolicitadas)){
 					
 					if ($idToma > 0 && $datos){
 	
@@ -454,7 +459,9 @@ class Horas extends Controllers{
 
 			$datos = $this->model->correoAprobacionORechazo($idToma);
 
-			$datos['TOM_FECHA_SOLI']=formatearFechaUsuComparar($datos['TOM_FECHA_SOLI'],"d/m/Y");
+			$datos['TOM_FECHA_SOLI'] = formatearFechaUsuComparar($datos['TOM_FECHA_SOLI'],"d/m/Y");
+			$datos['TOM_HORAS_SOLI'] = floatval($datos['TOM_HORAS_SOLI']);
+
 			
 			if ($idToma > 0){
 				$success = $this->model->estadoRechazado($idToma);

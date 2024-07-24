@@ -136,7 +136,7 @@ class HorasModel extends Oracle{
 			);
 	
 			$request = $this->select_all($sql);
-			return $request;
+			//return $request;
 
 		}
 
@@ -180,7 +180,7 @@ class HorasModel extends Oracle{
 
 		$sql = "SELECT
 					FUN_NOMBRES || ' ' ||FUN_APELLIDOS AS NOMBREFUNCIONARIO,
-					ROUND(AVG(COMP_HORAS_SUBQUERY),2) AS HORAS_COMPENSATORIOS_APROBADAS
+					ROUND(AVG(COMP_HORAS_SUBQUERY),2) AS HORAS_APROBADAS_SIN_TOMA
 				FROM(
 						SELECT
 							F.FUN_NOMBRES,
@@ -258,6 +258,7 @@ class HorasModel extends Oracle{
 					TO_CHAR(TOM.TOM_FECHA_SOLI) AS TOM_FECHA_SOLI,
 					TOM.TOM_MOTIVO,
 					TOM.TOM_HORAS_SOLI,
+					FUN.ID_FUNCIONARIO,
 					FUN.FUN_NOMBRES AS FUN_NOMBRES,
 					FUN.FUN_APELLIDOS AS FUN_APELLIDOS,
 					FUN.FUN_CORREO AS FUN_CORREO
@@ -275,6 +276,7 @@ class HorasModel extends Oracle{
 				TO_CHAR(TOM.TOM_FECHA_SOLI) AS TOM_FECHA_SOLI,
 				TOM.TOM_MOTIVO,
 				TOM.TOM_HORAS_SOLI,
+				FUN.ID_FUNCIONARIO,
 				FUN.FUN_NOMBRES AS FUN_NOMBRES,
 				FUN.FUN_APELLIDOS AS FUN_APELLIDOS,
 				FUN.FUN_CORREO AS FUN_CORREO

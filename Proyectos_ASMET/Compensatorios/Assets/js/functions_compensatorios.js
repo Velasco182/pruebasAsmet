@@ -229,9 +229,7 @@ function ftnDateTimePickerConfiguration(){
                 today: "fa fa-calendar-check",
                 clear: "fa fa-trash",
                 close: "fa fa-xmark",
-            },
-            minDate: moment(), // Establecer la fecha mínima seleccionable como la fecha y hora actual
-              
+            },              
         };
 
         // Crea una copia del objeto de configuración
@@ -304,6 +302,8 @@ function ftnRechazarCompensatorio(idCompensatorio) { // Funcion para boton boton
         closeOnCancel: true
     }, function(isConfirm) {
         if (isConfirm) {
+            divLoading.style.display = "flex"; // Mostrar el div de carga
+
             let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
             let ajaxUrl = base_url + '/Compensatorios/rechazarCompensatorio';
             let strData = "ID_COMPENSATORIO=" + idCompensatorio;
@@ -320,6 +320,7 @@ function ftnRechazarCompensatorio(idCompensatorio) { // Funcion para boton boton
                         swal("Error", objData.msg, "error");
                     }
                 }
+                divLoading.style.display = "none"; // Ocultar el div de carga
             }
         }
     });
@@ -481,12 +482,15 @@ function ftnTotalUsuarios(){
         request.open("GET",ajaxUrl,true);
         request.send();
         request.onreadystatechange = function(){
+
             if(request.readyState == 4 && request.status == 200){
+
                 document.querySelector('#listaUsuarios').innerHTML = request.responseText;
                 
                 $('#listaUsuarios').selectpicker('refresh');
                 $('#listaUsuarios').selectpicker('render');
             }
+            
         }
     }
 }

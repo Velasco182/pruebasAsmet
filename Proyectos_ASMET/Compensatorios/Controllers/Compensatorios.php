@@ -435,6 +435,7 @@ class Compensatorios extends Controllers{
 	public function getSelectUsuarios(){
 		$htmlOptions = "";
 		$arrData = $this->model->selectUsuarios();
+
 		if(count($arrData) > 0 ){
 			// Obtener el nombre del usuario que inició sesión
 			$loggedUserName = $_SESSION['userData']['FUN_NOMBRES'];
@@ -444,7 +445,8 @@ class Compensatorios extends Controllers{
 				
 			// Agregar las opciones de los demás registros
 			for ($i=0; $i < count($arrData); $i++) { 
-				if($arrData[$i]['FUN_ESTADO'] == 1 && $arrData[$i]['ID_FUNCIONARIO'] != $_SESSION['userData']['ID_FUNCIONARIO']){
+				if($arrData[0]['FUN_ESTADO'] == 1 && $arrData[0]['ID_FUNCIO
+				NARIO'] != $_SESSION['userData']['ID_FUNCIONARIO']){
 					$htmlOptions .= '<option value="'.$arrData[$i]['ID_FUNCIONARIO'].'">'.$arrData[$i]['FUN_NOMBRES'].' '.$arrData[$i]['FUN_APELLIDOS'].'</option>';
 				}
 			}

@@ -50,4 +50,7 @@
 	const EMAIL_REMITENTE = "estivenmendez550@gmail.com";
 	const NOMBRE_EMPESA = "Asmet Salud";
 	const WEB_EMPRESA = "www.asmetsalud.com";
+
+	//Grupo de roles
+	const ROLES_ADMIN = ["1A", "2F", "3A"];
  ?>

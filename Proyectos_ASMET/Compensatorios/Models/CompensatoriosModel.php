@@ -286,24 +286,38 @@ class CompensatoriosModel extends Oracle{
 	//Modulo para llenar el select de usuario en el modal de registro de compensatorios 
 	public function selectUsuarios(){
 		
-		$whereAdmin = "";
-		if ($_SESSION['idUser'] != 1 ){
+		$rolCodigo = $_SESSION['userData']['ROL_CODIGO'];
 
-			$whereAdmin = " and ID_FUNCIONARIO != 1 ";
-
+		// Obtener el ID del funcionario de la sesión
+		$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
+		$this->intIdFuncionario = $idFuncionario;
+		//vericar arreglo de roles
+		if($rolCodigo == "1A"){
+			// EXTRAE ROLES excluyendo el usuario con ID_FUNCIONARIO = 1
+			$sql = "SELECT 
+						F.ID_FUNCIONARIO, F.FUN_NOMBRES, F.FUN_APELLIDOS, F.FUN_ESTADO
+					FROM BIG_FUNCIONARIOS F
+					WHERE F.FUN_ESTADO != 0 AND F.ID_FUNCIONARIO != 1
+					ORDER BY F.FUN_NOMBRES ASC, F.FUN_APELLIDOS ASC";
+			
+			$request = $this->select_all($sql);
+			return $request;
 		}
-		// EXTRAE ROLES excluyendo el usuario con ID_FUNCIONARIO = 1
-		$sql = "SELECT * FROM BIG_FUNCIONARIOS WHERE FUN_ESTADO != 0" . $whereAdmin;
-		$request = $this->select_all($sql);
 
+		$sql = "SELECT 
+					F.ID_FUNCIONARIO, F.FUN_NOMBRES, F.FUN_APELLIDOS, F.FUN_ESTADO
+				FROM BIG_FUNCIONARIOS F
+				WHERE F.ID_FUNCIONARIO = '{$this->intIdFuncionario}'";
+			
+		$request = $this->select_all($sql);
 		return $request;
 	}
 	//Modulo para llenar el select de tipo de compensatorio
 	public function selectTipoCompensatorio(){
 		// Hago un select a la db para recuperar todos los tipos de compensatorios activos.
-		$sql = "SELECT TC.ID_TIPO_COMPENSATORIO, TC.TIP_COM_NOMBRE 
-			FROM BIG_TIPO_COMPENSATORIO TC 
-			WHERE TC.TIP_COM_ESTADO='1'
+		$sql = "SELECT TC.ID_TIPO_COMPENSATORIO, TC.TIP_COM_NOMBRE
+			FROM BIG_TIPO_COMPENSATORIO TC
+			WHERE TC.TIP_COM_ESTADO = '1'
 			ORDER BY TC.TIP_COM_NOMBRE ASC";
 
 		$request = $this->select_all($sql);
@@ -511,7 +525,7 @@ class CompensatoriosModel extends Oracle{
 
 	//----Funciones generales------
 	//Modulo de verificación de rol
-	public function esAdministrador($idRol) {
+	public function esAdministrador(int $idRol) {
 
 		$this->intIdRol = $idRol;
 
