@@ -273,6 +273,7 @@ async function fntEditToma(element, idToma){
     let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
     let ajaxUrl = base_url+'/Horas/editHora/'+idToma;
     request.open("GET",ajaxUrl,true);
+    request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     request.send();
     request.onreadystatechange = function(){
 
@@ -285,9 +286,9 @@ async function fntEditToma(element, idToma){
                 document.querySelector("#idHora").value = objData.data.ID_TOMA;
                 document.querySelector("#txtMotivo").value = objData.data.TOM_MOTIVO;
                 document.querySelector("#txtFecha").value = objData.data.TOM_FECHA_SOLI;
-                document.querySelector("#txtHoras").value = objData.data.TOM_HORAS_SOLI;
-
-                if(horasDisponibles){
+                document.querySelector("#txtHoras").value = parseFloat(objData.data.TOM_HORAS_SOLI);
+                
+                if(horasDisponibles){   
                     $('#modalFormHora').modal('show');
                 }
 
@@ -372,11 +373,45 @@ function fntRechazar(idToma) {
         }
     });
 }
+//función para llenar el select de usuarios
+function ftnTotalUsuarios(){
+   
+    if(document.querySelector('#listaUsuarios')){
+        let ajaxUrl = base_url+'/Compensatorios/getSelectUsuarios';
+        let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+        request.open("GET",ajaxUrl,true);
+        request.send();
+        request.onreadystatechange = function(){
+
+            if(request.readyState == 4 && request.status == 200){
+
+                document.querySelector('#listaUsuarios').innerHTML = request.responseText;
+                
+                $('#listaUsuarios').selectpicker('refresh');
+                $('#listaUsuarios').selectpicker('render');
+            }
+            
+        }
+    }
+}
 //Función para verificar tipo de usuario y así mismo permisos
 function ajustarFormulario() { 
     let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
     let ajaxUrl = base_url + '/Horas/verificarRol';
     request.open("GET", ajaxUrl, true);
+
+    request.onreadystatechange = function() {
+        if (request.readyState == 4 && request.status == 200) {
+            let esAdministrador = JSON.parse(request.responseText).esAdministrador;
+            // let estadoDiv = document.querySelector(".form-group.col-md-6");
+            
+            if (esAdministrador == 2) {
+                // estadoDiv.style.display = "none";
+                $("#ListaUsuarios").closest(".form-group").css("display","none");
+            }
+        }
+    }
+
     request.send();
 }
 
@@ -392,6 +427,7 @@ function openModal(){
     document.querySelector("#formHora").reset();
 
     fntRolesUsuario();
+    ftnTotalUsuarios();
     //fntViewHorasDisponibles();
     ajustarFormulario();
     

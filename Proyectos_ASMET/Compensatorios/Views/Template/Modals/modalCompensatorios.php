@@ -10,10 +10,22 @@
       </div>
       <div class="modal-body">
             <form enctype="multipart/form-data" id="formCompensatorio" name="formCompensatorio" class="form-horizontal">
-              <input type="hidden" id="idCompensatorio" name="idCompensatorio" value="">
-              <p class="text-primary">Todos los campos son obligatorios.</p>
-
+              
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <h5 class="text-primary">Todos los campos son obligatorios.</h5>
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="listaUsuarios">Usuarios</label>
+                  <select class="form-control" data-live-search="true" name="listaUsuarios" id="listaUsuarios">
+                    </select>
+                </div>
+              </div>
+                
               <div class="form-row" style="display:none;">
+                <div class="form-group col-md-6">
+                    <input type="hidden" id="idCompensatorio" name="idCompensatorio" value="">
+                </div>
                 <div class="form-group col-md-6">
                   <label for="txtCompensatorio">Compensatorio</label>
                   <input type="text" class="form-control" id="txtCompensatorio" name="txtCompensatorio" required value="0" autocomplete="off">
@@ -103,12 +115,6 @@
                       <br>
                       <div id="evidenciaName"></div>
                   </div>
-                </div>
-
-                <div class="form-group col-md-6">
-                    <label for="listaUsuarios">Usuarios</label>
-                      <select class="form-control" data-live-search="true" name="listaUsuarios" id="listaUsuarios">
-                      </select>
                 </div>
                 
                 <div class="form-group col-md-6" style="display:none;">

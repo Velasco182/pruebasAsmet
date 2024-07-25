@@ -1,6 +1,6 @@
 <!-- Modal de Horas-->
 <div class="modal fade" id="modalFormHora" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header headerRegister">
         <h5 class="modal-title" id="titleModal">Solicitud de horas</h5>
@@ -12,13 +12,28 @@
           <!-- <div class="tile"> -->
             <div class="tile-body">
               <form id="formHora" name="formHora">
-                <input type="hidden" id="idHora" name="idHora" value="">
-                
-                <div class="form-group" style="display:none;">
-                  <label class="control-label" for="txtEstado">Estado</label>
-                  <input class="form-control" id="txtEstado" name="txtEstado" value="1">              
+        
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <h5 class="text-primary">Todos los campos son obligatorios.</h5>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="listaUsuarios">Usuarios</label>
+                    <select class="form-control" data-live-search="true" name="listaUsuarios" id="listaUsuarios" required>
+                      </select>
+                  </div>
                 </div>
-
+                
+                <div class="form-row" style="display:none;">
+                  <div class="form-group col-md-6">
+                    <input type="hidden" id="idHora" name="idHora" value="">
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label class="control-label" for="txtEstado">Estado</label>
+                    <input class="form-control" id="txtEstado" name="txtEstado" value="1">              
+                  </div>
+                </div>
+                
                 <div class="row">
                   
                   <div class="form-group col-md-12">
@@ -70,7 +85,7 @@
                     <i class="fa fa-fw fa-lg fa-check-circle"></i>
                     <span id="btnText">Enviar solicitud</span>
                   </button>&nbsp;&nbsp;&nbsp;
-                  <a class="btn btn-secondary" href="#" data-dismiss="modal" >
+                  <a class="btn btn-danger" href="#" data-dismiss="modal" >
                     <i class="fa fa-fw fa-lg fa-times-circle">
                     </i>Cancelar</a>
                 </div>

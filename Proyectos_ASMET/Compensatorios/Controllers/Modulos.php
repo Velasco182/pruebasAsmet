@@ -61,8 +61,8 @@
 						$btnView = '<button class="btn btn-info btn-sm btnViewModulo" onClick="fntViewModulo('.$arrData[$i]['ID_MODULO'].')" title="Ver Modulo"><i class="far fa-eye"></i></button>';
 					}
 					if($_SESSION['permisosMod']['PER_D']){
-						if($arrData[$i]['MOD_CODIGO']!="2F" and $arrData[$i]['MOD_CODIGO']!="3M" AND $arrData[$i]['MOD_CODIGO']!="4M"
-							AND $arrData[$i]['MOD_CODIGO']!="5R" AND $arrData[$i]['MOD_CODIGO']!="6C" AND $arrData[$i]['MOD_CODIGO']!="7T"){
+						if($arrData[$i]['MOD_CODIGO']!="2F" AND $arrData[$i]['MOD_CODIGO']!="3M" AND $arrData[$i]['MOD_CODIGO']!="4M"
+							AND $arrData[$i]['MOD_CODIGO']!="5R" AND $arrData[$i]['MOD_CODIGO']!="6C" AND $arrData[$i]['MOD_CODIGO']!="7T" AND $arrData[$i]['MOD_CODIGO']!="8T"){
 							$btnDelete = '<button class="btn btn-danger btn-sm btnDeleteModulo" onClick="fntDelModulo('.$arrData[$i]['ID_MODULO'].')" title="Eliminar"><i class="fa fa-sm fa-trash"></i></button>';
 						}else{
 							$btnDelete = '<button class="btn btn-danger btn-sm btnDeleteModulo" disabled><i class="fa fa-sm fa-trash"></i></button>';
@@ -196,7 +196,7 @@
 
 		public function getMenus(){
 			$arrData = $this->model->listarMenus();
-			echo json_encode($arrData,JSON_UNESCAPED_UNICODE);	
+			echo json_encode($arrData,JSON_UNESCAPED_UNICODE);
 		}
 
 		public function getSelectMenus(){

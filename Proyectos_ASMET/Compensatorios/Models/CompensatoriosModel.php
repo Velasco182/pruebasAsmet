@@ -18,6 +18,7 @@ class CompensatoriosModel extends Oracle{
 	public $intIdUsuario;
 
 	public $intIdRol;
+	public $intCodigoRol;
 
 	public function __construct(){
 		parent::__construct();
@@ -102,7 +103,7 @@ class CompensatoriosModel extends Oracle{
 					'COM_USUARIO_FINAL' 		=> $this->strTrabajoRequerido,
 					'COM_EVIDENCIAS' 			=> $this->strEvidencia,
 					'COM_ESTADO' 				=> $this->intEstado,
-					'ID_FUNCIONARIO'			=> $this->listadoUsuarios
+					'ID_FUNCIONARIO'			=> $this->listadoUsuarios // Usando lista de usuarios
 				);
 		
 				$request_insert = $this->insert($query_insert, $arrData);
@@ -143,36 +144,16 @@ class CompensatoriosModel extends Oracle{
 
 		return $request;
 	}
-	//Modulo para recolectar información del usuario
-	public function recuperar(int $idFuncionario){
-
-		$this->intIdFuncionario = $idFuncionario;
-
-		$sql = "SELECT
-			FUN.ID_FUNCIONARIO,
-			FUN.FUN_NOMBRES || ' ' ||FUN.FUN_APELLIDOS NOMBREFUNCIONARIO,
-			FUN.FUN_CORREO,
-			FUN.FUN_USUARIO
-		FROM BIG_FUNCIONARIOS FUN
-		WHERE FUN.ID_FUNCIONARIO = $this->intIdFuncionario
-		";
-
-		$arrData = array(
-			'ID_FUNCIONARIO' => $this->intIdFuncionario
-		);
-
-		$request = $this->select($sql, $arrData);
-
-		return $request;
-	}
 	//Modulo de llenar datatable, de admin y usuario normal
 	public function selectCompensatorios(int $idFuncionario) {
 
 		$this->intIdUsuario = $idFuncionario;
 
 		$rolCodigo = $_SESSION['userData']['ROL_CODIGO'];
+		$this->intCodigoRol = $rolCodigo;
+
 		//Consulta para admin
-		if ($rolCodigo == '1A') { //REVISAR $rolCodigo in $arregloRoles
+		if (in_array($this->intCodigoRol, ROLES_ADMIN)) { //$rolCodigo == '1A'REVISAR $rolCodigo in $arregloRoles 
 
 			$sql = "SELECT
 						I.ID_COMPENSATORIO,
@@ -283,19 +264,23 @@ class CompensatoriosModel extends Oracle{
 	
 		return $request;
 	}
-	//Modulo para llenar el select de usuario en el modal de registro de compensatorios 
+	//Modulo para llenar el select de usuario en el modal de registro de horas 
 	public function selectUsuarios(){
 		
 		$rolCodigo = $_SESSION['userData']['ROL_CODIGO'];
+		$this->intCodigoRol = $rolCodigo;
 
 		// Obtener el ID del funcionario de la sesión
 		$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
 		$this->intIdFuncionario = $idFuncionario;
 		//vericar arreglo de roles
-		if($rolCodigo == "1A"){
+		if(in_array($this->intCodigoRol, ROLES_ADMIN)){
 			// EXTRAE ROLES excluyendo el usuario con ID_FUNCIONARIO = 1
 			$sql = "SELECT 
-						F.ID_FUNCIONARIO, F.FUN_NOMBRES, F.FUN_APELLIDOS, F.FUN_ESTADO
+						F.ID_FUNCIONARIO, 
+						F.FUN_NOMBRES, 
+						F.FUN_APELLIDOS, 
+						F.FUN_ESTADO
 					FROM BIG_FUNCIONARIOS F
 					WHERE F.FUN_ESTADO != 0 AND F.ID_FUNCIONARIO != 1
 					ORDER BY F.FUN_NOMBRES ASC, F.FUN_APELLIDOS ASC";
@@ -312,13 +297,37 @@ class CompensatoriosModel extends Oracle{
 		$request = $this->select_all($sql);
 		return $request;
 	}
+	//Modulo para recolectar información del usuario
+	public function recuperar(int $idFuncionario){
+
+		$this->intIdFuncionario = $idFuncionario;
+
+		$sql = "SELECT
+			FUN.ID_FUNCIONARIO,
+			FUN.FUN_NOMBRES || ' ' ||FUN.FUN_APELLIDOS NOMBREFUNCIONARIO,
+			FUN.FUN_CORREO,
+			FUN.FUN_USUARIO
+		FROM BIG_FUNCIONARIOS FUN
+		WHERE FUN.ID_FUNCIONARIO = $this->intIdFuncionario
+		";
+
+		$arrData = array(
+			'ID_FUNCIONARIO' => $this->intIdFuncionario
+		);
+
+		$request = $this->select($sql, $arrData);
+
+		return $request;
+	}
 	//Modulo para llenar el select de tipo de compensatorio
 	public function selectTipoCompensatorio(){
 		// Hago un select a la db para recuperar todos los tipos de compensatorios activos.
-		$sql = "SELECT TC.ID_TIPO_COMPENSATORIO, TC.TIP_COM_NOMBRE
-			FROM BIG_TIPO_COMPENSATORIO TC
-			WHERE TC.TIP_COM_ESTADO = '1'
-			ORDER BY TC.TIP_COM_NOMBRE ASC";
+		$sql = "SELECT 
+					TC.ID_TIPO_COMPENSATORIO, 
+					TC.TIP_COM_NOMBRE
+				FROM BIG_TIPO_COMPENSATORIO TC
+				WHERE TC.TIP_COM_ESTADO = '1'
+				ORDER BY TC.TIP_COM_NOMBRE ASC";
 
 		$request = $this->select_all($sql);
 		return $request;
@@ -328,9 +337,10 @@ class CompensatoriosModel extends Oracle{
 
 		$this->intIdTipoCompensatorio = $idTipoCompensatorio;
 
-		$sql = "SELECT TC.TIP_COM_NOMBRE AS TIP_COM_NOMBRE
-			FROM BIG_TIPO_COMPENSATORIO TC
-			WHERE TC.ID_TIPO_COMPENSATORIO ='{$this->intIdTipoCompensatorio}'";
+		$sql = "SELECT 
+					TC.TIP_COM_NOMBRE AS TIP_COM_NOMBRE
+				FROM BIG_TIPO_COMPENSATORIO TC
+				WHERE TC.ID_TIPO_COMPENSATORIO ='{$this->intIdTipoCompensatorio}'";
 
 		$arrData = array(
 			'ID_TIPO_COMPENSATORIO'	 =>$this->intIdTipoCompensatorio,

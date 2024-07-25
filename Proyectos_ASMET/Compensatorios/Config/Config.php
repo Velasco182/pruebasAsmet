@@ -52,5 +52,5 @@
 	const WEB_EMPRESA = "www.asmetsalud.com";
 
 	//Grupo de roles
-	const ROLES_ADMIN = ["1A", "2F", "3A"];
+	const ROLES_ADMIN = ["1A", "3A"];
  ?>
