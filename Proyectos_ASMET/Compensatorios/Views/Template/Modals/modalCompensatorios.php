@@ -11,7 +11,7 @@
       <div class="modal-body">
             <form enctype="multipart/form-data" id="formCompensatorio" name="formCompensatorio" class="form-horizontal">
               
-              <div class="form-row">
+              <div class="form-row" id="usersDiv" name="usersDiv">
                 <div class="form-group col-md-6">
                   <h5 class="text-primary">Todos los campos son obligatorios.</h5>
                 </div>
@@ -110,9 +110,8 @@
 
                 <div class="form-group col-md-6">
                   <label id="labelEvidencia" for="archivoEvidencia">Adjuntar evidencia</label>
-                  <div class="tile p-3">
+                  <div class="tile mx-auto">
                       <input type="file" class="form-control-file" id="archivoEvidencia" name="archivoEvidencia" multiple required>
-                      <br>
                       <div id="evidenciaName"></div>
                   </div>
                 </div>
@@ -124,7 +123,7 @@
 
               </div>
 
-              <div class="tile-footer">
+              <div class="modal-footer">
                 <button id="btnActionForm" class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i><span id="btnText">Enviar solicitud</span></button>&nbsp;&nbsp;&nbsp;
                 <button class="btn btn-danger" type="button" data-dismiss="modal"><i class="fa fa-fw fa-lg fa-times-circle"></i>Cerrar</button>
               </div>

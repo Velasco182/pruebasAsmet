@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function(){
         formUsuario.onsubmit = function(e) {
            
             e.preventDefault();
-            
+
             let strFechaInicio = document.querySelector('#txtFechaInicio').value;
             let strFechaFin = document.querySelector('#txtFechaFin').value;
             let strDescripcionActividad = document.querySelector('#txtDescripcionActividad').value;
@@ -115,15 +115,15 @@ document.addEventListener('DOMContentLoaded', function(){
                         request.send(formData);
                         
                         request.onreadystatechange = function(){
+                            let objData; 
                             if(request.readyState == 4 && request.status == 200){
-                                let objData = JSON.parse(request.responseText);
+                                objData = JSON.parse(request.responseText);
             
-                                if(objData.status === false){
-            
+                                if(objData.status === false){        
                                     swal("Error", objData.msg , "error");
-                                
                                 }else{
-                                    
+                                    //Agregar donde sea necesario
+                                    divLoading.style.display = "flex";    
                                     if(rowTable == ""){
                                         tableCompensatorios.api().ajax.reload();
                                     }else{
@@ -173,7 +173,8 @@ document.addEventListener('DOMContentLoaded', function(){
                                     swal("Error", objData.msg , "error");
                                 
                                 }else{
-                                    
+                                    //Agregar donde sea necesario
+                                    divLoading.style.display = "flex";    
                                     if(rowTable == ""){
                                         tableCompensatorios.api().ajax.reload();
                                     }else{
@@ -251,6 +252,161 @@ function ftnDateTimePickerConfiguration(){
 
     });
 };
+//Función para ver compensatorio por id mostrando el modal
+function ftnViewCompensatorio(idCompensatorio){
+    let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+    let ajaxUrl = base_url+'/Compensatorios/getCompensatorio/'+idCompensatorio;
+    request.open("GET",ajaxUrl,true);
+    request.send();
+    request.onreadystatechange = function(){
+        if(request.readyState == 4 && request.status == 200){
+            let objData = JSON.parse(request.responseText);
+
+            if(objData.status){
+                let estado = objData.data.COM_ESTADO == 1 ? 
+                '<span class="badge badge-warning">Pendiente</span>' : 
+                (objData.data.COM_ESTADO == 2 ? '<span class="badge badge-success">Aprobado</span>' :
+                '<span class="badge badge-danger">Rechazado</span>');
+                
+                document.querySelector("#InfoNombres").innerHTML = objData.data.FUN_NOMBRES;
+                document.querySelector("#InfoApellidos").innerHTML = objData.data.FUN_APELLIDOS;
+                document.querySelector("#InfoCorreo").innerHTML = objData.data.FUN_CORREO;
+                document.querySelector("#InfoTipoCompensatorio").innerHTML = objData.data.TIP_COM_NOMBRE;
+                document.querySelector("#InfoEstado").innerHTML = estado;
+                document.querySelector("#InfoDescripcion").innerHTML = objData.data.COM_DESCRIPCION_ACTIVIDAD;
+
+                if (objData.data.url_portada) {
+                    document.querySelector("#DescargarSoporte").innerHTML = '<a class="btn" href="' + objData.data.url_portada + '" target="_blank"><i class="fas fa-download"> Evidencia disponible</i></a>';
+                } else {
+                    // Si objData.data.url_portada está vacío, muestra un mensaje de "No hay evidencia disponible"
+                    document.querySelector("#DescargarSoporte").innerHTML = '<h6> No hay evidencia disponible </h6>';
+                }
+                
+                $('#modalViewFuncionario').modal('show');
+
+            }else{
+                swal("Error", objData.msg , "error");
+            }
+        }
+    }
+}
+//Función para editar el compensatorio mostrando el modal
+function ftnEditCompensatorio(element,idCompensatorio){
+
+    ftnTotalUsuarios();
+    ftnTotalTipoCompensatorio();
+    
+    rowTable = element.parentNode.parentNode.parentNode; 
+    document.querySelector('#titleModal').innerHTML ="Actualizar compensatorio";
+    document.querySelector('.modal-header').classList.replace("headerRegister", "headerUpdate");
+    document.querySelector('#btnActionForm').classList.replace("btn-primary", "btn-info");
+    document.querySelector('#btnText').innerHTML ="Actualizar";
+
+    document.getElementById("archivoEvidencia").value = "";
+
+    //var idCompensatorio = idCompensatorio;
+    let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+    let ajaxUrl = base_url+'/Compensatorios/editCompensatorio/'+idCompensatorio;
+    request.open("GET",ajaxUrl,true);
+    request.send();
+    request.onreadystatechange = function(){
+
+        if(request.readyState == 4 && request.status == 200){
+
+            let objData = JSON.parse(request.responseText);
+
+            if(objData.status){
+
+                divLoading.style.display = "flex"; // Mostrar el div de carga
+
+                $("#usersDiv").closest(".form-row").css("display","none");
+
+                document.querySelector("#idCompensatorio").value = objData.data.ID_COMPENSATORIO;
+                document.querySelector("#txtFechaInicio").value = objData.data.COM_FECHA_INICIO;
+                document.querySelector("#txtFechaFin").value = objData.data.COM_FECHA_FIN;
+                document.querySelector("#txtActividad").value = objData.data.ID_TIPO_COMPENSATORIO;
+                document.querySelector("#txtTrabajoRequerido").value = objData.data.COM_USUARIO_FINAL;
+                document.querySelector("#txtDescripcionActividad").value = objData.data.COM_DESCRIPCION_ACTIVIDAD;
+                
+                let evidencia = objData.data.COM_EVIDENCIAS;
+
+                if (evidencia == undefined) {
+                    validacionEvidencia = false;
+                    document.querySelector("#archivoEvidencia").required = true;
+                    document.querySelector("#evidenciaName").innerHTML = '<h6 id="archivoEvidenciaName">No hay evidencia disponible</h6>';
+                }else{
+                    validacionEvidencia = true;
+                    document.querySelector("#evidenciaName").innerHTML = '<a class="mt-3 btn" href="archivos/' + evidencia + '" target="_blank"><i class="fas fa-download">&nbsp;&nbsp;&nbsp;Evidencia disponible</i></a>';
+                    document.querySelector("#archivoEvidencia").required = false;
+                }
+                
+                //Revisar
+                $('#txtActividad').selectpicker('refresh');
+                $('#txtActividad').selectpicker('render');
+
+                $('#listaUsuarios').selectpicker('refresh');
+                $('#listaUsuarios').selectpicker('render');
+
+                $('#modalFormCompensatorio').modal('show');
+                
+            }else{
+                swal("Error", objData.msg, "error");
+            }
+        }
+        divLoading.style.display = "none"; // Ocultar el div de carga
+    }
+}
+//Función para subir evidencias mostrando el modal
+function ftnEvidencias(idCompensatorio) {
+    // Abre el modal de subir evidencias
+    $('#modalFormEvidencias').modal('show');
+    document.querySelector("#formCargarEvidencias").reset();
+
+    // Al hacer clic en el botón de subir evidencia dentro del modal
+    document.getElementById("btnSubirEvidencia").addEventListener("click", function() {
+        if (document.getElementById("archivoEvidencia").files[0]) {
+            let fd = new FormData();
+            let archivo = document.getElementById("archivoEvidencia").files[0];
+            let nombreArchivo = archivo.name;
+            let extension = nombreArchivo.split('.').pop().toLowerCase();
+            let extensionesValidas = ["jpg","png","xlsx","docx","pdf"];
+
+            if (extensionesValidas.includes(extension)) {
+                fd.append("archivoEvidencia", archivo);
+                fd.append("idCompensatorio", idCompensatorio);
+
+                let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+                let ajaxUrl = base_url + '/Compensatorios/subirEvidencia'; // Reemplazar con la URL correcta
+                request.open("POST", ajaxUrl, true);
+                request.send(fd);
+                request.onreadystatechange = function() {
+                    if (request.readyState == 4) { // Verifica que la solicitud esté en el estado 4 (completo)
+                        if (request.status === 200) {
+                            let data = JSON.parse(request.responseText);
+                            // console.log("Volvio");
+                            if (data.status){
+                                swal("Evidencia: ", data.msg, "success");
+                                $('#modalFormEvidencias').modal('hide');
+                                document.getElementById("archivoEvidencia").value = "";
+                            }else{
+                                alert("Error al subir el archivo", data.msg, "error");
+                            }
+                        } else {
+                            alert("Error en la solicitud: " + request.statusText);
+                        }
+                    }
+                };
+                
+            } else {
+                swal("Extensión no válida", "El archivo contiene una extensión no permitida", "warning");
+                document.getElementById("archivoEvidencia").value = "";
+            }
+        } else {
+            swal("Seleccione un archivo para subir", "Ningun archivo seleccionado", "info");
+        }
+});
+
+}
 //Función para aprobación del compensatorio
 function ftnAprobarCompensatorio(idCompensatorio) { //Funcion para el boton de aprobacion
     swal({
@@ -325,154 +481,6 @@ function ftnRechazarCompensatorio(idCompensatorio) { // Funcion para boton boton
         }
     });
 }
-//Función para ver compensatorio por id mostrando el modal
-function ftnViewCompensatorio(idCompensatorio){
-    let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-    let ajaxUrl = base_url+'/Compensatorios/getCompensatorio/'+idCompensatorio;
-    request.open("GET",ajaxUrl,true);
-    request.send();
-    request.onreadystatechange = function(){
-        if(request.readyState == 4 && request.status == 200){
-            let objData = JSON.parse(request.responseText);
-
-            if(objData.status){
-                let estado = objData.data.COM_ESTADO == 1 ? 
-                '<span class="badge badge-warning">Pendiente</span>' : 
-                (objData.data.COM_ESTADO == 2 ? '<span class="badge badge-success">Aprobado</span>' :
-                '<span class="badge badge-danger">Rechazado</span>');
-                
-                document.querySelector("#InfoNombres").innerHTML = objData.data.FUN_NOMBRES;
-                document.querySelector("#InfoApellidos").innerHTML = objData.data.FUN_APELLIDOS;
-                document.querySelector("#InfoCorreo").innerHTML = objData.data.FUN_CORREO;
-                document.querySelector("#InfoTipoCompensatorio").innerHTML = objData.data.TIP_COM_NOMBRE;
-                document.querySelector("#InfoEstado").innerHTML = estado;
-                document.querySelector("#InfoDescripcion").innerHTML = objData.data.COM_DESCRIPCION_ACTIVIDAD;
-
-                if (objData.data.url_portada) {
-                    document.querySelector("#DescargarSoporte").innerHTML = '<a href="' + objData.data.url_portada + '" target="_blank"><i class="fas fa-download"> Evidencia disponible</i></a>';
-                } else {
-                    // Si objData.data.url_portada está vacío, muestra un mensaje de "No hay evidencia disponible"
-                    document.querySelector("#DescargarSoporte").innerHTML = 'No hay evidencia disponible';
-                }
-                
-                $('#modalViewFuncionario').modal('show');
-
-            }else{
-                swal("Error", objData.msg , "error");
-            }
-        }
-    }
-}
-//Función para editar el compensatorio mostrando el modal
-function ftnEditCompensatorio(element,idCompensatorio){
-
-    ftnTotalUsuarios();
-    ftnTotalTipoCompensatorio();
-    
-    rowTable = element.parentNode.parentNode.parentNode; 
-    document.querySelector('#titleModal').innerHTML ="Actualizar compensatorio";
-    document.querySelector('.modal-header').classList.replace("headerRegister", "headerUpdate");
-    document.querySelector('#btnActionForm').classList.replace("btn-primary", "btn-info");
-    document.querySelector('#btnText').innerHTML ="Actualizar";
-
-    document.getElementById("archivoEvidencia").value = "";
-
-    //var idCompensatorio = idCompensatorio;
-    let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-    let ajaxUrl = base_url+'/Compensatorios/editCompensatorio/'+idCompensatorio;
-    request.open("GET",ajaxUrl,true);
-    request.send();
-    request.onreadystatechange = function(){
-
-        if(request.readyState == 4 && request.status == 200){
-
-            let objData = JSON.parse(request.responseText);
-
-            if(objData.status){
-                
-                document.querySelector("#idCompensatorio").value = objData.data.ID_COMPENSATORIO;
-                document.querySelector("#txtFechaInicio").value = objData.data.COM_FECHA_INICIO;
-                document.querySelector("#txtFechaFin").value = objData.data.COM_FECHA_FIN;
-                document.querySelector("#txtActividad").value = objData.data.ID_TIPO_COMPENSATORIO;
-                document.querySelector("#txtTrabajoRequerido").value = objData.data.COM_USUARIO_FINAL;
-                document.querySelector("#txtDescripcionActividad").value = objData.data.COM_DESCRIPCION_ACTIVIDAD;
-                
-                let evidencia = objData.data.COM_EVIDENCIAS;
-
-                if (evidencia == undefined) {
-                    validacionEvidencia = false;
-                    document.querySelector("#archivoEvidencia").required = true;
-                    document.querySelector("#evidenciaName").innerHTML = '<h6 id="archivoEvidenciaName">No hay evidencia disponible</h6>';
-                }else{
-                    validacionEvidencia = true;
-                    document.querySelector("#evidenciaName").innerHTML = '<a href="archivos/' + evidencia + '" target="_blank"><i class="fas fa-download">&nbsp;&nbsp;&nbsp;Evidencia disponible</i></a>';
-                    document.querySelector("#archivoEvidencia").required = false;
-                }
-                
-                //Revisar
-                $('#txtActividad').selectpicker('refresh');
-                $('#txtActividad').selectpicker('render');
-
-                $('#modalFormCompensatorio').modal('show');
-                
-            }else{
-                swal("Error", objData.msg, "error");
-            }
-        }
-       
-    }
-}
-//Función para subir evidencias mostrando el modal
-function ftnEvidencias(idCompensatorio) {
-    // Abre el modal de subir evidencias
-    $('#modalFormEvidencias').modal('show');
-    document.querySelector("#formCargarEvidencias").reset();
-
-    // Al hacer clic en el botón de subir evidencia dentro del modal
-    document.getElementById("btnSubirEvidencia").addEventListener("click", function() {
-        if (document.getElementById("archivoEvidencia").files[0]) {
-            let fd = new FormData();
-            let archivo = document.getElementById("archivoEvidencia").files[0];
-            let nombreArchivo = archivo.name;
-            let extension = nombreArchivo.split('.').pop().toLowerCase();
-            let extensionesValidas = ["jpg","png","xlsx","docx","pdf"];
-
-            if (extensionesValidas.includes(extension)) {
-                fd.append("archivoEvidencia", archivo);
-                fd.append("idCompensatorio", idCompensatorio);
-
-                let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-                let ajaxUrl = base_url + '/Compensatorios/subirEvidencia'; // Reemplazar con la URL correcta
-                request.open("POST", ajaxUrl, true);
-                request.send(fd);
-                request.onreadystatechange = function() {
-                    if (request.readyState == 4) { // Verifica que la solicitud esté en el estado 4 (completo)
-                        if (request.status === 200) {
-                            let data = JSON.parse(request.responseText);
-                            // console.log("Volvio");
-                            if (data.status){
-                                swal("Evidencia: ", data.msg, "success");
-                                $('#modalFormEvidencias').modal('hide');
-                                document.getElementById("archivoEvidencia").value = "";
-                            }else{
-                                alert("Error al subir el archivo", data.msg, "error");
-                            }
-                        } else {
-                            alert("Error en la solicitud: " + request.statusText);
-                        }
-                    }
-                };
-                
-            } else {
-                swal("Extensión no válida", "El archivo contiene una extensión no permitida", "warning");
-                document.getElementById("archivoEvidencia").value = "";
-            }
-        } else {
-            swal("Seleccione un archivo para subir", "Ningun archivo seleccionado", "info");
-        }
-});
-
-}
 //función para llenar el select de usuarios
 function ftnTotalUsuarios(){
    
@@ -540,6 +548,7 @@ function ajustarFormulario() {
 }
 //función para abrir el modal
 function openModal(){
+
     rowTable = "";
     document.querySelector('#idCompensatorio').value ="";
     document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
@@ -549,6 +558,9 @@ function openModal(){
     document.querySelector("#formCompensatorio").reset();
     document.querySelector("#evidenciaName").innerHTML = '';
     document.querySelector("#archivoEvidencia").required = true;
+
+    $("#usersDiv").closest(".form-row").css("display","flex");
+
     ajustarFormulario();
     ftnTotalUsuarios();
     ftnTotalTipoCompensatorio();

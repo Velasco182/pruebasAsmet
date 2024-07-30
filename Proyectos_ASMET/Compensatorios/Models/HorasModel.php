@@ -6,7 +6,6 @@ class HorasModel extends Oracle{
 
 	public $intIdToma;
 
-	public $intIdHora;
 	public $strMotivo;
 	public $intEstado;
 	public $strFecha;
@@ -53,9 +52,12 @@ class HorasModel extends Oracle{
 				WHERE ID_FUNCIONARIO = '{$this->intIdFuncionario}'
 				AND TOM_MOTIVO = '{$this->strMotivo}'
 				AND TOM_FECHA_SOLI = TO_TIMESTAMP('{$this->strFecha}', 'DD/MM/YYYY')
-				AND TOM_HORAS_SOLI = '{$this->strHoras}'";
+				AND TOM_HORAS_SOLI = {$this->strHoras}";
 				
 			$request = $this->select_all($sql);
+
+			/*Dep($sql);
+			Dep($request);*/
 	
 			//Verificación de inserción
 			if(empty($request)){
@@ -83,10 +85,14 @@ class HorasModel extends Oracle{
 					'TOM_ESTADO'		=>$this->intEstado,
 					'TOM_FECHA_SOLI'	=>$this->strFecha,
 					'TOM_HORAS_SOLI'	=>$this->strHoras,
-					'ID_FUNCIONARIO'	=> $this->listadoUsuarios  // Usando lista de usuarios
+					'ID_FUNCIONARIO'	=>$this->listadoUsuarios  // Usando lista de usuarios
 				);
 				
 				$request_insert = $this->insert($query_insert, $arrData);
+
+				/*Dep($query_insert);
+				Dep($request_insert);*/
+				
 				$return = $request_insert;
 			}else{
 				$return = "exist";
@@ -100,52 +106,54 @@ class HorasModel extends Oracle{
 	}
 
 	//----Funciones de lectura----
-	//Modulo para verificar horas disponibles
-	public function getHorasDisponibles(int $idFuncionario){
-
+	//Modulo para verificar existencia de horas por id
+	public function getHorasExistentes(int $idFuncionario){
 		$this -> intIdFuncionario = $idFuncionario;
+				
+		$sqlValidacion = "SELECT
+							F.FUN_NOMBRES,
+							F.FUN_APELLIDOS,
+							T.TOM_ESTADO
+						FROM BIG_TOMA T
+						INNER JOIN BIG_FUNCIONARIOS F ON T.ID_FUNCIONARIO = F.ID_FUNCIONARIO
+						WHERE T.TOM_ESTADO = 2 AND T.ID_FUNCIONARIO = {$this->intIdFuncionario}
+						GROUP BY T.ID_FUNCIONARIO, T.TOM_ESTADO, F.FUN_NOMBRES, F.FUN_APELLIDOS";
 
-		/*$codigoRol = $_SESSION['userData']['ROL_CODIGO'];
-		$this -> intCodigoRol = $codigoRol;
+		$arrDataValidacion = array(
+			'ID_FUNCIONARIO' => $this->intIdFuncionario
+		);
 
-		if (in_array($this->intCodigoRol, ROLES_ADMIN)) {
-			
+		$requestValidacion = $this->select_all($sqlValidacion);
+
+		if(empty($requestValidacion)){
+
 			$sql = "SELECT
-						FUN_NOMBRES || ' ' ||FUN_APELLIDOS AS NOMBREFUNCIONARIO,
-						ROUND(SUM(TOM_HORAS_SOLI_SUBQUERY),2) AS HORAS_APROBADAS,
-						ROUND(AVG(COMP_HORAS_SUBQUERY),2) AS HORAS_COMPENSATORIOS_APROBADAS,
-						AVG(COMP_HORAS_SUBQUERY) - SUM(TOM_HORAS_SOLI_SUBQUERY) AS HORAS_DISPONIBLES
-					FROM(
-							SELECT
-								F.FUN_NOMBRES,
-								F.FUN_APELLIDOS,
-								C.ID_FUNCIONARIO,
-								T.TOM_HORAS_SOLI,
-								C.COM_ESTADO,
-								T.TOM_ESTADO,
-								T.TOM_MOTIVO,
-								T.TOM_FECHA_SOLI,
-								T.TOM_HORAS_SOLI AS TOM_HORAS_SOLI_SUBQUERY,
-								SUM(EXTRACT(HOUR FROM (C.COM_FECHA_FIN - C.COM_FECHA_INICIO)) +
-									EXTRACT(MINUTE FROM (C.COM_FECHA_FIN - C.COM_FECHA_INICIO)) / 60) AS COMP_HORAS_SUBQUERY
-							FROM BIG_COMPENSATORIOS C
-							INNER JOIN BIG_TOMA T ON C.ID_FUNCIONARIO = T.ID_FUNCIONARIO
-							INNER JOIN BIG_FUNCIONARIOS F ON C.ID_FUNCIONARIO = F.ID_FUNCIONARIO
-							WHERE T.ID_FUNCIONARIO = '{$this->intIdFuncionario}' AND T.TOM_ESTADO = 2 AND C.COM_ESTADO = 2
-							GROUP BY C.ID_FUNCIONARIO, T.TOM_HORAS_SOLI, C.COM_ESTADO, T.TOM_ESTADO, T.TOM_MOTIVO,
-							T.TOM_FECHA_SOLI, F.FUN_NOMBRES, F.FUN_APELLIDOS
-						)GROUP BY FUN_NOMBRES || ' ' ||FUN_APELLIDOS";//T.ID_FUNCIONARIO = '{$this->intIdFuncionario}' AND
-
+					FUN_NOMBRES || ' ' ||FUN_APELLIDOS AS NOMBREFUNCIONARIO,
+					ROUND(AVG(COMP_HORAS_SUBQUERY),2) AS HORAS_APROBADAS_SIN_TOMA
+				FROM(
+						SELECT
+							F.FUN_NOMBRES,
+							F.FUN_APELLIDOS,
+							C.ID_FUNCIONARIO,
+							C.COM_ESTADO,
+							SUM(EXTRACT(HOUR FROM (C.COM_FECHA_FIN - C.COM_FECHA_INICIO)) +
+								EXTRACT(MINUTE FROM (C.COM_FECHA_FIN - C.COM_FECHA_INICIO)) / 60) AS COMP_HORAS_SUBQUERY
+						FROM BIG_COMPENSATORIOS C
+						INNER JOIN BIG_FUNCIONARIOS F ON C.ID_FUNCIONARIO = F.ID_FUNCIONARIO
+						WHERE C.COM_ESTADO = 2 AND C.ID_FUNCIONARIO = {$this->intIdFuncionario}
+						GROUP BY C.ID_FUNCIONARIO, C.COM_ESTADO, F.FUN_NOMBRES, F.FUN_APELLIDOS
+					)GROUP BY FUN_NOMBRES || ' ' ||FUN_APELLIDOS";
+	
 			$arrData = array(
 				'ID_FUNCIONARIO' => $this->intIdFuncionario
 			);
-	
+
 			$request = $this->select_all($sql);
 			return $request;
 
-		}*/
+		}else{
 
-		$sql = "SELECT
+			$sql = "SELECT
 					FUN_NOMBRES || ' ' ||FUN_APELLIDOS AS NOMBREFUNCIONARIO,
 					ROUND(SUM(TOM_HORAS_SOLI_SUBQUERY),2) AS HORAS_APROBADAS,
 					ROUND(AVG(COMP_HORAS_SUBQUERY),2) AS HORAS_COMPENSATORIOS_APROBADAS,
@@ -171,94 +179,16 @@ class HorasModel extends Oracle{
 						T.TOM_FECHA_SOLI, F.FUN_NOMBRES, F.FUN_APELLIDOS
 					)GROUP BY FUN_NOMBRES || ' ' ||FUN_APELLIDOS";
 	
-		$arrData = array(
-			'ID_FUNCIONARIO' => $this->intIdFuncionario
-		);
+			$arrData = array(
+				'ID_FUNCIONARIO' => $this->intIdFuncionario
+			);
 
-		$request = $this->select_all($sql);
-		return $request;
-	}
-	//Modulo para verificar horas disponibles sin toma
-	public function getHorasDisponiblesSinToma(int $idFuncionario){
+			$request = $this->select_all($sql);
+			return $request;
 
-		$this -> intIdFuncionario = $idFuncionario;
-
-		$sql = "SELECT
-					FUN_NOMBRES || ' ' ||FUN_APELLIDOS AS NOMBREFUNCIONARIO,
-					ROUND(AVG(COMP_HORAS_SUBQUERY),2) AS HORAS_APROBADAS_SIN_TOMA
-				FROM(
-						SELECT
-							F.FUN_NOMBRES,
-							F.FUN_APELLIDOS,
-							C.ID_FUNCIONARIO,
-							C.COM_ESTADO,
-							SUM(EXTRACT(HOUR FROM (C.COM_FECHA_FIN - C.COM_FECHA_INICIO)) +
-								EXTRACT(MINUTE FROM (C.COM_FECHA_FIN - C.COM_FECHA_INICIO)) / 60) AS COMP_HORAS_SUBQUERY
-						FROM BIG_COMPENSATORIOS C
-						INNER JOIN BIG_FUNCIONARIOS F ON C.ID_FUNCIONARIO = F.ID_FUNCIONARIO
-						WHERE C.COM_ESTADO = 2 AND C.ID_FUNCIONARIO = {$this->intIdFuncionario}
-						GROUP BY C.ID_FUNCIONARIO, C.COM_ESTADO, F.FUN_NOMBRES, F.FUN_APELLIDOS
-					)GROUP BY FUN_NOMBRES || ' ' ||FUN_APELLIDOS";
-	
-		$arrData = array(
-			'ID_FUNCIONARIO' => $this->intIdFuncionario
-		);
-
-		$request = $this->select_all($sql);
-		return $request;
-	}
-	//Modulo para verificar existencia de horas por id
-	public function getHorasExistentes(int $idFuncionario){
-		$this -> intIdFuncionario = $idFuncionario;
-
-		$codigoRol = $_SESSION['userData']['ROL_CODIGO'];
-
-		$this -> intCodigoRol = $codigoRol;
-
-		if (in_array($this->intCodigoRol, ROLES_ADMIN)) {
-
-			$sqlVerificacion = "SELECT
-									F.FUN_NOMBRES,
-									F.FUN_APELLIDOS,
-									T.TOM_ESTADO
-								FROM BIG_TOMA T
-								INNER JOIN BIG_FUNCIONARIOS F ON T.ID_FUNCIONARIO = F.ID_FUNCIONARIO
-								WHERE T.TOM_ESTADO = 2 AND T.ID_FUNCIONARIO = {$this->intIdFuncionario}";
-
-			$requestVerificacion = $this->select_all($sqlVerificacion);
-
-			if($requestVerificacion){
-				
-				$sql = "SELECT
-							F.FUN_NOMBRES,
-							F.FUN_APELLIDOS,
-							T.TOM_ESTADO
-						FROM BIG_TOMA T
-						INNER JOIN BIG_FUNCIONARIOS F ON T.ID_FUNCIONARIO = F.ID_FUNCIONARIO
-						WHERE T.TOM_ESTADO = 2 AND T.ID_FUNCIONARIO = {$this->intIdFuncionario}
-						GROUP BY T.ID_FUNCIONARIO, T.TOM_ESTADO, F.FUN_NOMBRES, F.FUN_APELLIDOS";
-		
-				$request = $this->select_all($sql);
-	
-				return $request;
-			}
 		}
 
-		$sql = "SELECT
-					F.FUN_NOMBRES,
-					F.FUN_APELLIDOS,
-					T.TOM_ESTADO
-				FROM BIG_TOMA T
-				INNER JOIN BIG_FUNCIONARIOS F ON T.ID_FUNCIONARIO = F.ID_FUNCIONARIO
-				WHERE T.ID_FUNCIONARIO = '{$this->intIdFuncionario}' AND T.TOM_ESTADO = 2
-				GROUP BY T.ID_FUNCIONARIO, T.TOM_ESTADO, F.FUN_NOMBRES, F.FUN_APELLIDOS";
-	
-		$arrData = array(
-			'ID_FUNCIONARIO' => $this->intIdFuncionario
-		);
-
-		$request = $this->select_all($sql);
-		return $request;
+		return $requestValidacion;
 	}
 	//Modulo para llenar el DataTable +
 	public function selectHoras(int $idFuncionario){
@@ -387,7 +317,7 @@ class HorasModel extends Oracle{
 					TO_CHAR(TOM.TOM_FECHA_SOLI, 'DD/MM/YYYY') AS TOM_FECHA_SOLI,
 					TOM.TOM_HORAS_SOLI
 				FROM BIG_TOMA TOM
-				WHERE TOM.ID_TOMA = $this->intIdToma";
+				WHERE TOM.ID_TOMA = {$this->intIdToma}";
 
 		$request = $this->select($sql);
 
@@ -416,15 +346,21 @@ class HorasModel extends Oracle{
 			
 			$request = $this->select_all($sql);
 			return $request;
+		}else{
+
+			$sql = "SELECT
+						F.ID_FUNCIONARIO,
+						F.FUN_NOMBRES,
+						F.FUN_APELLIDOS,
+						F.FUN_ESTADO
+					FROM BIG_FUNCIONARIOS F
+					WHERE F.ID_FUNCIONARIO = {$this->intIdFuncionario}";
+				
+			$request = $this->select_all($sql);
+			return $request;
+
 		}
 
-		$sql = "SELECT 
-					F.ID_FUNCIONARIO, F.FUN_NOMBRES, F.FUN_APELLIDOS, F.FUN_ESTADO
-				FROM BIG_FUNCIONARIOS F
-				WHERE F.ID_FUNCIONARIO = '{$this->intIdFuncionario}'";
-			
-		$request = $this->select_all($sql);
-		return $request;
 	}
 	//Modulo para recolectar información del usuario
 	public function recuperar(int $idFuncionario){
@@ -437,7 +373,7 @@ class HorasModel extends Oracle{
 			FUN.FUN_CORREO,
 			FUN.FUN_USUARIO
 		FROM BIG_FUNCIONARIOS FUN
-		WHERE FUN.ID_FUNCIONARIO = $this->intIdFuncionario
+		WHERE FUN.ID_FUNCIONARIO = {$this->intIdFuncionario}
 		";
 
 		$arrData = array(
@@ -465,10 +401,13 @@ class HorasModel extends Oracle{
 		$sql = "SELECT * FROM BIG_TOMA
 			WHERE TOM_MOTIVO = '{$this->strMotivo}'
 			AND TOM_FECHA_SOLI = TO_TIMESTAMP('{$this->strFecha}', 'DD/MM/YYYY')
-			AND TOM_HORAS_SOLI = '{$this->strHoras}'
-			AND ID_TOMA != '{$this->intIdToma}'";
+			AND TOM_HORAS_SOLI = {$this->strHoras}
+			AND ID_TOMA != $this->intIdToma";
 
 		$request = $this->select_all($sql);
+
+		/*Dep($sql);
+		Dep($request);*/
 
 		if(empty($request)){
 
@@ -487,6 +426,9 @@ class HorasModel extends Oracle{
 			);
 
 			$requestUpdate = $this->update($sqlUpdate, $arrData);
+
+			/*Dep($sqlUpdate);
+			Dep($requestUpdate);*/
 
 		}else{
 			$requestUpdate = "exist";

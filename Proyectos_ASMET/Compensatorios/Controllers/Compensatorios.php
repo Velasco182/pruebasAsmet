@@ -127,7 +127,7 @@ class Compensatorios extends Controllers{
 										$strFechaFin,
 										$strActividad, //ID_TIPO_COMPENSATORIO
 										$strDescripcionActividad,
-										$name,
+										$name, //COM_EVIDENCIAS
 										$strTrabajoRequerido
 									);
 									$option = 2;//Actualización
@@ -143,15 +143,19 @@ class Compensatorios extends Controllers{
 						// Error: no se seleccionó ningún archivo o hubo un error al cargarlo
 						$arrResponse = array('status' => false, 'msg' => 'No se seleccionó ningún archivo');
 
-						$request_user = $this->model->updateCompensatorioSinEvidencia(
-							$intIdCompensatorio,
-							$strFechaInicio,
-							$strFechaFin,
-							$strActividad, //ID_TIPO_COMPENSATORIO
-							$strDescripcionActividad,
-							$strTrabajoRequerido
-						);
-						$option = 2; // Actualización
+						if ($_SESSION['permisosMod']['PER_U']) {
+
+							$request_user = $this->model->updateCompensatorioSinEvidencia(
+								$intIdCompensatorio,
+								$strFechaInicio,
+								$strFechaFin,
+								$strActividad, //ID_TIPO_COMPENSATORIO
+								$strDescripcionActividad,
+								$strTrabajoRequerido
+							);
+							$option = 2; // Actualización
+
+						}
 					}
 	
 					$arrResponse = array('status' => false, 'msg' => 'El compensatorio ya existe!');
@@ -226,6 +230,7 @@ class Compensatorios extends Controllers{
 		if($_SESSION['permisosMod']['PER_R']){
 
 			$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO']; // ID del funcionario que deseas mostrar
+			$idFuncionario = intval($idFuncionario);
 			
 			$arrData = $this->model->selectCompensatorios($idFuncionario);
 			// Procesa $resultado para mostrar los compensatorios del funcionario
@@ -266,38 +271,51 @@ class Compensatorios extends Controllers{
 
 				//Revisar
 				if($_SESSION['permisosMod']['PER_R']){ // Icono de ver funcionario
+					
 					if($arrData[$i]['COM_USUARIO_FINAL']!="1"){
 						$btnVer = '<button class="btn btn-info btn-sm btnViewFuncionario" onClick="ftnViewCompensatorio('.$arrData[$i]['ID_COMPENSATORIO'].')" title="Ver Compensatorio"><i class="far fa-eye"></i></button>';
 					}else{
-						$btnVer = '<button class="btn btn-secondary btn-sm" disabled ><i class="far fa-eye"></i></button>';
+						$btnVer = '';
 					}
+
+					if($comEstado == 3){
+						$btnVer = '<button class="btn btn-info btn-sm btnViewFuncionario" onClick="ftnViewCompensatorio('.$arrData[$i]['ID_COMPENSATORIO'].')" title="Ver Compensatorio"><i class="far fa-eye"></i></button>';
+					}
+
 				}
 
 				if($_SESSION['permisosMod']['PER_U'] && $_SESSION['permisosMod']['ID_ROL'] !== '1') {
-					if($arrData[$i]['COM_USUARIO_FINAL'] != "1" && ($comEstado == 1)) {
+					
+					if(($arrData[$i]['COM_USUARIO_FINAL'] != "1") && ($comEstado == 1) && (intval($arrData[$i]['ID_FUNCIONARIO']) === $idFuncionario)) {
 						$btnEdit = '<button class="btn btn-primary btn-sm btnEditFuncionario" onClick="ftnEditCompensatorio(this,'.$arrData[$i]['ID_COMPENSATORIO'].')" title="Editar Funcionario"><i class="fas fa-pencil-alt"></i></button>';
 					} else {
 						$btnEdit = '';
 					}
+
 				}
 
-				if ($_SESSION['permisosMod']['PER_U'] && $_SESSION['permisosMod']['ID_ROL'] === '1') {
-					if ($comEstado == 1) {
-						$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="ftnAprobarCompensatorio(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Aprobar Compensatorio"><i class="fas fa-check-circle"></i></button>';
+				if($_SESSION['permisosMod']['ID_ROL'] !== '2'){
+
+					if ($_SESSION['permisosMod']['PER_U']) {
+						if ($comEstado == 1) {
+							$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="ftnAprobarCompensatorio(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Aprobar Compensatorio"><i class="fas fa-check-circle"></i></button>';
+						} else {
+							$btnAprobar = '';
+						}
 					} else {
 						$btnAprobar = '';
 					}
-				} else {
-					$btnAprobar = '';
-				}
-				
-				if ($_SESSION['permisosMod']['PER_U'] && $_SESSION['permisosMod']['ID_ROL'] === '1') {
-					if ($comEstado == 1) {
-						$btnRechazar = '<button class="btn btn-danger btn-sm" onClick="ftnRechazarCompensatorio(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Rechazar Compensatorio"><i class="fas fa-times-circle"></i></button>';
-					} else {
-						$btnRechazar = '';
+					
+					if ($_SESSION['permisosMod']['PER_U']) {
+						if ($comEstado == 1) {
+							$btnRechazar = '<button class="btn btn-danger btn-sm" onClick="ftnRechazarCompensatorio(' . $arrData[$i]['ID_COMPENSATORIO'] . ')" title="Rechazar Compensatorio"><i class="fas fa-times-circle"></i></button>';
+						} else {
+							$btnRechazar = '';
+						}
 					}
+
 				}
+
 				
 				$arrData[$i]['ACCIONES'] = '<div class="text-center">'.$btnVer.' '.$btnEdit.' '.$btnAprobar.' '.$btnRechazar.' '.$btnReset.' '.$btnCancelar.'</div>';
 			}
@@ -443,10 +461,9 @@ class Compensatorios extends Controllers{
 			// Agregar la opción del usuario que inició sesión
 			$htmlOptions .= '<option value="'.$_SESSION['userData']['ID_FUNCIONARIO'].'">'.$loggedUserName.'</option>';
 				
-			// Agregar las opciones de los demás registros
-			for ($i=0; $i < count($arrData); $i++) { 
-				if($arrData[0]['FUN_ESTADO'] == 1 && $arrData[0]['ID_FUNCIO
-				NARIO'] != $_SESSION['userData']['ID_FUNCIONARIO']){
+			// Agregar las opciones de los demás registros && $arrData[0]['ID_FUNCIONARIO'] != $_SESSION['userData']['ID_FUNCIONARIO']
+			for ($i=0; $i < count($arrData); $i++) {
+				if($arrData[0]['FUN_ESTADO'] == 1 ){
 					$htmlOptions .= '<option value="'.$arrData[$i]['ID_FUNCIONARIO'].'">'.$arrData[$i]['FUN_NOMBRES'].' '.$arrData[$i]['FUN_APELLIDOS'].'</option>';
 				}
 			}

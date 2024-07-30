@@ -72,27 +72,27 @@ class CompensatoriosModel extends Oracle{
 			if(empty($request)){
 	
 				$query_insert  = "INSERT INTO BIG_COMPENSATORIOS
-				(
-					ID_FUNCIONARIO,
-					COM_FECHA_INICIO,
-					COM_FECHA_FIN,
-					ID_TIPO_COMPENSATORIO,
-					COM_DESCRIPCION_ACTIVIDAD,
-					COM_USUARIO_FINAL,
-					COM_EVIDENCIAS,
-					COM_ESTADO
-				) 
-				VALUES
-				(
-					:ID_FUNCIONARIO,
-					TO_TIMESTAMP(:COM_FECHA_INICIO, 'YYYY/MM/DD HH24:MI:SS'),
-					TO_TIMESTAMP(:COM_FECHA_FIN, 'YYYY/MM/DD HH24:MI:SS'),
-					:ID_TIPO_COMPENSATORIO,
-					:COM_DESCRIPCION_ACTIVIDAD,
-					:COM_USUARIO_FINAL,
-					:COM_EVIDENCIAS,
-					:COM_ESTADO
-				)";
+					(
+						ID_FUNCIONARIO,
+						COM_FECHA_INICIO,
+						COM_FECHA_FIN,
+						ID_TIPO_COMPENSATORIO,
+						COM_DESCRIPCION_ACTIVIDAD,
+						COM_USUARIO_FINAL,
+						COM_EVIDENCIAS,
+						COM_ESTADO
+					) 
+					VALUES
+					(
+						:ID_FUNCIONARIO,
+						TO_TIMESTAMP(:COM_FECHA_INICIO, 'YYYY/MM/DD HH24:MI:SS'),
+						TO_TIMESTAMP(:COM_FECHA_FIN, 'YYYY/MM/DD HH24:MI:SS'),
+						:ID_TIPO_COMPENSATORIO,
+						:COM_DESCRIPCION_ACTIVIDAD,
+						:COM_USUARIO_FINAL,
+						:COM_EVIDENCIAS,
+						:COM_ESTADO
+					)";
 		
 				$arrData = array(
 					'ID_FUNCIONARIO' 			=> $this->intIdFuncionario, // Usar el ID del funcionario
@@ -290,7 +290,10 @@ class CompensatoriosModel extends Oracle{
 		}
 
 		$sql = "SELECT 
-					F.ID_FUNCIONARIO, F.FUN_NOMBRES, F.FUN_APELLIDOS, F.FUN_ESTADO
+					F.ID_FUNCIONARIO, 
+					F.FUN_NOMBRES, 
+					F.FUN_APELLIDOS, 
+					F.FUN_ESTADO
 				FROM BIG_FUNCIONARIOS F
 				WHERE F.ID_FUNCIONARIO = '{$this->intIdFuncionario}'";
 			

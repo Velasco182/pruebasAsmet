@@ -28,7 +28,7 @@
                           <th>Nombres</th>
                           <th>Apellidos</th>
                           <th>Correo</th>
-                          <th>Motivo</th>
+                          <!-- <th>Motivo</th> -->
                           <th>Fecha de la solicitud</th>
                           <th>Horas a solicitar</th>
                           <th>Estado</th>

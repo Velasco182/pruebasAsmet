@@ -43,10 +43,15 @@ class Horas extends Controllers{
 			|| $_POST['txtFecha']=='' || $_POST['txtHoras']==''){
 				
 				$arrResponse = array("status" => false, "msg" => 'Ingrese todos los datos.');
+				
+				/*if($_POST['idToma'] == ''){
+					$arrResponse = array("status" => false, "msg" => 'Ingrese idToma.');
+				}*/
 			
 			}else{
 
-				$intIdHora = intval($_POST['idHora']);
+				$intIdToma = intval($_POST['idToma']);
+
 				$strMotivo = mb_convert_case(strClean($_POST['txtMotivo']), MB_CASE_TITLE, "UTF-8");
 				$intEstado = intval($_POST['txtEstado']);
 				$strFecha = $_POST['txtFecha'];
@@ -54,69 +59,88 @@ class Horas extends Controllers{
 
 				$listadoUsuarios = intval(strClean($_POST['listaUsuarios']));
 				// Recuperar los datos insertados
-				//$arrDataUsuarios = $this->model->recuperar($listadoUsuarios); 
+				$arrDataUsuarios = $this->model->recuperar($listadoUsuarios);
 
-				$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
+				/*Dep($listadoUsuarios);
+				Dep($arrDataUsuarios);*/
+
+				if(!empty($listadoUsuarios)){ //&& is_array($listadoUsuarios)
+					$idFuncionario = $listadoUsuarios;
+					//Dep($listadoUsuarios);
+					//Dep($idFuncionario);
+				}else{
+					$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
+					//Dep($idFuncionario);
+				}
 
 				$option = 0;
 				$request_user = 0;
 				
 				$horasExistentes = $this->model->getHorasExistentes($idFuncionario);
 				
-				if($horasExistentes){
-					$arrHoras = $this->model->getHorasDisponibles($idFuncionario);
-					//Dep($arrHoras);
-					
-					if($arrHoras){
-						$horasDisponibles = floatval($arrHoras[0]['HORAS_DISPONIBLES']);
-						$horasAprobadas = floatval($arrHoras[0]['HORAS_APROBADAS']);
-						$horasAprobadasCompensatorios = floatval($arrHoras[0]['HORAS_COMPENSATORIOS_APROBADAS']);
-						$funcionario = $arrHoras[0]['NOMBREFUNCIONARIO'];
-					}else{
-						$horasDisponibles = 0;
-						$horasAprobadas = 0;
-						$horasAprobadasCompensatorios = 0;
-						$funcionario = "";
-					}
-					
-					if($horasDisponibles<=0){
-						$msjResta="No tienes horas para tomar.";
-					}else{
-						$msjResta="Tienes ".$horasDisponibles." hora/s para tomar.";
-					}
-					
-				}else{
-					$arrHorasSinToma = $this->model->getHorasDisponiblesSinToma($idFuncionario);
-					//Dep($arrHorasSinToma);
-					
-					if($arrHorasSinToma){
-						$funcionario = $arrHorasSinToma[0]['NOMBREFUNCIONARIO'];
-						$horasAprobadasCompensatorios = floatval($arrHorasSinToma[0]['HORAS_APROBADAS_SIN_TOMA']);
-						$horasAprobadas = 0;
-						$horasDisponibles = 0;
-					}else{
-						$funcionario = "";
-						$horasAprobadasCompensatorios = 0;
-						$horasAprobadas = 0;
-						$horasDisponibles = 0;
-					}
-	
-					if($horasAprobadasCompensatorios<=0){
-						$msjResta="No tienes horas para tomar";
-					}else{
-						$msjResta="Tienes ".$horasAprobadasCompensatorios." hora/s para tomar.";
-					}
+				if(($_SESSION['permisosMod']['ID_ROL'] !== '2') || !empty($horasExistentes) && is_array($horasExistentes)){
 
+					if(!empty($horasExistentes)){
+
+						$horas = $horasExistentes[0];
+		
+						if(array_key_exists('HORAS_APROBADAS_SIN_TOMA', $horas)) {
+
+							if($horasExistentes){
+								$funcionario = $horasExistentes[0]['NOMBREFUNCIONARIO'];
+								$horasAprobadasCompensatorios = floatval($horasExistentes[0]['HORAS_APROBADAS_SIN_TOMA']);
+								$horasAprobadas = 0;
+								$horasDisponibles = 0;
+							}else{
+								$funcionario = "";
+								$horasAprobadasCompensatorios = 0;
+								$horasAprobadas = 0;
+								$horasDisponibles = 0;
+							}
+			
+							if($horasAprobadasCompensatorios<=0){
+								$msjResta="No tiene horas para tomar";
+							}else{
+								$msjResta="Tiene ".$horasAprobadasCompensatorios." hora/s para tomar.";
+							}
+
+						}else{
+
+							if($horasExistentes){
+								$horasDisponibles = floatval($horasExistentes[0]['HORAS_DISPONIBLES']);
+								$horasAprobadas = floatval($horasExistentes[0]['HORAS_APROBADAS']);
+								$horasAprobadasCompensatorios = floatval($horasExistentes[0]['HORAS_COMPENSATORIOS_APROBADAS']);
+								$funcionario = $horasExistentes[0]['NOMBREFUNCIONARIO'];
+							}else{
+								$horasDisponibles = 0;
+								$horasAprobadas = 0;
+								$horasAprobadasCompensatorios = 0;
+								$funcionario = "";
+							}
+							
+							if($horasDisponibles<=0){
+								$msjResta="No tiene horas para tomar.";
+							}else{
+								$msjResta="Tiene ".$horasDisponibles." hora/s para tomar.";
+							}
+
+						}
+
+					}else{
+						$arrResponse = array('status' => false, 'msg' => 'No tienes horas disponibles.');
+						$msjResta = "No tiene horas para tomar.";
+						$horasAprobadasCompensatorios = 0;
+					}
 				}
-
+///
 				if(($horasAprobadasCompensatorios && $strHoras) > 0
 					&& ($horasAprobadasCompensatorios - $horasAprobadas) > 0
 					&& ($horasAprobadasCompensatorios - $horasAprobadas) >= $strHoras){
 
-					$request_user = "";
-					if($intIdHora == 0){
+					if(($intIdToma === 0) || ($intIdToma == "")){//|| ($intIdToma == null )
 						
 						if($_SESSION['permisosMod']['PER_W']){
+
 							$request_user = $this->model->insertHora(
 								$strMotivo,
 								$intEstado,
@@ -124,25 +148,23 @@ class Horas extends Controllers{
 								$strHoras,
 								$listadoUsuarios
 							);
-
 							$option = 1; //Inserción
 
 						}
 
 					}else{
 
-						//if($_SESSION['permisosMod']['PER_U']){
+						if($_SESSION['permisosMod']['PER_U']){
 
 							$request_user = $this->model->updateHora(
-								$intIdHora,
+								$intIdToma,
 								$strMotivo,
 								$strFecha,
 								$strHoras
 							);
-
 							$option = 2; //Actualización
 
-						//}
+						}
 					}
 
 					$arrResponse = array('status' => false, 'msg' => 'Registro de horas existente!');
@@ -170,28 +192,29 @@ class Horas extends Controllers{
 								}else{
 									$arrResponse = array('status' => true, 'msg' => 'Su solicitud fue procesada con éxito, espera que el admin la apruebe!');
 									$enviarcorreo = enviarMail($remitente, $destinatario, $asunto, 'solicitud_horas', $datos);
-								} 
+								}
 								
 							} catch (Exception $e) {
 								$arrResponse = array('status' => false, 'msg' => 'Error al enviar el correo: ' . $e->getMessage());
 							}
 							
-						} else {
+					} else {
 
-							if($request_user === "time_error"){
-								$arrResponse = $diferencia;
-							}else{
-								$request_user === "exist" ? $arrResponse : $arrResponse = array('status' => true, 'msg' =>'Registro de horas actualizado correctamente!');
-							}
+						if($request_user === "time_error"){
+							$arrResponse = $diferencia;
+						}else{
+							$request_user === "exist" ? $arrResponse : $arrResponse = array('status' => true, 'msg' =>'Registro de horas actualizado correctamente!');
 						}
-
-					}else{
-
-						$arrResponse = array('status' => false, 'msg' => $msjResta);
-						
 					}
+
+				}else{
+
+					$arrResponse = array('status' => false, 'msg' => $msjResta);
+					
 				}
 			}
+		}
+
 		echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
 	}
 
@@ -201,6 +224,7 @@ class Horas extends Controllers{
 		if($_SESSION['permisosMod']['PER_R']){
 
 			$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
+			$idFuncionario = intval($idFuncionario);
 
 			$arrData = $this->model->selectHoras($idFuncionario);
 
@@ -235,140 +259,47 @@ class Horas extends Controllers{
 
 				if($_SESSION['permisosMod']['PER_R']){
 					if($arrData[$i]['TOM_FECHA_SOLI'] !="1"){
-						$btnView = '<button class="btn btn-info btn-sm btnViewFuncionario" onClick="fntViewHora('.$arrData[$i]['ID_TOMA'].')" title="Ver Horas"><i class="far fa-eye"></i></button>';
+						$btnView = '<button class="btn btn-info btn-sm btnViewFuncionario" onClick="fntViewHora('.$arrData[$i]['ID_TOMA'].')" title="Ver horas"><i class="far fa-eye"></i></button>';
 					}else{
 						$btnView = '<button class="btn btn-info btn-sm"><i class="far fa-eye"></i></button>';
 					}
 					
 					if($comEstado == 3){
-						$btnView = '<button class="btn btn-info btn-sm btnViewFuncionario" onClick="fntViewHora('.$arrData[$i]['ID_TOMA'].')" title="Ver Horas"><i class="far fa-eye"></i></button>';
+						$btnView = '<button class="btn btn-info btn-sm btnViewFuncionario" onClick="fntViewHora('.$arrData[$i]['ID_TOMA'].')" title="Ver horas"><i class="far fa-eye"></i></button>';
 					}
 				}
 
 				//Botón para editar
-				if($arrData[$i]['TOM_FECHA_SOLI'] != "1" && $comEstado == 1 && $arrData[$i]['ID_FUNCIONARIO'] === $idFuncionario) {
-					//ftnEditToma(this,'.$arrData[$i]['ID_TOMA'].')
-					$btnEdit = '<button class="btn btn-primary btn-sm btnEditFuncionario" onClick="fntEditToma(this,'.$arrData[$i]['ID_TOMA'].')" title="Editar Toma de Horas"><i class="fas fa-pencil-alt"></i></button>';
-				} else {
-					$btnEdit = '';
-				}
-				// Botón de aprobaciones
-				/*if ($_SESSION['permisosMod']['PER_U']) {
-					if ($comEstado == 1) {//|| $comEstado == 3
-						$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="fntAprobar('. $arrData[$i]['ID_TOMA'] .')" title="Aprobar Horas"><i class="fas fa-check-circle"></i></button>';
-					} else {
-						$btnAprobar = '';//<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-check-circle"></i></button>
-					}
-				}
-				
-				//$_SESSION['permisosMod']['PER_U'] && 
-				if($_SESSION['permisosMod']['ID_ROL'] !== '1') {
-					if($arrData[$i]['TOM_FECHA_SOLI'] != "1" && ($comEstado == 1)) {
-						//ftnEditToma(this,'.$arrData[$i]['ID_TOMA'].')
-						$btnEdit = '<button class="btn btn-primary btn-sm btnEditFuncionario" onClick="fntEditToma(this,'.$arrData[$i]['ID_TOMA'].')" title="Editar Toma de Horas"><i class="fas fa-pencil-alt"></i></button>';
+				if ($_SESSION['permisosMod']['PER_U']) {
+					if($arrData[$i]['TOM_FECHA_SOLI'] != "1" && $comEstado == 1 && intval($arrData[$i]['ID_FUNCIONARIO']) === $idFuncionario) {
+						$btnEdit = '<button class="btn btn-primary btn-sm btnEditFuncionario" onClick="fntEditToma(this,'.$arrData[$i]['ID_TOMA'].')" title="Editar toma de horas"><i class="fas fa-pencil-alt"></i></button>';
 					} else {
 						$btnEdit = '';
 					}
-				}*/
+				}
 
-				$idRol = $_SESSION['permisosMod']['ID_ROL'];
-				switch($idRol){
-
-					case 1:
-						//Botón para aprobar solicitudes
-						if ($_SESSION['permisosMod']['PER_U'] && $arrData[$i]['ID_FUNCIONARIO'] !== $idFuncionario) {
-							
-							if ($comEstado == 1) {//|| $comEstado == 3
-								$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="fntAprobar('. $arrData[$i]['ID_TOMA'] .')" title="Aprobar Horas"><i class="fas fa-check-circle"></i></button>';
-							} else {
-								$btnAprobar = '';//<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-check-circle"></i></button>
-							}
-
-						}elseif($arrData[$i]['ID_ROL'] === 3){
-
-							if ($comEstado == 1) {//|| $comEstado == 3
-								$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="fntAprobar('. $arrData[$i]['ID_TOMA'] .')" title="Aprobar Horas"><i class="fas fa-check-circle"></i></button>';
-							} else {
-								$btnAprobar = '';//<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-check-circle"></i></button>
-							}
-							
+				if($_SESSION['permisosMod']['ID_ROL'] !== '2'){
+					
+					//Botón para aprobar de solicitud
+					if ($_SESSION['permisosMod']['PER_U']) {
+						if ($comEstado == 1) {//|| $comEstado == 3
+							$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="fntAprobar('. $arrData[$i]['ID_TOMA'] .')" title="Aprobar Horas"><i class="fas fa-check-circle"></i></button>';
+						} else {
+							$btnAprobar = '';//<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-check-circle"></i></button>
 						}
-						//Botón para rechazar solicitudes
-						if ($_SESSION['permisosMod']['PER_U'] && $arrData[$i]['ID_FUNCIONARIO'] !== $idFuncionario) {
-							
-							if ($comEstado == 1){//|| $comEstado == 2
-								$btnRechazar = '<button class="btn btn-danger btn-sm btnDelFuncionario" onClick="fntRechazar('.$arrData[$i]['ID_TOMA'].')" title="Rechazar Horas"><i class="fas fa-ban"></i></button>';
-							} else {
-								$btnRechazar = '';//<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-times-circle"></i></button>
-							}
-
-						}elseif($arrData[$i]['ID_ROL'] === 3){
-
-							if ($comEstado == 1) {//|| $comEstado == 3
-								$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="fntAprobar('. $arrData[$i]['ID_TOMA'] .')" title="Aprobar Horas"><i class="fas fa-check-circle"></i></button>';
-							} else {
-								$btnAprobar = '';//<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-check-circle"></i></button>
-							}
-							
+					}
+					
+					//Botón para rechazo de solicitud
+					if ($_SESSION['permisosMod']['PER_U']) {
+						if ($comEstado == 1){//|| $comEstado == 2
+							$btnRechazar = '<button class="btn btn-danger btn-sm btnDelFuncionario" onClick="fntRechazar('.$arrData[$i]['ID_TOMA'].')" title="Rechazar Horas"><i class="fas fa-ban"></i></button>';
+						} else {
+							$btnRechazar = '';//<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-times-circle"></i></button>
 						}
-
-						break;
-					case 3:
-
-						//Botón para aprobar solicitudes
-						if ($_SESSION['permisosMod']['PER_U'] && $arrData[$i]['ID_FUNCIONARIO'] !== $idFuncionario) {
-							
-							if ($comEstado == 1) {//|| $comEstado == 3
-								$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="fntAprobar('. $arrData[$i]['ID_TOMA'] .')" title="Aprobar Horas"><i class="fas fa-check-circle"></i></button>';
-							} else {
-								$btnAprobar = '';//<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-check-circle"></i></button>
-							}
-
-						}elseif($arrData[$i]['ID_ROL'] === 1){
-
-							if ($comEstado == 1) {//|| $comEstado == 3
-								$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="fntAprobar('. $arrData[$i]['ID_TOMA'] .')" title="Aprobar Horas"><i class="fas fa-check-circle"></i></button>';
-							} else {
-								$btnAprobar = '';//<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-check-circle"></i></button>
-							}
-							
-						}
-
-						//Botón para rechazar solicitudes
-						if ($_SESSION['permisosMod']['PER_U'] && $arrData[$i]['ID_FUNCIONARIO'] !== $idFuncionario) {
-							
-							if ($comEstado == 1){//|| $comEstado == 2
-								$btnRechazar = '<button class="btn btn-danger btn-sm btnDelFuncionario" onClick="fntRechazar('.$arrData[$i]['ID_TOMA'].')" title="Rechazar Horas"><i class="fas fa-ban"></i></button>';
-							} else {
-								$btnRechazar = '';//<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-times-circle"></i></button>
-							}
-
-						}elseif($arrData[$i]['ID_ROL'] === 1){
-
-							if ($comEstado == 1) {//|| $comEstado == 3
-								$btnAprobar = '<button class="btn btn-sm btn-primary" onClick="fntAprobar('. $arrData[$i]['ID_TOMA'] .')" title="Aprobar Horas"><i class="fas fa-check-circle"></i></button>';
-							} else {
-								$btnAprobar = '';//<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-check-circle"></i></button>
-							}
-							
-						}
-						
-						break;
-					default:
-						
-						break;
+					}
 
 				}
 
-
-				
-				/*if ($_SESSION['permisosMod']['PER_D']) {
-					if ($comEstado == 1){//|| $comEstado == 2
-						$btnRechazar = '<button class="btn btn-danger btn-sm btnDelFuncionario" onClick="fntRechazar('.$arrData[$i]['ID_TOMA'].')" title="Rechazar Horas"><i class="fas fa-ban"></i></button>';
-					} else {
-						$btnRechazar = '';//<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-times-circle"></i></button>
-					}
-				}*/
 				$arrData[$i]['ACCIONES'] = '<div class="text-center">'.$btnView.' '.$btnEdit.' '.$btnAprobar.' '.$btnRechazar.'</div>';
 			}
 			echo json_encode($arrData,JSON_UNESCAPED_UNICODE);
@@ -390,73 +321,161 @@ class Horas extends Controllers{
 		}
 	}
 	//Modulo para obtener horas disponibles por id
-	public function obtenerHorasDisponibles(){
+	public function obtenerHorasDisponibles($idFuncionario){
+
+		$idFuncionario = intval($idFuncionario);
+
+		if($idFuncionario > 0){
+			
+			$horasExistentes = $this->model->getHorasExistentes($idFuncionario);
+
+			$horas = 0;
+
+			if(($_SESSION['permisosMod']['ID_ROL'] !== '2') || (!empty($horasExistentes) && is_array($horasExistentes))){
+
+				if(!empty($horasExistentes)){
+
+					$horas = $horasExistentes[0];
+	
+					if(array_key_exists('HORAS_APROBADAS_SIN_TOMA', $horas)) {
+			
+						if($horasExistentes){
+							$horasAprobadasCompensatoriosSinToma = floatval($horasExistentes[0]['HORAS_APROBADAS_SIN_TOMA']);
+						}else{
+							$horasAprobadasCompensatoriosSinToma = 0;
+						}
+			
+						if($horasAprobadasCompensatoriosSinToma <= 0){
+							$msjResta="No tiene horas para tomar";
+							$arrResponse = array('status' => false, 'msg' => $msjResta);
+						}else{
+							$msjResta="Tiene ".$horasAprobadasCompensatoriosSinToma." hora/s para tomar.";
+							$arrResponse = array('status' => true, 'msg' => $msjResta);
+						}
+		
+					}else{
+					
+						if($horasExistentes){
+							$horasDisponibles = floatval($horasExistentes[0]['HORAS_DISPONIBLES']);
+							$horasAprobadas = floatval($horasExistentes[0]['HORAS_APROBADAS']);
+							$horasAprobadasCompensatorios = floatval($horasExistentes[0]['HORAS_COMPENSATORIOS_APROBADAS']);
+						}else{
+							$horasDisponibles = 0;
+							$horasAprobadas = 0;
+							$horasAprobadasCompensatorios = 0;
+						}
+			
+						if($horasDisponibles<=0){
+							$msjResta="No tiene horas para tomar";
+							$arrResponse = array('status' => false, 'msg' => $msjResta);
+						}else{
+							$msjResta="Tiene ".$horasDisponibles." hora/s para tomar.";
+							$arrResponse = array('status' => true, 'msg' => $msjResta);
+						}
+					}
+
+				}else{
+					$arrResponse = array('status' => false, 'msg' => 'No tienes horas disponibles.');
+					$msjResta = "No tiene horas para tomar.";
+				}
+
+			}else{
+				
+				$arrResponse = array('status' => false, 'msg' => 'No se encontraron datos');
+
+			}
+			/*
+			97	1	Diligencias Personales	16/07/24	1	26
+			133	1	Practicas De Powerbi	05/07/24	1	26
+			139	1	Toma De Hoy	17/07/24	1	26
+			132	1	Diligencias En Otra Ciudad	16/07/24	1	26
+			137	2	Almuerzo De Cumpleaños	30/07/24	1	26
+			*/			
+			echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
+		}
+	}
+	//Modulo para obtener horas disponibles
+	public function obtenerHorasDisponiblesSinId(){
 
 		$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
+		$idFuncionario = intval($idFuncionario);
 
-		//Dep($idFuncionario);
+		if($idFuncionario > 0){
+			
+			$horasExistentes = $this->model->getHorasExistentes($idFuncionario);
 
-		$horasExistentes = $this->model->getHorasExistentes($idFuncionario);
-		/*
-		97	1	Diligencias Personales	16/07/24	1	26
-		133	1	Practicas De Powerbi	05/07/24	1	26
-		139	1	Toma De Hoy	17/07/24	1	26
-		132	1	Diligencias En Otra Ciudad	16/07/24	1	26
-		137	2	Almuerzo De Cumpleaños	30/07/24	1	26
-		*/
+			//Dep($horasExistentes);
+			$horas = 0;
 
-		if($horasExistentes){
-			//Respuesta de la DB
-			$arrHoras = $this->model->getHorasDisponibles($idFuncionario);
+			if(($_SESSION['permisosMod']['ID_ROL'] !== '2') || (!empty($horasExistentes) && is_array($horasExistentes))){
+				
+				if(!empty($horasExistentes)){
+					
+					$horas = $horasExistentes[0];
 
-			Dep($arrHoras);
+					if(array_key_exists('HORAS_APROBADAS_SIN_TOMA', $horas)) {
+			
+						if($horasExistentes){
+							$horasAprobadasCompensatoriosSinToma = floatval($horasExistentes[0]['HORAS_APROBADAS_SIN_TOMA']);
+						}else{
+							$horasAprobadasCompensatoriosSinToma = 0;
+						}
+			
+						if($horasAprobadasCompensatoriosSinToma <= 0){
+							$msjResta="No tiene horas para tomar";
+							$arrResponse = array('status' => false, 'msg' => $msjResta);
+						}else{
+							$msjResta="Tiene ".$horasAprobadasCompensatoriosSinToma." hora/s para tomar.";
+							$arrResponse = array('status' => true, 'msg' => $msjResta);
+						}
+		
+					}else{
+					
+						if($horasExistentes){
+							$horasDisponibles = floatval($horasExistentes[0]['HORAS_DISPONIBLES']);
+							$horasAprobadas = floatval($horasExistentes[0]['HORAS_APROBADAS']);
+							$horasAprobadasCompensatorios = floatval($horasExistentes[0]['HORAS_COMPENSATORIOS_APROBADAS']);
+						}else{
+							$horasDisponibles = 0;
+							$horasAprobadas = 0;
+							$horasAprobadasCompensatorios = 0;
+						}
+			
+						if($horasDisponibles<=0){
+							$msjResta="No tiene horas para tomar";
+							$arrResponse = array('status' => false, 'msg' => $msjResta);
+						}else{
+							$msjResta="Tiene ".$horasDisponibles." hora/s para tomar.";
+							$arrResponse = array('status' => true, 'msg' => $msjResta);
+						}
+					}
 
-			if($arrHoras){
-				$horasDisponibles = floatval($arrHoras[0]['HORAS_DISPONIBLES']);
-				$horasAprobadas = floatval($arrHoras[0]['HORAS_APROBADAS']);
-				$horasAprobadasCompensatorios = floatval($arrHoras[0]['HORAS_COMPENSATORIOS_APROBADAS']);
+				}else{
+					$arrResponse = array('status' => true, 'msg' => 'Admin');
+				}
+
+
 			}else{
-				$horasDisponibles = 0;
-				$horasAprobadas = 0;
-				$horasAprobadasCompensatorios = 0;
+				
+				$arrResponse = array('status' => false, 'msg' => 'No se encontraron datos');
+
 			}
-
-			if($horasDisponibles<=0){
-				$msjResta="No tienes horas para tomar";
-				$arrResponse = array('status' => false, 'msg' => $msjResta);
-			}else{
-				$msjResta="Tienes ".$horasDisponibles." hora/s para tomar.";
-				$arrResponse = array('status' => true, 'msg' => $msjResta);
-			}
-
-		}else{
-
-			$arrHorasSinToma = $this->model->getHorasDisponiblesSinToma($idFuncionario);
-
-			//Dep($arrHorasSinToma);
-
-			if($arrHorasSinToma){
-				$horasAprobadasCompensatoriosSinToma = floatval($arrHorasSinToma[0]['HORAS_APROBADAS_SIN_TOMA']);
-			}else{
-				$horasAprobadasCompensatoriosSinToma = 0;
-			}
-
-			if($horasAprobadasCompensatoriosSinToma <= 0){
-				$msjResta="No tienes horas para tomar";
-				$arrResponse = array('status' => false, 'msg' => $msjResta);
-			}else{
-				$msjResta="Tienes ".$horasAprobadasCompensatoriosSinToma." hora/s para tomar.";
-				$arrResponse = array('status' => true, 'msg' => $msjResta);
-			}
-
+			/*
+			97	1	Diligencias Personales	16/07/24	1	26
+			133	1	Practicas De Powerbi	05/07/24	1	26
+			139	1	Toma De Hoy	17/07/24	1	26
+			132	1	Diligencias En Otra Ciudad	16/07/24	1	26
+			137	2	Almuerzo De Cumpleaños	30/07/24	1	26
+			*/			
+			echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
 		}
-
-		echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
 	}
 	//Modulo para obetener los usuarios en el select, haciendo llamado al modelo selectUsuarios
 	public function getSelectUsuarios(){
 		$htmlOptions = "";
 		$arrData = $this->model->selectUsuarios();
+
+		//Dep($arrData);
 
 		if(count($arrData) > 0 ){
 			// Obtener el nombre del usuario que inició sesión
@@ -465,9 +484,9 @@ class Horas extends Controllers{
 			// Agregar la opción del usuario que inició sesión
 			$htmlOptions .= '<option value="'.$_SESSION['userData']['ID_FUNCIONARIO'].'">'.$loggedUserName.'</option>';
 				
-			// Agregar las opciones de los demás registros
+			// Agregar las opciones de los demás registros && $arrData[0]['ID_FUNCIONARIO'] != $_SESSION['userData']['ID_FUNCIONARIO']
 			for ($i=0; $i < count($arrData); $i++) { 
-				if($arrData[0]['FUN_ESTADO'] == 1 && $arrData[0]['ID_FUNCIONARIO'] != $_SESSION['userData']['ID_FUNCIONARIO']){
+				if($arrData[0]['FUN_ESTADO'] == 1){
 					$htmlOptions .= '<option value="'.$arrData[$i]['ID_FUNCIONARIO'].'">'.$arrData[$i]['FUN_NOMBRES'].' '.$arrData[$i]['FUN_APELLIDOS'].'</option>';
 				}
 			}
@@ -524,67 +543,86 @@ class Horas extends Controllers{
 				$horasSolicitadas = $datos['TOM_HORAS_SOLI'];
 				
 				$idFuncionario = $datos['ID_FUNCIONARIO'];
-				
-				$arrHoras = $this->model->getHorasDisponibles($idFuncionario);
-				$arrHorasSinToma = $this->model->getHorasDisponiblesSinToma($idFuncionario);
 
-				if($arrHorasSinToma){
-					$horasDisponiblesSinToma = floatval($arrHorasSinToma[0]['HORAS_APROBADAS_SIN_TOMA']);
-					$horasDisponibles = null;
-					$horasAprobadas = null;
-					$horasAprobadasCompensatorios = null;
-				}else{
-					$horasDisponiblesSinToma = 0;
-				}
+				if($idFuncionario > 0){
+			
+					$horasExistentes = $this->model->getHorasExistentes($idFuncionario);
+					$horas = 0;
+		
+					if(!empty($horasExistentes) && is_array($horasExistentes)){
+		
+						$horas = $horasExistentes[0];
+		
+						if(array_key_exists('HORAS_APROBADAS_SIN_TOMA', $horas)) {
 				
-				if($arrHoras){
-					$horasDisponibles = floatval($arrHoras[0]['HORAS_DISPONIBLES']);
-					$horasAprobadas = floatval($arrHoras[0]['HORAS_APROBADAS']);
-					$horasAprobadasCompensatorios = floatval($arrHoras[0]['HORAS_COMPENSATORIOS_APROBADAS']);
-					$horasDisponiblesSinToma = null;
-				}else{
-					$horasDisponibles = 0;
-					$horasAprobadas = 0;
-					$horasAprobadasCompensatorios = 0;
-				}
-				
-				if(($arrHoras && $horasDisponibles>=$horasSolicitadas) || ($arrHorasSinToma && $horasDisponiblesSinToma>=$horasSolicitadas)){
-					
-					if ($idToma > 0 && $datos){
-	
-						$arrAprobado = $this->model->estadoAprobado($idToma);
-	
-						if ($arrAprobado) {
-							$nombres = $datos['FUN_NOMBRES'];
-							$correo = $datos['FUN_CORREO'];
-							
-							$remitente = 'estivenmendez550@gmail.com';
-							$destinatario = 'aprendiz.bi@asmetsalud.com';
-							$asunto = 'Aprobacion de horas';
-	
-							$tipoMensaje = 'Aprobacion de horas';
-	
-							$html = generarHTML($tipoMensaje, $datos);
-	
-							$enviarMail = enviarMail($remitente, $destinatario, $asunto, 'Aprobacion de horas', $datos);
-	
-							if ($enviarMail){
-								$response = array('status' => true, 'msg' => 'Se envió un correo de confirmación al solicitante.');
-							} else {
-								$response = array('status' => false, 'msg' => 'No se pudo enviar el correo de confirmación.');
+							if($horasExistentes){
+								$horasDisponiblesSinToma = floatval($horasExistentes[0]['HORAS_APROBADAS_SIN_TOMA']);
+								$horasDisponibles = null;
+								$horasAprobadas = null;
+								$horasAprobadasCompensatorios = null;
+							}else{
+								$horasDisponiblesSinToma = 0;
 							}
-						} else {
-							$response = array('status' => false, 'msg' => 'Al aprobar la solicitud');
+			
+						}else{
+						
+							if($horasExistentes){
+								$horasDisponibles = floatval($horasExistentes[0]['HORAS_DISPONIBLES']);
+								$horasAprobadas = floatval($horasExistentes[0]['HORAS_APROBADAS']);
+								$horasAprobadasCompensatorios = floatval($horasExistentes[0]['HORAS_COMPENSATORIOS_APROBADAS']);
+								$horasDisponiblesSinToma = null;
+							}else{
+								$horasDisponibles = 0;
+								$horasAprobadas = 0;
+								$horasAprobadasCompensatorios = 0;
+							}
+
 						}
+		
+					}else{
+						
+						$arrResponse = array('status' => false, 'msg' => 'No se encontraron datos');
+		
 					}
-					
-				}else{
-					$response = array('status' => false, 'msg' => 'Tiempo insuficiente.
-					Disponibles: '.$horasDisponibles.' hora/s.');
-				}
 				
-				echo json_encode($response, JSON_UNESCAPED_UNICODE);
-				exit;
+					if(($horasDisponibles>=$horasSolicitadas) || ($horasDisponiblesSinToma>=$horasSolicitadas)){
+						
+						if ($idToma > 0 && $datos){
+		
+							$arrAprobado = $this->model->estadoAprobado($idToma);
+		
+							if ($arrAprobado) {
+								$nombres = $datos['FUN_NOMBRES'];
+								$correo = $datos['FUN_CORREO'];
+								
+								$remitente = 'estivenmendez550@gmail.com';
+								$destinatario = 'aprendiz.bi@asmetsalud.com';
+								$asunto = 'Aprobacion de horas';
+		
+								$tipoMensaje = 'Aprobacion de horas';
+		
+								$html = generarHTML($tipoMensaje, $datos);
+		
+								$enviarMail = enviarMail($remitente, $destinatario, $asunto, 'Aprobacion de horas', $datos);
+		
+								if ($enviarMail){
+									$response = array('status' => true, 'msg' => 'Se envió un correo de confirmación al solicitante.');
+								} else {
+									$response = array('status' => false, 'msg' => 'No se pudo enviar el correo de confirmación.');
+								}
+							} else {
+								$response = array('status' => false, 'msg' => 'Al aprobar la solicitud');
+							}
+						}
+						
+					}else{
+						$response = array('status' => false, 'msg' => 'Tiempo insuficiente.
+						Disponibles: '.$horasDisponibles.' hora/s.');
+					}
+				
+					echo json_encode($response, JSON_UNESCAPED_UNICODE);
+					exit;
+				}
 			}
 		}
 	}
