@@ -487,10 +487,10 @@ class Compensatorios extends Controllers{
 		
 		// Verificar si el usuario tiene el rol de administrador
 		$idRol = $_SESSION['userData']['ID_ROL'];
-		$esAdministrador = $this->model->esAdministrador($idRol);
+		$rol = $this->model->getRol($idRol);
 		
 		$response = array(
-			'esAdministrador' => $idRol
+			'Rol' => $idRol
 		);
 		
 		header('Content-Type: application/json');

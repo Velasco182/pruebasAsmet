@@ -55,9 +55,6 @@ class HorasModel extends Oracle{
 				AND TOM_HORAS_SOLI = {$this->strHoras}";
 				
 			$request = $this->select_all($sql);
-
-			/*Dep($sql);
-			Dep($request);*/
 	
 			//Verificación de inserción
 			if(empty($request)){
@@ -89,9 +86,6 @@ class HorasModel extends Oracle{
 				);
 				
 				$request_insert = $this->insert($query_insert, $arrData);
-
-				/*Dep($query_insert);
-				Dep($request_insert);*/
 				
 				$return = $request_insert;
 			}else{
@@ -363,7 +357,7 @@ class HorasModel extends Oracle{
 
 	}
 	//Modulo para recolectar información del usuario
-	public function recuperar(int $idFuncionario){
+	/*public function recuperar(int $idFuncionario){
 
 		$this->intIdFuncionario = $idFuncionario;
 
@@ -383,7 +377,7 @@ class HorasModel extends Oracle{
 		$request = $this->select($sql, $arrData);
 
 		return $request;
-	}
+	}*/
 
 	//-----Funciones para actualización de datos-----
 	//Modulo de actualización de horas
@@ -406,9 +400,6 @@ class HorasModel extends Oracle{
 
 		$request = $this->select_all($sql);
 
-		/*Dep($sql);
-		Dep($request);*/
-
 		if(empty($request)){
 
 			$sqlUpdate = "UPDATE BIG_TOMA
@@ -426,9 +417,6 @@ class HorasModel extends Oracle{
 			);
 
 			$requestUpdate = $this->update($sqlUpdate, $arrData);
-
-			/*Dep($sqlUpdate);
-			Dep($requestUpdate);*/
 
 		}else{
 			$requestUpdate = "exist";
@@ -504,22 +492,18 @@ class HorasModel extends Oracle{
 
 	//----Funciones generales------
 	//Modulo de verificación de rol
-	public function esAdministrador($idRol) {
+	public function getRol(int $idRol) {
 
 		$this->intIdRol = $idRol;
 
 		$sql = "SELECT 
 			distinct ID_ROL
 			FROM BIG_FUNCIONARIOS
-			WHERE ID_ROL = ID_ROL";
+			WHERE ID_ROL = '{$this->intIdRol}'";
 
-		$arrData = array(
-			':ID_ROL' 		=> $this->intIdRol
-		);
+		$request = $this->select($sql);
 
-		$request = $this->select($sql, $arrData);
-
-		return $request['ID_ROL'] == 1;
+		return $request;
 	}
 
 }

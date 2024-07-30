@@ -43,10 +43,6 @@ class Horas extends Controllers{
 			|| $_POST['txtFecha']=='' || $_POST['txtHoras']==''){
 				
 				$arrResponse = array("status" => false, "msg" => 'Ingrese todos los datos.');
-				
-				/*if($_POST['idToma'] == ''){
-					$arrResponse = array("status" => false, "msg" => 'Ingrese idToma.');
-				}*/
 			
 			}else{
 
@@ -58,19 +54,15 @@ class Horas extends Controllers{
 				$strHoras = floatval($_POST['txtHoras']);
 
 				$listadoUsuarios = intval(strClean($_POST['listaUsuarios']));
-				// Recuperar los datos insertados
-				$arrDataUsuarios = $this->model->recuperar($listadoUsuarios);
 
-				/*Dep($listadoUsuarios);
-				Dep($arrDataUsuarios);*/
+				if(!empty($listadoUsuarios)){
 
-				if(!empty($listadoUsuarios)){ //&& is_array($listadoUsuarios)
 					$idFuncionario = $listadoUsuarios;
-					//Dep($listadoUsuarios);
-					//Dep($idFuncionario);
+
 				}else{
+
 					$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
-					//Dep($idFuncionario);
+
 				}
 
 				$option = 0;
@@ -137,7 +129,7 @@ class Horas extends Controllers{
 					&& ($horasAprobadasCompensatorios - $horasAprobadas) > 0
 					&& ($horasAprobadasCompensatorios - $horasAprobadas) >= $strHoras){
 
-					if(($intIdToma === 0) || ($intIdToma == "")){//|| ($intIdToma == null )
+					if($intIdToma == 0){
 						
 						if($_SESSION['permisosMod']['PER_W']){
 
@@ -451,7 +443,7 @@ class Horas extends Controllers{
 					}
 
 				}else{
-					$arrResponse = array('status' => true, 'msg' => 'Admin');
+					$arrResponse = array('status' => true, 'msg' => '¡Bienvenido Administrador!');
 				}
 
 
@@ -675,10 +667,10 @@ class Horas extends Controllers{
 		
 		// Verificar si el usuario tiene el rol de administrador
 		$idRol = $_SESSION['userData']['ID_ROL'];
-		$esAdministrador = $this->model->esAdministrador($idRol);
+		$rol = $this->model->getRol($idRol);
 		
 		$response = array(
-			'esAdministrador' => $idRol
+			'Rol' => $idRol
 		);
 		
 		header('Content-Type: application/json');

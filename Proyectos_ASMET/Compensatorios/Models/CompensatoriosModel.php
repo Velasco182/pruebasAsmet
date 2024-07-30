@@ -538,24 +538,21 @@ class CompensatoriosModel extends Oracle{
 
 	//----Funciones generales------
 	//Modulo de verificación de rol
-	public function esAdministrador(int $idRol) {
+	public function getRol(int $idRol) {
 
 		$this->intIdRol = $idRol;
 
-		$sql = "SELECT distinct ID_ROL
+		$sql = "SELECT 
+			distinct ID_ROL
 			FROM BIG_FUNCIONARIOS
-			WHERE ID_ROL = ID_ROL";
+			WHERE ID_ROL = '{$this->intIdRol}'";
 
-		$arrData = array(
-			':ID_ROL' 		=> $this->intIdRol
-		);
+		$request = $this->select($sql);
 
-		$request = $this->select($sql, $arrData);
-
-		return $request['ID_ROL'] == 1;
+		return $request;
 	}
 	//Modulo para guardar la evidencia del compensatorio
-	public function guardarEvidencia(string $evidencia, int $idCompensatorio){ // Esta definitivamente funciona
+	/*public function guardarEvidencia(string $evidencia, int $idCompensatorio){ // Esta definitivamente funciona
 		$this->strEvidencia = $evidencia;
 		$this->intIdCompensatorio = $idCompensatorio;
 
@@ -571,6 +568,6 @@ class CompensatoriosModel extends Oracle{
 		$request = $this->update($sql, $arrData);
 
 		return $request;
-	}
+	}*/
 }
  ?>

@@ -357,7 +357,7 @@ function ftnEditCompensatorio(element,idCompensatorio){
     }
 }
 //Función para subir evidencias mostrando el modal
-function ftnEvidencias(idCompensatorio) {
+/*function ftnEvidencias(idCompensatorio) {
     // Abre el modal de subir evidencias
     $('#modalFormEvidencias').modal('show');
     document.querySelector("#formCargarEvidencias").reset();
@@ -406,7 +406,7 @@ function ftnEvidencias(idCompensatorio) {
         }
 });
 
-}
+}*/
 //Función para aprobación del compensatorio
 function ftnAprobarCompensatorio(idCompensatorio) { //Funcion para el boton de aprobacion
     swal({
@@ -535,11 +535,9 @@ function ajustarFormulario() {
 
     request.onreadystatechange = function() {
         if (request.readyState == 4 && request.status == 200) {
-            let esAdministrador = JSON.parse(request.responseText).esAdministrador;
-            // let estadoDiv = document.querySelector(".form-group.col-md-6");
-            
-            if (esAdministrador == 2) {
-                // estadoDiv.style.display = "none";
+            let rol = JSON.parse(request.responseText).Rol;
+
+            if (rol === '2') {
                 $("#listaUsuarios").closest(".form-group").css("display","none");
             }
         }

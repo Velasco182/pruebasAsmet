@@ -225,157 +225,101 @@ function fntViewHora(idToma){
 //Función que retorna una promesa para llenar horas disponibles en el modal de solicitar horas
 function fntViewHorasDisponibles(){
         
-    /*var elemento = document.querySelector("#listaUsuarios").closest(".form-group");
+    document.querySelector('#idToma').value ="";
+    document.querySelector("#formHora").reset();
+    $("#usersDiv").closest(".form-row").css("display","flex");
+    ftnTotalUsuarios();
+
+    return new Promise((resolve, reject) => {
     
-    console.log(window.getComputedStyle(elemento).display === "none");
-    
-    if (window.getComputedStyle(elemento).display === "none") {
-        
-        return new Promise((resolve, reject) => {
+        let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+        let ajaxUrl = base_url+'/Horas/obtenerHorasDisponiblesSinId';
+        request.open("GET",ajaxUrl,true);
+        request.send();
+        request.onreadystatechange = function(){
 
-            let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-            let ajaxUrl = base_url+'/Horas/obtenerHorasDisponiblesSinId';
-            request.open("GET",ajaxUrl,true);
-            request.send();
-            request.onreadystatechange = function(){
+            if(request.readyState == 4 && request.status == 200){
+                let objData = JSON.parse(request.responseText);
 
-                if(request.readyState == 4 && request.status == 200){
-                    let objData = JSON.parse(request.responseText);
-    
-                    let response = objData.msg;
-                    
-                    if(objData.status){
-                        document.querySelector("#txtDisponibles").innerHTML = `<h5>${response}</h5>`;
-                        openModal();
-                        resolve(true);
-                        //swal(disponibles, mensaje, "warning");
-                    }else{
-                        document.querySelector("#txtDisponibles").innerHTML = `<h5>${response}</h5>`;
-                        swal({
-                            title: response,
-                            text: "",
-                            type: "error",
-                            confirmButtonText: "OK",
-                            closeOnConfirm: true,
-                        }, function(isConfirm){
-
-                            if(isConfirm){
-                                $('#modalFormHora').modal('hide');
-                                document.querySelector("#txtDisponibles").innerHTML = "";
-                            }
-                        });
-                        resolve(false);
-                    }
-                }
-
-            }
-
-        });
-
-    }else
-    
-    if(window.getComputedStyle(elemento).display !== "none"){
-
-        console.log(window.getComputedStyle(elemento).display !== "none");*/
-
-        //document.querySelector("#txtDisponibles").innerHTML = "";
-        document.querySelector('#idToma').value ="";
-        document.querySelector("#formHora").reset();
-        $("#usersDiv").closest(".form-row").css("display","flex");
-        ftnTotalUsuarios();
-
-        return new Promise((resolve, reject) => {
-        
-            let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-            let ajaxUrl = base_url+'/Horas/obtenerHorasDisponiblesSinId';
-            request.open("GET",ajaxUrl,true);
-            request.send();
-            request.onreadystatechange = function(){
-
-                if(request.readyState == 4 && request.status == 200){
-                    let objData = JSON.parse(request.responseText);
-    
-                    let response = objData.msg;
-                    
-                    if(objData.status){
-                        document.querySelector("#txtDisponibles").innerHTML = `<h5>${response}</h5>`;
-                        //document.querySelector("#formHora").reset();
-                        openModal();
-                        resolve(true);
-                        //swal(disponibles, mensaje, "warning");
-                    }else{
-                        document.querySelector("#txtDisponibles").innerHTML = `<h5>${response}</h5>`;
-                        swal({
-                            title: response,
-                            text: "",
-                            type: "error",
-                            confirmButtonText: "OK",
-                            closeOnConfirm: true,
-                        }, function(isConfirm){
-
-                            if(isConfirm){
-                                $('#modalFormHora').modal('hide');
-                                document.querySelector("#txtDisponibles").innerHTML = "";
-                            }
-                        });
-                        resolve(false);
-                    }
-                }
-
-            }    
-            
-            var elemento = document.querySelector("#listaUsuarios").closest(".form-group");
-            if (window.getComputedStyle(elemento).display !== "none") {
-                                
-                document.getElementById('listaUsuarios').addEventListener('change', function() {
+                let response = objData.msg;
                 
-                    let userId = parseInt(this.value);
-                        
-                    let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-                    let ajaxUrl = base_url+'/Horas/obtenerHorasDisponibles/'+userId;//
-                    request.open("GET",ajaxUrl,true);
-                    request.send();
-                    request.onreadystatechange = function(){    
-                        if(request.readyState == 4 && request.status == 200){
-                            let objData = JSON.parse(request.responseText);
-            
-                            let response = objData.msg;
-                            
-                            if(objData.status){
+                if(objData.status){
+                    document.querySelector("#txtDisponibles").innerHTML = `<h5>${response}</h5>`;
+                    openModal();
+                    resolve(true);
+                    //swal(disponibles, mensaje, "warning");
+                }else{
+                    document.querySelector("#txtDisponibles").innerHTML = `<h5>${response}</h5>`;
+                    swal({
+                        title: response,
+                        text: "",
+                        type: "error",
+                        confirmButtonText: "OK",
+                        closeOnConfirm: true,
+                    }, function(isConfirm){
 
-                                divLoading.style.display = "flex"; // Mostrar el div de carga
-
-                                document.querySelector("#txtDisponibles").innerHTML = `<h5>${response}</h5>`;
-                                openModal();
-                                resolve(true);
-                                //swal(disponibles, mensaje, "warning");
-                            }else{
-                                document.querySelector("#txtDisponibles").innerHTML = `<h5>${response}</h5>`;
-                                swal({
-                                    title: response,
-                                    text: "",
-                                    type: "error",
-                                    confirmButtonText: "OK",
-                                    closeOnConfirm: true,
-                                }, function(isConfirm){
-    
-                                    if(isConfirm){
-                                        $('#modalFormHora').modal('hide');
-                                        document.querySelector("#txtDisponibles").innerHTML = "";
-                                    }
-                                });
-                                resolve(false);
-                            }
+                        if(isConfirm){
+                            $('#modalFormHora').modal('hide');
+                            document.querySelector("#txtDisponibles").innerHTML = "";
                         }
-                        divLoading.style.display = "none"; // Mostrar el div de carga
-                    }
-                        
-                });
+                    });
+                    resolve(false);
+                }
             }
-            // Resuelve la promesa aquí para asegurarte de que el código no se detenga
-            resolve(true);
+
+        }    
+        
+        var elemento = document.querySelector("#listaUsuarios").closest(".form-group");
+        if (window.getComputedStyle(elemento).display !== "none") {
+                            
+            document.getElementById('listaUsuarios').addEventListener('change', function() {
+            
+                let userId = parseInt(this.value);
+                    
+                let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+                let ajaxUrl = base_url+'/Horas/obtenerHorasDisponibles/'+userId;//
+                request.open("GET",ajaxUrl,true);
+                request.send();
+                request.onreadystatechange = function(){    
+                    if(request.readyState == 4 && request.status == 200){
+                        let objData = JSON.parse(request.responseText);
+        
+                        let response = objData.msg;
+                        
+                        if(objData.status){
+
+                            divLoading.style.display = "flex"; // Mostrar el div de carga
+
+                            document.querySelector("#txtDisponibles").innerHTML = `<h5>${response}</h5>`;
+                            openModal();
+                            resolve(true);
+                            //swal(disponibles, mensaje, "warning");
+                        }else{
+                            document.querySelector("#txtDisponibles").innerHTML = `<h5>${response}</h5>`;
+                            swal({
+                                title: response,
+                                text: "",
+                                type: "error",
+                                confirmButtonText: "OK",
+                                closeOnConfirm: true,
+                            }, function(isConfirm){
+
+                                if(isConfirm){
+                                    $('#modalFormHora').modal('hide');
+                                    document.querySelector("#txtDisponibles").innerHTML = "";
+                                }
+                            });
+                            resolve(false);
+                        }
+                    }
+                    divLoading.style.display = "none"; // Mostrar el div de carga
+                }
+                    
+            });
+        }
+        // Resuelve la promesa aquí para asegurarte de que el código no se detenga
+        resolve(true);
     }); 
-    //}   
 }
 //Función asíncrona para actualizar el registro de horas
 async function fntEditToma(element, idToma){
@@ -386,8 +330,6 @@ async function fntEditToma(element, idToma){
     if (horasDisponibles) {
         divLoading.style.display = "flex"; // Mostrar el div de carga
     }
-
-    //$("#usersDiv").closest(".form-group").css("display","none");
 
     let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
     let ajaxUrl = base_url+'/Horas/editHora/'+idToma;
@@ -415,10 +357,7 @@ async function fntEditToma(element, idToma){
                 document.querySelector("#txtFecha").value = objData.data.TOM_FECHA_SOLI;
                 document.querySelector("#txtHoras").value = parseFloat(objData.data.TOM_HORAS_SOLI);
                 
-                /*$('#listaUsuarios').selectpicker('refresh');
-                $('#listaUsuarios').selectpicker('render');*/
                 $("#usersDiv").closest(".form-row").css("display","none");
-                //$("#txtDisponibles").closest(".form-group").css("display","none");
 
                 if(!horasDisponibles){   
                     $('#modalFormHora').modal('show');
@@ -537,18 +476,16 @@ function ftnTotalUsuarios(){
    
 }
 //Función para verificar tipo de usuario y así mismo permisos
-function ajustarFormulario() { 
+function ajustarFormulario() {
     let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
     let ajaxUrl = base_url + '/Horas/verificarRol';
     request.open("GET", ajaxUrl, true);
 
     request.onreadystatechange = function() {
         if (request.readyState == 4 && request.status == 200) {
-            let esAdministrador = JSON.parse(request.responseText).esAdministrador;
-            // let estadoDiv = document.querySelector(".form-group.col-md-6");
+            let rol = JSON.parse(request.responseText).Rol;
             
-            if (esAdministrador === '2'){
-                // estadoDiv.style.display = "none";
+            if (rol === '2'){
                 $("#listaUsuarios").closest(".form-group").css("display","none");
             }
         }
