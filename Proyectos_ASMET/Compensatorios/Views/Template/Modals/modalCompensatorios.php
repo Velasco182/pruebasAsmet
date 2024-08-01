@@ -110,7 +110,7 @@
 
                 <div class="form-group col-md-6">
                   <label id="labelEvidencia" for="archivoEvidencia">Adjuntar evidencia</label>
-                  <div class="tile mx-auto">
+                  <div class="tile mx-auto rounded-lg border-top">
                       <input type="file" class="form-control-file" id="archivoEvidencia" name="archivoEvidencia" multiple required>
                       <div id="evidenciaName"></div>
                   </div>

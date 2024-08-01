@@ -449,16 +449,10 @@ class Horas extends Controllers{
 
 			}else{
 				
-				$arrResponse = array('status' => false, 'msg' => 'No se encontraron datos');
+				$arrResponse = array('status' => false, 'msg' => 'No se encontraron horas para tomar');
 
 			}
-			/*
-			97	1	Diligencias Personales	16/07/24	1	26
-			133	1	Practicas De Powerbi	05/07/24	1	26
-			139	1	Toma De Hoy	17/07/24	1	26
-			132	1	Diligencias En Otra Ciudad	16/07/24	1	26
-			137	2	Almuerzo De Cumpleaños	30/07/24	1	26
-			*/			
+		
 			echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
 		}
 	}
