@@ -197,7 +197,13 @@ class Compensatorios extends Controllers{
 							}elseif($request_user === "exist"){
 								$arrResponse;
 							}else{
-								$arrResponse = array('status' => true, 'msg' => 'Su solicitud fue procesada con éxito, espera que el admin apruebe tu compensatorio!');
+
+								if($_SESSION['userData']['ID_ROL'] !== '2'){
+									$arrResponse = array('status' => true, 'msg' => 'La solicitud fue procesada con éxito, ya puedes aprobar el compensatorio!');
+								}else{
+									$arrResponse = array('status' => true, 'msg' => 'Su solicitud fue procesada con éxito, espera que un admin apruebe tu compensatorio!');
+								}
+
 								$enviarcorreo = enviarMail($remitente, $destinatario, $asunto, 'solicitud', $datos);
 							}
 
@@ -322,7 +328,7 @@ class Compensatorios extends Controllers{
 			echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
 		}
 	}
-	//Modulo para seleccionar compensatorio por id para después actualizar el mismo llamando al modelo selectEdit
+	//Modulo para seleccionar compensatorio por id llamando al modelo selectEdit para después actualizarlo
 	public function editCompensatorio($idCompensatorio) {
 		if ($_SESSION['permisosMod']['PER_R']) {
 			$idCompensatorio = intval($idCompensatorio);
@@ -363,6 +369,41 @@ class Compensatorios extends Controllers{
 			echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE); // Devuelve la respuesta JSON
 		}
 	}
+	//Modulo para obetener los usuarios en el select, haciendo llamado al modelo selectUsuarios
+	public function getSelectUsuarios(){
+		$htmlOptions = "";
+		$arrData = $this->model->selectUsuarios();
+
+		if(count($arrData) > 0 ){
+			// Obtener el nombre del usuario que inició sesión
+			$loggedUserName = $_SESSION['userData']['FUN_NOMBRES'];
+				
+			// Agregar la opción del usuario que inició sesión
+			$htmlOptions .= '<option value="'.$_SESSION['userData']['ID_FUNCIONARIO'].'">'.$loggedUserName.'</option>';
+				
+			// Agregar las opciones de los demás registros && $arrData[0]['ID_FUNCIONARIO'] != $_SESSION['userData']['ID_FUNCIONARIO']
+			for ($i=0; $i < count($arrData); $i++) {
+				if($arrData[0]['FUN_ESTADO'] == 1 ){
+					$htmlOptions .= '<option value="'.$arrData[$i]['ID_FUNCIONARIO'].'">'.$arrData[$i]['FUN_NOMBRES'].' '.$arrData[$i]['FUN_APELLIDOS'].'</option>';
+				}
+			}
+		}
+		echo $htmlOptions;
+	}
+	//Modulo para obetener los tipos de compensatorios en el select, haciendo llamado al modelo selectTipoCompensatorio
+	public function getSelectTipoCompensatorio(){
+		$htmlOptions = "";
+		$arrData = $this->model->selectTipoCompensatorio();
+		if(count($arrData) > 0 ){
+			// Agregar las opciones de los demás registros de tipo de compensatorios
+			for ($i=0; $i < count($arrData); $i++) {
+				$htmlOptions .= '<option value="'.$arrData[$i]['ID_TIPO_COMPENSATORIO'].'">'.$arrData[$i]['TIP_COM_NOMBRE'].'</option>';
+			}
+		}
+		echo $htmlOptions;
+	}
+
+	//------Funciones de actualización----
 	//Modulo para aprovación del compensatorio llamando al modelo correoAprobacionORechazo para el correo y el modelo estadoAprobado
 	public function aprobarCompensatorio() {
 		if ($_POST) {
@@ -449,42 +490,11 @@ class Compensatorios extends Controllers{
 			}
 		}
 	}
-	//Modulo para obetener los usuarios en el select, haciendo llamado al modelo selectUsuarios
-	public function getSelectUsuarios(){
-		$htmlOptions = "";
-		$arrData = $this->model->selectUsuarios();
 
-		if(count($arrData) > 0 ){
-			// Obtener el nombre del usuario que inició sesión
-			$loggedUserName = $_SESSION['userData']['FUN_NOMBRES'];
-				
-			// Agregar la opción del usuario que inició sesión
-			$htmlOptions .= '<option value="'.$_SESSION['userData']['ID_FUNCIONARIO'].'">'.$loggedUserName.'</option>';
-				
-			// Agregar las opciones de los demás registros && $arrData[0]['ID_FUNCIONARIO'] != $_SESSION['userData']['ID_FUNCIONARIO']
-			for ($i=0; $i < count($arrData); $i++) {
-				if($arrData[0]['FUN_ESTADO'] == 1 ){
-					$htmlOptions .= '<option value="'.$arrData[$i]['ID_FUNCIONARIO'].'">'.$arrData[$i]['FUN_NOMBRES'].' '.$arrData[$i]['FUN_APELLIDOS'].'</option>';
-				}
-			}
-		}
-		echo $htmlOptions;
-	}
-	//Modulo para obetener los tipos de compensatorios en el select, haciendo llamado al modelo selectTipoCompensatorio
-	public function getSelectTipoCompensatorio(){
-		$htmlOptions = "";
-		$arrData = $this->model->selectTipoCompensatorio();
-		if(count($arrData) > 0 ){
-			// Agregar las opciones de los demás registros de tipo de compensatorios
-			for ($i=0; $i < count($arrData); $i++) {
-				$htmlOptions .= '<option value="'.$arrData[$i]['ID_TIPO_COMPENSATORIO'].'">'.$arrData[$i]['TIP_COM_NOMBRE'].'</option>';
-			}
-		}
-		echo $htmlOptions;
-	}
-	//Módulo paraa verificación de rol llamando al modelo esAdministrador
+	//----Funciones generales-----
+	//Módulo para verificación de rol llamando al modelo getRol
 	public function verificarRol() {
-		
+	
 		// Verificar si el usuario tiene el rol de administrador
 		$idRol = $_SESSION['userData']['ID_ROL'];
 		$rol = $this->model->getRol($idRol);
@@ -495,43 +505,6 @@ class Compensatorios extends Controllers{
 		
 		header('Content-Type: application/json');
 		echo json_encode($response);
-	}
-	//Módulo para subir evidencia llamando al modelo guardarEvidencia
-	public function subirEvidencia($idCompensatorio) {
-		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-			$idCompensatorio = isset($_POST['ID_COMPENSATORIO']) ? intval($_POST['ID_COMPENSATORIO']) : 0;
-
-			// Verificar que se haya subido un archivo
-			if (isset($_FILES['archivoEvidencia']) && $_FILES['archivoEvidencia']['error'] === UPLOAD_ERR_OK) {
-				$archivo = $_FILES['archivoEvidencia']['tmp_name'];
-				$name = $_FILES['archivoEvidencia']['name'];
-		
-				$directorio = "archivos/";
-				$name = strtolower($name) . '_' . uniqid();
-				$destino = $directorio . $name;
-		
-				// Intenta mover el archivo al directorio de destino
-				if (move_uploaded_file($archivo, $destino)) {
-					// Éxito: el archivo se cargó con éxito
-		
-					// Llama al método en tu modelo para guardar la evidencia en la base de datos
-					$return = $this->model->guardarEvidencia($name, $idCompensatorio);
-		
-					if ($return) {
-						$response = array('status' => true, 'msg' => 'Subida con éxito');
-					} else {
-						$response = array('status' => false, 'msg' => 'Error al subir el archivo');
-					}
-				} else {
-					// Error: no se pudo mover el archivo al directorio de destino
-					$response = array('status' => false, 'msg' => 'No se pudo mover el archivo al directorio de destino');
-				}
-			} else {
-				// Error: no se seleccionó ningún archivo o hubo un error al cargarlo
-				$response = array('status' => false, 'msg' => 'No se seleccionó ningún archivo');
-			}
-		}
-		echo json_encode($response, JSON_UNESCAPED_UNICODE);
 	}
 }
  ?>

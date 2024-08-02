@@ -124,7 +124,7 @@ class Horas extends Controllers{
 						$horasAprobadasCompensatorios = 0;
 					}
 				}
-///
+
 				if(($horasAprobadasCompensatorios && $strHoras) > 0
 					&& ($horasAprobadasCompensatorios - $horasAprobadas) > 0
 					&& ($horasAprobadasCompensatorios - $horasAprobadas) >= $strHoras){
@@ -182,7 +182,13 @@ class Horas extends Controllers{
 								}elseif ($request_user === "exist"){
 									$arrResponse;
 								}else{
-									$arrResponse = array('status' => true, 'msg' => 'Su solicitud fue procesada con éxito, espera que el admin la apruebe!');
+
+									if($_SESSION['userData']['ID_ROL'] !== '2'){
+										$arrResponse = array('status' => true, 'msg' => 'La solicitud fue procesada con éxito, ya la puedes aprobar!');
+									}else{
+										$arrResponse = array('status' => true, 'msg' => 'Su solicitud fue procesada con éxito, espera que un admin la apruebe!');
+									}
+
 									$enviarcorreo = enviarMail($remitente, $destinatario, $asunto, 'solicitud_horas', $datos);
 								}
 								
@@ -210,7 +216,7 @@ class Horas extends Controllers{
 		echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
 	}
 
-	//-----Funciones de recuperación de datos
+	//-----Funciones de recuperación de datos------
 	//Modulo para llenar datatable llamando al modelo selectHoras
 	public function obtenerHoras(){
 		if($_SESSION['permisosMod']['PER_R']){
@@ -479,9 +485,7 @@ class Horas extends Controllers{
 		}
 		echo $htmlOptions;
 	}
-	
-	//-----Funciones de actualización-----
-	//Modulo para actualizar la solicitud de horas
+	//Modulo para seleccionar horas por id para obtener el contenido llamando al modelo selectEditHora y posteriormente editarlo
 	public function editHora($idToma){
 		if($_SESSION['permisosMod']['PER_R']){
 			$idToma = intval($idToma);
@@ -498,20 +502,8 @@ class Horas extends Controllers{
 			}
 		}
 	}
-
-	//Modulo para verificar rol
-	public function getSelectRoles(){
-		$htmlOptions = "";
-		$arrData = $this->model->selectRoles();
-		if(count($arrData) > 0 ){
-			for ($i=0; $i < count($arrData); $i++) { 
-				if($arrData[$i]['ROL_ESTADO'] == 1 ){
-					$htmlOptions .= '<option value="'.$arrData[$i]['ID_ROL'].'">'.$arrData[$i]['ROL_NOMBRE'].'</option>';
-				}
-			}
-		}
-		return $htmlOptions;
-	}
+	
+	//-----Funciones de actualización-----
 	//Modulo para aprobar la solicitud de horas
 	public function aprobarSolicitud(){
 
@@ -669,6 +661,19 @@ class Horas extends Controllers{
 		
 		header('Content-Type: application/json');
 		echo json_encode($response);
+	}
+	//Modulo para verificar rol
+	public function getSelectRoles(){
+		$htmlOptions = "";
+		$arrData = $this->model->selectRoles();
+		if(count($arrData) > 0 ){
+			for ($i=0; $i < count($arrData); $i++) { 
+				if($arrData[$i]['ROL_ESTADO'] == 1 ){
+					$htmlOptions .= '<option value="'.$arrData[$i]['ID_ROL'].'">'.$arrData[$i]['ROL_NOMBRE'].'</option>';
+				}
+			}
+		}
+		return $htmlOptions;
 	}
 }
 ?>

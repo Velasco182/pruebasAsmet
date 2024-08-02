@@ -344,8 +344,6 @@ async function fntEditToma(element, idToma){
 
             if(objData.status){
 
-                console.log(objData.data.ID_TOMA);
-
                 rowTable = element.parentNode.parentNode.parentNode; 
                 document.querySelector('#titleModal').innerHTML ="Actualizar solicitud de horas";
                 document.querySelector('.modal-header').classList.replace("headerRegister", "headerUpdate");
@@ -493,7 +491,6 @@ function ajustarFormulario() {
 
     request.send();
 }
-
 //Función para abrir modal
 function openModal(){
     
@@ -511,7 +508,7 @@ function openModal(){
 
     $('#modalFormHora').modal('show');
 }
-
+//Ajustar formulario al cargar la página
 window.onload = function() {
     ajustarFormulario();
 };

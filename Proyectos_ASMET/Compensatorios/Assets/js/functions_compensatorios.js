@@ -356,57 +356,6 @@ function ftnEditCompensatorio(element,idCompensatorio){
         divLoading.style.display = "none"; // Ocultar el div de carga
     }
 }
-//Función para subir evidencias mostrando el modal
-/*function ftnEvidencias(idCompensatorio) {
-    // Abre el modal de subir evidencias
-    $('#modalFormEvidencias').modal('show');
-    document.querySelector("#formCargarEvidencias").reset();
-
-    // Al hacer clic en el botón de subir evidencia dentro del modal
-    document.getElementById("btnSubirEvidencia").addEventListener("click", function() {
-        if (document.getElementById("archivoEvidencia").files[0]) {
-            let fd = new FormData();
-            let archivo = document.getElementById("archivoEvidencia").files[0];
-            let nombreArchivo = archivo.name;
-            let extension = nombreArchivo.split('.').pop().toLowerCase();
-            let extensionesValidas = ["jpg","png","xlsx","docx","pdf"];
-
-            if (extensionesValidas.includes(extension)) {
-                fd.append("archivoEvidencia", archivo);
-                fd.append("idCompensatorio", idCompensatorio);
-
-                let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-                let ajaxUrl = base_url + '/Compensatorios/subirEvidencia'; // Reemplazar con la URL correcta
-                request.open("POST", ajaxUrl, true);
-                request.send(fd);
-                request.onreadystatechange = function() {
-                    if (request.readyState == 4) { // Verifica que la solicitud esté en el estado 4 (completo)
-                        if (request.status === 200) {
-                            let data = JSON.parse(request.responseText);
-                            // console.log("Volvio");
-                            if (data.status){
-                                swal("Evidencia: ", data.msg, "success");
-                                $('#modalFormEvidencias').modal('hide');
-                                document.getElementById("archivoEvidencia").value = "";
-                            }else{
-                                alert("Error al subir el archivo", data.msg, "error");
-                            }
-                        } else {
-                            alert("Error en la solicitud: " + request.statusText);
-                        }
-                    }
-                };
-                
-            } else {
-                swal("Extensión no válida", "El archivo contiene una extensión no permitida", "warning");
-                document.getElementById("archivoEvidencia").value = "";
-            }
-        } else {
-            swal("Seleccione un archivo para subir", "Ningun archivo seleccionado", "info");
-        }
-});
-
-}*/
 //Función para aprobación del compensatorio
 function ftnAprobarCompensatorio(idCompensatorio) { //Funcion para el boton de aprobacion
     swal({
@@ -565,6 +514,7 @@ function openModal(){
 
     $('#modalFormCompensatorio').modal('show');
 }
+//Ajustar formulario al cargar la página
 window.onload = function() {
     ajustarFormulario();
 };

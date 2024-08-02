@@ -37,21 +37,33 @@ class HorasModel extends Oracle{
 		$this->intEstado = $tomEstado;
 		$this->strFecha = $tomFechaSolicitada;
 		$this->strHoras = $tomHorasSolicitadas;
-		$this->listadoUsuarios = $usuarios;
+		//$this->listadoUsuarios = $usuarios;
 
 		$horasSolicitadas = $this->strHoras;
 
 		$return = 0;
 
-		$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
-		$this -> intIdFuncionario = $idFuncionario;
+		// Obtener el ID del funcionario de la sesión
+		$codigoRol = $_SESSION['userData']['ROL_CODIGO'];
+		$this -> intCodigoRol = $codigoRol;
+
+        if(in_array($this->intCodigoRol, ROLES_ADMIN)){
+
+			$this->intIdFuncionario = $usuarios;
+			
+		}else{
+			
+			$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
+			$this->intIdFuncionario = $idFuncionario;
+		}
+		
 
 		if($horasSolicitadas >= 0.5){
 
 			$sql = "SELECT * FROM BIG_TOMA
 				WHERE ID_FUNCIONARIO = '{$this->intIdFuncionario}'
 				AND TOM_MOTIVO = '{$this->strMotivo}'
-				AND TOM_FECHA_SOLI = TO_TIMESTAMP('{$this->strFecha}', 'DD/MM/YYYY')
+				AND TOM_FECHA_SOLI = TO_DATE('{$this->strFecha}', 'DD/MM/YYYY')
 				AND TOM_HORAS_SOLI = {$this->strHoras}";
 				
 			$request = $this->select_all($sql);
@@ -82,7 +94,7 @@ class HorasModel extends Oracle{
 					'TOM_ESTADO'		=>$this->intEstado,
 					'TOM_FECHA_SOLI'	=>$this->strFecha,
 					'TOM_HORAS_SOLI'	=>$this->strHoras,
-					'ID_FUNCIONARIO'	=>$this->listadoUsuarios  // Usando lista de usuarios
+					//'ID_FUNCIONARIO'	=>$this->listadoUsuarios  // Usando lista de usuarios
 				);
 				
 				$request_insert = $this->insert($query_insert, $arrData);
@@ -356,28 +368,6 @@ class HorasModel extends Oracle{
 		}
 
 	}
-	//Modulo para recolectar información del usuario
-	/*public function recuperar(int $idFuncionario){
-
-		$this->intIdFuncionario = $idFuncionario;
-
-		$sql = "SELECT
-			FUN.ID_FUNCIONARIO,
-			FUN.FUN_NOMBRES || ' ' ||FUN.FUN_APELLIDOS NOMBREFUNCIONARIO,
-			FUN.FUN_CORREO,
-			FUN.FUN_USUARIO
-		FROM BIG_FUNCIONARIOS FUN
-		WHERE FUN.ID_FUNCIONARIO = {$this->intIdFuncionario}
-		";
-
-		$arrData = array(
-			'ID_FUNCIONARIO' => $this->intIdFuncionario
-		);
-
-		$request = $this->select($sql, $arrData);
-
-		return $request;
-	}*/
 
 	//-----Funciones para actualización de datos-----
 	//Modulo de actualización de horas

@@ -40,7 +40,7 @@ class CompensatoriosModel extends Oracle{
 		$this->strFechaFin = $fechaFin;
 		$this->intIdTipoCompensatorio = $idTipoCompensatorio;//Antes strActividad
 		$this->strDescripcionActividad = $descripcionActividad;
-		$this->listadoUsuarios = $usuarios;
+		//$this->listadoUsuarios = $usuarios;
 		$this->strTrabajoRequerido = $usuarioFinal;
 		$this->strEvidencia = $evidencia;
 		$this->intEstado = $estado;
@@ -48,8 +48,19 @@ class CompensatoriosModel extends Oracle{
 		$return = 0;
 		
 		// Obtener el ID del funcionario de la sesión
-		$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
-		$this->intIdFuncionario = $idFuncionario;
+		$codigoRol = $_SESSION['userData']['ROL_CODIGO'];
+		$this -> intCodigoRol = $codigoRol;
+
+        if(in_array($this->intCodigoRol, ROLES_ADMIN)){
+
+			$this->intIdFuncionario = $usuarios;
+			
+		}else{
+			
+			$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
+			$this->intIdFuncionario = $idFuncionario;
+
+		}
 
 		// Convertir fechas a timestamps y calcular la diferencia en minutos
 		$timestampInicio = strtotime($this->strFechaInicio);
@@ -103,7 +114,7 @@ class CompensatoriosModel extends Oracle{
 					'COM_USUARIO_FINAL' 		=> $this->strTrabajoRequerido,
 					'COM_EVIDENCIAS' 			=> $this->strEvidencia,
 					'COM_ESTADO' 				=> $this->intEstado,
-					'ID_FUNCIONARIO'			=> $this->listadoUsuarios // Usando lista de usuarios
+					//'ID_FUNCIONARIO'			=> $this->listadoUsuarios // Usando lista de usuarios
 				);
 		
 				$request_insert = $this->insert($query_insert, $arrData);
@@ -551,23 +562,5 @@ class CompensatoriosModel extends Oracle{
 
 		return $request;
 	}
-	//Modulo para guardar la evidencia del compensatorio
-	/*public function guardarEvidencia(string $evidencia, int $idCompensatorio){ // Esta definitivamente funciona
-		$this->strEvidencia = $evidencia;
-		$this->intIdCompensatorio = $idCompensatorio;
-
-		$sql = "UPDATE BIG_COMPENSATORIOS 
-			SET COM_EVIDENCIAS = :COM_EVIDENCIAS 
-			WHERE ID_COMPENSATORIO = :ID_COMPENSATORIO";
-
-		$arrData = array(
-			'COM_EVIDENCIAS'		=>$this->strEvidencia,
-			'ID_COMPENSATORIO' 		=>$this->intIdCompensatorio
-		);
-		
-		$request = $this->update($sql, $arrData);
-
-		return $request;
-	}*/
 }
  ?>
