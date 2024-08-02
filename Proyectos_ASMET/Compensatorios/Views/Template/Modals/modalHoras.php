@@ -38,13 +38,13 @@
                 <div class="row">
                   
                   <div class="form-group col-md-12">
-                    <div class="card headerRegister p-3 text-center" id="txtDisponibles" name="txtDisponibles">
+                    <div class="card headerRegister p-3 text-center shadow" id="txtDisponibles" name="txtDisponibles">
                     </div>
                   </div>
 
                   <div class="form-group col-md-12">
                     <label class="control-label">Motivo de la solicitud</label>
-                    <textarea class="form-control" id="txtMotivo" name="txtMotivo" type="text" placeholder="Escribe tu motivo" required="" autocomplete="off"></textarea>
+                    <textarea class="form-control" id="txtMotivo" name="txtMotivo" type="text" placeholder="Escribe tu motivo" rows="1" cols="50" required autocomplete="off"></textarea>
                   </div>
 
                 </div>  

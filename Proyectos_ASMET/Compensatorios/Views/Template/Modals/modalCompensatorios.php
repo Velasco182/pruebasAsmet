@@ -105,12 +105,12 @@
 
                 <div class="form-group col-md-6">
                   <label for="txtDescripcionActividad">Descripcion Actividad</label>
-                    <textarea class="form-control" id="txtDescripcionActividad" name="txtDescripcionActividad" rows="4" cols="50" required autocomplete="off"></textarea>
+                    <textarea class="form-control shadow" id="txtDescripcionActividad" name="txtDescripcionActividad" rows="1" cols="50" required autocomplete="off"></textarea>
                 </div>
 
                 <div class="form-group col-md-6">
                   <label id="labelEvidencia" for="archivoEvidencia">Adjuntar evidencia</label>
-                  <div class="tile mx-auto rounded-lg border-top">
+                  <div class="card mx-auto p-3 text-center rounded-lg border-top bg-white shadow">
                       <input type="file" class="form-control-file" id="archivoEvidencia" name="archivoEvidencia" multiple required>
                       <div id="evidenciaName"></div>
                   </div>

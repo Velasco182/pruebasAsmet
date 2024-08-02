@@ -230,11 +230,13 @@ function ftnDateTimePickerConfiguration(){
                 today: "fa fa-calendar-check",
                 clear: "fa fa-trash",
                 close: "fa fa-xmark",
-            },              
+            }, 
+            maxDate: moment(), // Establecer la fecha mínima seleccionable como la fecha y hora actual                
         };
 
         // Crea una copia del objeto de configuración
         let finalTimePickerConfiguration = Object.assign({}, timePickerConfiguration);
+        
         // Agrega el campo dinámico a la copia
         finalTimePickerConfiguration['useCurrent'] = false;
 
@@ -244,6 +246,7 @@ function ftnDateTimePickerConfiguration(){
 
         $(inicio).on("change.datetimepicker", function(e){
             $(final).datetimepicker('minDate', e.date);
+            $(final).datetimepicker('maxDate', moment());
         });
         
         $(final).on("change.datetimepicker", function(e){
