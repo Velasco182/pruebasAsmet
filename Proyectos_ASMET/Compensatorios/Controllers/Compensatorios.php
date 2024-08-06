@@ -94,8 +94,8 @@ class Compensatorios extends Controllers{
 						$name = $_FILES['archivoEvidencia']['name'];
 				
 						$directorio = "archivos/";
-						$name = strtolower($name) . '_' . uniqid();
-						$destino = $directorio . $name;
+						//$name = strtolower($name) . '_' . uniqid() . '_' . md5(uniqid());
+						$name = strtolower($name) . '_' . uniqid();$destino = $directorio . $name;
 				
 						// Intenta mover el archivo al directorio de destino
 						if (move_uploaded_file($archivo, $destino)) {
@@ -198,7 +198,9 @@ class Compensatorios extends Controllers{
 								$arrResponse;
 							}else{
 
-								if($_SESSION['userData']['ID_ROL'] !== '2'){
+								$rolCodigo = $_SESSION['userData']['ROL_CODIGO'];
+
+								if(in_array($rolCodigo, ROLES_ADMIN)){
 									$arrResponse = array('status' => true, 'msg' => 'La solicitud fue procesada con éxito, ya puedes aprobar el compensatorio!');
 								}else{
 									$arrResponse = array('status' => true, 'msg' => 'Su solicitud fue procesada con éxito, espera que un admin apruebe tu compensatorio!');
@@ -235,8 +237,10 @@ class Compensatorios extends Controllers{
 	public function getCompensatorios(){
 		if($_SESSION['permisosMod']['PER_R']){
 
-			$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO']; // ID del funcionario que deseas mostrar
+			$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
 			$idFuncionario = intval($idFuncionario);
+
+			$rolCodigo = $_SESSION['userData']['ROL_CODIGO'];
 			
 			$arrData = $this->model->selectCompensatorios($idFuncionario);
 			// Procesa $resultado para mostrar los compensatorios del funcionario
@@ -250,12 +254,10 @@ class Compensatorios extends Controllers{
 
 				$btnVer = '';
 				$btnCancelar = '';
-				$btnPendiente = '';
 				$btnAprobar = '';
 				$btnRechazar = '';
 				$btnEdit = '';
 				$btnReset = '';
-				$btnDelete = '';
 				$newStatus= '';
 
 				$comEstado = $arrData[$i]['COM_ESTADO'];
@@ -290,7 +292,7 @@ class Compensatorios extends Controllers{
 
 				}
 
-				if($_SESSION['permisosMod']['PER_U'] && $_SESSION['permisosMod']['ID_ROL'] !== '1') {
+				if($_SESSION['permisosMod']['PER_U']) {// && !(in_array($rolCodigo, ROLES_ADMIN))
 					
 					if(($arrData[$i]['COM_USUARIO_FINAL'] != "1") && ($comEstado == 1) && (intval($arrData[$i]['ID_FUNCIONARIO']) === $idFuncionario)) {
 						$btnEdit = '<button class="btn btn-primary btn-sm btnEditFuncionario" onClick="ftnEditCompensatorio(this,'.$arrData[$i]['ID_COMPENSATORIO'].')" title="Editar Funcionario"><i class="fas fa-pencil-alt"></i></button>';
@@ -300,7 +302,7 @@ class Compensatorios extends Controllers{
 
 				}
 
-				if($_SESSION['permisosMod']['ID_ROL'] !== '2'){
+				if(in_array($rolCodigo, ROLES_ADMIN)){
 
 					if ($_SESSION['permisosMod']['PER_U']) {
 						if ($comEstado == 1) {
@@ -379,7 +381,7 @@ class Compensatorios extends Controllers{
 			$loggedUserName = $_SESSION['userData']['FUN_NOMBRES'];
 				
 			// Agregar la opción del usuario que inició sesión
-			$htmlOptions .= '<option value="'.$_SESSION['userData']['ID_FUNCIONARIO'].'">'.$loggedUserName.'</option>';
+			//$htmlOptions .= '<option value="'.$_SESSION['userData']['ID_FUNCIONARIO'].'">'.$loggedUserName.'</option>';
 				
 			// Agregar las opciones de los demás registros && $arrData[0]['ID_FUNCIONARIO'] != $_SESSION['userData']['ID_FUNCIONARIO']
 			for ($i=0; $i < count($arrData); $i++) {
@@ -494,7 +496,6 @@ class Compensatorios extends Controllers{
 	//----Funciones generales-----
 	//Módulo para verificación de rol llamando al modelo getRol
 	public function verificarRol() {
-	
 		// Verificar si el usuario tiene el rol de administrador
 		$idRol = $_SESSION['userData']['ID_ROL'];
 		$rol = $this->model->getRol($idRol);

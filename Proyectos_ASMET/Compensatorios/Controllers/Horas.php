@@ -69,8 +69,10 @@ class Horas extends Controllers{
 				$request_user = 0;
 				
 				$horasExistentes = $this->model->getHorasExistentes($idFuncionario);
+
+				$rolCodigo = $_SESSION['userData']['ROL_CODIGO'];
 				
-				if(($_SESSION['permisosMod']['ID_ROL'] !== '2') || !empty($horasExistentes) && is_array($horasExistentes)){
+				if((in_array($rolCodigo, ROLES_ADMIN)) || !empty($horasExistentes) && is_array($horasExistentes)){
 
 					if(!empty($horasExistentes)){
 
@@ -183,10 +185,10 @@ class Horas extends Controllers{
 									$arrResponse;
 								}else{
 
-									if($_SESSION['userData']['ID_ROL'] !== '2'){
-										$arrResponse = array('status' => true, 'msg' => 'La solicitud fue procesada con éxito, ya la puedes aprobar!');
+									if(in_array($rolCodigo, ROLES_ADMIN)){
+										$arrResponse = array('status' => true, 'msg' => 'La solicitud de horas fue procesada con éxito, ya la puedes aprobar!');
 									}else{
-										$arrResponse = array('status' => true, 'msg' => 'Su solicitud fue procesada con éxito, espera que un admin la apruebe!');
+										$arrResponse = array('status' => true, 'msg' => 'Su solicitud de horas fue procesada con éxito, espera que un admin la apruebe!');
 									}
 
 									$enviarcorreo = enviarMail($remitente, $destinatario, $asunto, 'solicitud_horas', $datos);
@@ -223,6 +225,8 @@ class Horas extends Controllers{
 
 			$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
 			$idFuncionario = intval($idFuncionario);
+
+			$rolCodigo = $_SESSION['userData']['ROL_CODIGO'];
 
 			$arrData = $this->model->selectHoras($idFuncionario);
 
@@ -276,7 +280,7 @@ class Horas extends Controllers{
 					}
 				}
 
-				if($_SESSION['permisosMod']['ID_ROL'] !== '2'){
+				if(in_array($rolCodigo, ROLES_ADMIN)){
 					
 					//Botón para aprobar de solicitud
 					if ($_SESSION['permisosMod']['PER_U']) {
@@ -322,6 +326,7 @@ class Horas extends Controllers{
 	public function obtenerHorasDisponibles($idFuncionario){
 
 		$idFuncionario = intval($idFuncionario);
+		$rolCodigo = $_SESSION['userData']['ROL_CODIGO'];
 
 		if($idFuncionario > 0){
 			
@@ -329,7 +334,7 @@ class Horas extends Controllers{
 
 			$horas = 0;
 
-			if(($_SESSION['permisosMod']['ID_ROL'] !== '2') || (!empty($horasExistentes) && is_array($horasExistentes))){
+			if((in_array($rolCodigo, ROLES_ADMIN)) || (!empty($horasExistentes) && is_array($horasExistentes))){
 
 				if(!empty($horasExistentes)){
 
@@ -373,7 +378,7 @@ class Horas extends Controllers{
 					}
 
 				}else{
-					$arrResponse = array('status' => false, 'msg' => 'No tienes horas disponibles.');
+					$arrResponse = array('status' => false, 'msg' => 'No tiene horas disponibles.');
 					$msjResta = "No tiene horas para tomar.";
 				}
 
@@ -382,13 +387,7 @@ class Horas extends Controllers{
 				$arrResponse = array('status' => false, 'msg' => 'No se encontraron datos');
 
 			}
-			/*
-			97	1	Diligencias Personales	16/07/24	1	26
-			133	1	Practicas De Powerbi	05/07/24	1	26
-			139	1	Toma De Hoy	17/07/24	1	26
-			132	1	Diligencias En Otra Ciudad	16/07/24	1	26
-			137	2	Almuerzo De Cumpleaños	30/07/24	1	26
-			*/			
+			
 			echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
 		}
 	}
@@ -398,14 +397,15 @@ class Horas extends Controllers{
 		$idFuncionario = $_SESSION['userData']['ID_FUNCIONARIO'];
 		$idFuncionario = intval($idFuncionario);
 
+		$rolCodigo = $_SESSION['userData']['ROL_CODIGO'];
+
 		if($idFuncionario > 0){
 			
 			$horasExistentes = $this->model->getHorasExistentes($idFuncionario);
 
-			//Dep($horasExistentes);
 			$horas = 0;
 
-			if(($_SESSION['permisosMod']['ID_ROL'] !== '2') || (!empty($horasExistentes) && is_array($horasExistentes))){
+			if((in_array($rolCodigo, ROLES_ADMIN)) || (!empty($horasExistentes) && is_array($horasExistentes))){
 				
 				if(!empty($horasExistentes)){
 					
@@ -467,14 +467,12 @@ class Horas extends Controllers{
 		$htmlOptions = "";
 		$arrData = $this->model->selectUsuarios();
 
-		//Dep($arrData);
-
 		if(count($arrData) > 0 ){
 			// Obtener el nombre del usuario que inició sesión
 			$loggedUserName = $_SESSION['userData']['FUN_NOMBRES'];
 				
 			// Agregar la opción del usuario que inició sesión
-			$htmlOptions .= '<option value="'.$_SESSION['userData']['ID_FUNCIONARIO'].'">'.$loggedUserName.'</option>';
+			//$htmlOptions .= '<option value="'.$_SESSION['userData']['ID_FUNCIONARIO'].'">'.$loggedUserName.'</option>';
 				
 			// Agregar las opciones de los demás registros && $arrData[0]['ID_FUNCIONARIO'] != $_SESSION['userData']['ID_FUNCIONARIO']
 			for ($i=0; $i < count($arrData); $i++) { 
