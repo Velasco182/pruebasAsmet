@@ -216,7 +216,7 @@ function ftnDateTimePickerConfiguration(){
             format: "DD/MM/yyyy hh:mm A",
             locale: moment.locale('es-mx'),
             buttons:{
-                showToday: true,
+                //showToday: true,
                 showClear: true,
                 showClose: true
             },
@@ -231,7 +231,10 @@ function ftnDateTimePickerConfiguration(){
                 clear: "fa fa-trash",
                 close: "fa fa-xmark",
             }, 
-            maxDate: moment(), // Establecer la fecha mínima seleccionable como la fecha y hora actual                
+            maxDate: moment(), // Establecer la fecha mínima seleccionable como la fecha y hora actual   
+            disabledDates: [
+                moment()
+            ],             
         };
 
         // Crea una copia del objeto de configuración
@@ -246,11 +249,10 @@ function ftnDateTimePickerConfiguration(){
 
         $(inicio).on("change.datetimepicker", function(e){
             $(final).datetimepicker('minDate', e.date);
-            $(final).datetimepicker('maxDate', moment());
         });
         
         $(final).on("change.datetimepicker", function(e){
-            $(inicio).datetimepicker('maxDate', e.date);
+            $(inicio).datetimepicker('maxDate', moment());
         });
 
     });
