@@ -234,7 +234,7 @@ function ftnDateTimePickerConfiguration(){
             maxDate: moment(), // Establecer la fecha mínima seleccionable como la fecha y hora actual   
             disabledDates: [
                 moment()
-            ],             
+            ],         
         };
 
         // Crea una copia del objeto de configuración
@@ -489,9 +489,9 @@ function ajustarFormulario() {
 
     request.onreadystatechange = function() {
         if (request.readyState == 4 && request.status == 200) {
-            let rol = JSON.parse(request.responseText).Rol;
+            let rol = JSON.parse(request.responseText);
 
-            if (rol === '2') {
+            if (rol === 2) {
                 $("#listaUsuarios").closest(".form-group").css("display","none");
             }
         }

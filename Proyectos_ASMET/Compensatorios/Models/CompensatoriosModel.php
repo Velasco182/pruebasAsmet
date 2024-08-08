@@ -549,7 +549,7 @@ class CompensatoriosModel extends Oracle{
 
 	//----Funciones generales------
 	//Modulo de verificación de rol
-	public function getRol(int $idRol) {
+	/*public function getRol(int $idRol) {
 
 		$this->intIdRol = $idRol;
 
@@ -561,6 +561,6 @@ class CompensatoriosModel extends Oracle{
 		$request = $this->select($sql);
 
 		return $request;
-	}
+	}*/
 }
  ?>

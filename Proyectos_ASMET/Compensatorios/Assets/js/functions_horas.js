@@ -168,6 +168,7 @@ function fntDatePickerConfiguration(){
             },
             useCurrent: true,   
             minDate: moment(), // Establecer la fecha mínima seleccionable como la fecha y hora actual
+            daysOfWeekDisabled: [0, 6],
         };
 
         $(picker).datetimepicker(timePickerConfiguration);
