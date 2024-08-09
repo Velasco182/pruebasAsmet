@@ -477,14 +477,14 @@ function ftnTotalUsuarios(){
 //Función para verificar tipo de usuario y así mismo permisos
 function ajustarFormulario() {
     let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-    let ajaxUrl = base_url + '/Horas/verificarRol';
+    let ajaxUrl = base_url + '/Horas/getRol';
     request.open("GET", ajaxUrl, true);
 
     request.onreadystatechange = function() {
         if (request.readyState == 4 && request.status == 200) {
             let rol = JSON.parse(request.responseText).Rol;
             
-            if (rol === '2'){
+            if (!rol) {
                 $("#listaUsuarios").closest(".form-group").css("display","none");
             }
         }

@@ -35,16 +35,14 @@ class Compensatorios extends Controllers{
 
 	//Modulo para parsear fechas
 	public function parseToDB($fecha){
-	
-		// Format the date string before passing to strtotime()
+
+		//Format the date string before passing to strtotime()
 		$formattedDateTime = DateTime::createFromFormat('d/m/Y h:i A', $fecha);
 		$formattedDateString = $formattedDateTime->format('Y/m/d H:i:s');
 		//
 		$unixTimestamp = strtotime($formattedDateString);
-		// Use the formatted Unix timestamp for further processing
-		$strFecha = date('Y/m/d H:i:s', $unixTimestamp);
-
-		return $strFecha;
+		//Use the formatted Unix timestamp for further processing
+		return date('Y/m/d H:i:s', $unixTimestamp);
 
 	}
 
@@ -376,30 +374,27 @@ class Compensatorios extends Controllers{
 		$htmlOptions = "";
 		$arrData = $this->model->selectUsuarios();
 
-		if(count($arrData) > 0 ){
-			// Obtener el nombre del usuario que inició sesión
-			$loggedUserName = $_SESSION['userData']['FUN_NOMBRES'];
-				
-			// Agregar la opción del usuario que inició sesión
-			//$htmlOptions .= '<option value="'.$_SESSION['userData']['ID_FUNCIONARIO'].'">'.$loggedUserName.'</option>';
-				
-			// Agregar las opciones de los demás registros && $arrData[0]['ID_FUNCIONARIO'] != $_SESSION['userData']['ID_FUNCIONARIO']
+		if(!empty($arrData)){
+			// Agregar las opciones de los demás registros
 			for ($i=0; $i < count($arrData); $i++) {
-				if($arrData[0]['FUN_ESTADO'] == 1 ){
+				if($arrData[0]['FUN_ESTADO'] == '1' ){
 					$htmlOptions .= '<option value="'.$arrData[$i]['ID_FUNCIONARIO'].'">'.$arrData[$i]['FUN_NOMBRES'].' '.$arrData[$i]['FUN_APELLIDOS'].'</option>';
 				}
 			}
 		}
+
 		echo $htmlOptions;
 	}
 	//Modulo para obetener los tipos de compensatorios en el select, haciendo llamado al modelo selectTipoCompensatorio
 	public function getSelectTipoCompensatorio(){
 		$htmlOptions = "";
 		$arrData = $this->model->selectTipoCompensatorio();
-		if(count($arrData) > 0 ){
+		if(!empty($arrData)){
 			// Agregar las opciones de los demás registros de tipo de compensatorios
 			for ($i=0; $i < count($arrData); $i++) {
-				$htmlOptions .= '<option value="'.$arrData[$i]['ID_TIPO_COMPENSATORIO'].'">'.$arrData[$i]['TIP_COM_NOMBRE'].'</option>';
+				if($arrData[0]['TIP_COM_ESTADO'] == '1' ){
+					$htmlOptions .= '<option value="'.$arrData[$i]['ID_TIPO_COMPENSATORIO'].'">'.$arrData[$i]['TIP_COM_NOMBRE'].'</option>';
+				}
 			}
 		}
 		echo $htmlOptions;
@@ -494,22 +489,17 @@ class Compensatorios extends Controllers{
 	}
 
 	//----Funciones generales-----
-	//Módulo para verificación de rol llamando al modelo getRol
-	public function verificarRol() {
-		// Verificar si el usuario tiene el rol de administrador
-		$idRol = $_SESSION['userData']['ID_ROL'];
-		$idRol = intval($idRol);
-		//$rol = $this->model->getRol($idRol);
+	//Módulo para verificación de rol llamando al modelo obtenerRol
+	public function getRol() {
 
-		//Dep($idRol);
-		//Dep($rol);
+		// Verificar si el usuario tiene el rol de administrador
+		$rol = $this->model->obtenerRol();
+				
+		$response = array('Rol' => $rol);
 		
-		/*$response = array(
-			'Rol' => $idRol
-		);*/
-		
-		//header('Content-Type: application/json');
-		echo json_encode($idRol, JSON_UNESCAPED_UNICODE);
+		header('Content-Type: application/json');
+
+		echo json_encode($response, JSON_UNESCAPED_UNICODE);
 	}
 }
  ?>

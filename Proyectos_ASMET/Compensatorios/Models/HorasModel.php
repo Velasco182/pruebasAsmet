@@ -482,18 +482,17 @@ class HorasModel extends Oracle{
 
 	//----Funciones generales------
 	//Modulo de verificación de rol
-	public function getRol(int $idRol) {
+	public function obtenerRol() {
 
-		$this->intIdRol = $idRol;
+		// Obtener el ID del rol de la sesión
+		$codigoRol = $_SESSION['userData']['ROL_CODIGO'];
+		$this -> intCodigoRol = $codigoRol;
 
-		$sql = "SELECT 
-			distinct ID_ROL
-			FROM BIG_FUNCIONARIOS
-			WHERE ID_ROL = '{$this->intIdRol}'";
+		if(in_array($this->intCodigoRol, ROLES_ADMIN)){
+			return true;
+		}
 
-		$request = $this->select($sql);
-
-		return $request;
+		return false;
 	}
 
 }

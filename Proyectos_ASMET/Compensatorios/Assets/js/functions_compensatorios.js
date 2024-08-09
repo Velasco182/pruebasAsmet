@@ -466,13 +466,8 @@ function ftnTotalTipoCompensatorio(){
         request.send();
         request.onreadystatechange = function(){
             if(request.readyState == 4 && request.status == 200){
-
-                let opciones = request.responseText;
                 
-                const defaultOption = '<option value="default" selected>Selecciona una opcion</option>';
-                const options = {defaultOption, ...opciones};
-                
-                document.querySelector('#txtActividad').innerHTML = opciones;
+                document.querySelector('#txtActividad').innerHTML = request.responseText;
                 
                 $('#txtActividad').selectpicker('refresh');
                 $('#txtActividad').selectpicker('render');
@@ -484,14 +479,14 @@ function ftnTotalTipoCompensatorio(){
 //Ajustar formulario para la renderización o no de la lista de usuarios
 function ajustarFormulario() { 
     let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-    let ajaxUrl = base_url + '/Compensatorios/verificarRol';
+    let ajaxUrl = base_url + '/Compensatorios/getRol';
     request.open("GET", ajaxUrl, true);
 
     request.onreadystatechange = function() {
         if (request.readyState == 4 && request.status == 200) {
-            let rol = JSON.parse(request.responseText);
+            let rol = JSON.parse(request.responseText).Rol;
 
-            if (rol === 2) {
+            if (!rol) {
                 $("#listaUsuarios").closest(".form-group").css("display","none");
             }
         }

@@ -47,7 +47,7 @@ class CompensatoriosModel extends Oracle{
 
 		$return = 0;
 		
-		// Obtener el ID del funcionario de la sesión
+		// Obtener el ID del rol de la sesión
 		$codigoRol = $_SESSION['userData']['ROL_CODIGO'];
 		$this -> intCodigoRol = $codigoRol;
 
@@ -286,14 +286,14 @@ class CompensatoriosModel extends Oracle{
 		$this->intIdFuncionario = $idFuncionario;
 		//vericar arreglo de roles
 		if(in_array($this->intCodigoRol, ROLES_ADMIN)){
-			// EXTRAE ROLES excluyendo el usuario con ID_FUNCIONARIO = 1
+			// Hago un select a la db para recuperar todos los usuarios activos.
 			$sql = "SELECT 
-						F.ID_FUNCIONARIO, 
-						F.FUN_NOMBRES, 
-						F.FUN_APELLIDOS, 
+						F.ID_FUNCIONARIO,
+						F.FUN_NOMBRES,
+						F.FUN_APELLIDOS,
 						F.FUN_ESTADO
 					FROM BIG_FUNCIONARIOS F
-					WHERE F.FUN_ESTADO != 0 AND F.ID_FUNCIONARIO != 1
+					WHERE F.FUN_ESTADO = '1' AND F.ID_FUNCIONARIO != 1
 					ORDER BY F.FUN_NOMBRES ASC, F.FUN_APELLIDOS ASC";
 			
 			$request = $this->select_all($sql);
@@ -301,9 +301,9 @@ class CompensatoriosModel extends Oracle{
 		}
 
 		$sql = "SELECT 
-					F.ID_FUNCIONARIO, 
-					F.FUN_NOMBRES, 
-					F.FUN_APELLIDOS, 
+					F.ID_FUNCIONARIO,
+					F.FUN_NOMBRES,
+					F.FUN_APELLIDOS,
 					F.FUN_ESTADO
 				FROM BIG_FUNCIONARIOS F
 				WHERE F.ID_FUNCIONARIO = '{$this->intIdFuncionario}'";
@@ -338,7 +338,8 @@ class CompensatoriosModel extends Oracle{
 		// Hago un select a la db para recuperar todos los tipos de compensatorios activos.
 		$sql = "SELECT 
 					TC.ID_TIPO_COMPENSATORIO, 
-					TC.TIP_COM_NOMBRE
+					TC.TIP_COM_NOMBRE,
+					TC.TIP_COM_ESTADO
 				FROM BIG_TIPO_COMPENSATORIO TC
 				WHERE TC.TIP_COM_ESTADO = '1'
 				ORDER BY TC.TIP_COM_NOMBRE ASC";
@@ -549,18 +550,17 @@ class CompensatoriosModel extends Oracle{
 
 	//----Funciones generales------
 	//Modulo de verificación de rol
-	/*public function getRol(int $idRol) {
+	public function obtenerRol() {
 
-		$this->intIdRol = $idRol;
+		// Obtener el ID del rol de la sesión
+		$codigoRol = $_SESSION['userData']['ROL_CODIGO'];
+		$this -> intCodigoRol = $codigoRol;
 
-		$sql = "SELECT 
-			distinct ID_ROL
-			FROM BIG_FUNCIONARIOS
-			WHERE ID_ROL = '{$this->intIdRol}'";
+		if(in_array($this->intCodigoRol, ROLES_ADMIN)){
+			return true;
+		}
 
-		$request = $this->select($sql);
-
-		return $request;
-	}*/
+		return false;
+	}
 }
  ?>

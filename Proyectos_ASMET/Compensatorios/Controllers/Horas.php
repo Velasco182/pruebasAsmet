@@ -467,9 +467,9 @@ class Horas extends Controllers{
 		$htmlOptions = "";
 		$arrData = $this->model->selectUsuarios();
 
-		if(count($arrData) > 0 ){
+		if(!empty($arrData)){
 			// Obtener el nombre del usuario que inició sesión
-			$loggedUserName = $_SESSION['userData']['FUN_NOMBRES'];
+			//$loggedUserName = $_SESSION['userData']['FUN_NOMBRES'];
 				
 			// Agregar la opción del usuario que inició sesión
 			//$htmlOptions .= '<option value="'.$_SESSION['userData']['ID_FUNCIONARIO'].'">'.$loggedUserName.'</option>';
@@ -646,32 +646,17 @@ class Horas extends Controllers{
 	}
 
 	//-----Funciones generales-----
-	//Módulo paraa verificación de rol llamando al modelo esAdministrador
-	public function verificarRol() {
-		
+	//Módulo paraa verificación de rol llamando al modelo obtenerRol
+	public function getRol() {
+
 		// Verificar si el usuario tiene el rol de administrador
-		$idRol = $_SESSION['userData']['ID_ROL'];
-		$rol = $this->model->getRol($idRol);
-		
-		$response = array(
-			'Rol' => $idRol
-		);
+		$rol = $this->model->obtenerRol();
+				
+		$response = array('Rol' => $rol);
 		
 		header('Content-Type: application/json');
-		echo json_encode($response);
-	}
-	//Modulo para verificar rol
-	public function getSelectRoles(){
-		$htmlOptions = "";
-		$arrData = $this->model->selectRoles();
-		if(count($arrData) > 0 ){
-			for ($i=0; $i < count($arrData); $i++) { 
-				if($arrData[$i]['ROL_ESTADO'] == 1 ){
-					$htmlOptions .= '<option value="'.$arrData[$i]['ID_ROL'].'">'.$arrData[$i]['ROL_NOMBRE'].'</option>';
-				}
-			}
-		}
-		return $htmlOptions;
+
+		echo json_encode($response, JSON_UNESCAPED_UNICODE);
 	}
 }
 ?>
